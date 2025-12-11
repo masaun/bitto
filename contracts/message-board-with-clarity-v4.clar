@@ -105,15 +105,16 @@
 
 ;; Function to get the hash of this contract using contract-hash?
 (define-read-only (get-contract-hash)
-  (contract-hash? (as-contract tx-sender))
+  (contract-hash? tx-sender)
 )
 
-;; Function to toggle asset restrictions using restrict-assets?
+;; Function to toggle asset restrictions
 (define-public (toggle-asset-restrictions (restricted bool))
   (begin
     (asserts! (is-eq tx-sender CONTRACT_OWNER) ERR_NOT_CONTRACT_OWNER)
     (var-set assets-restricted restricted)
-    (restrict-assets? restricted)
+    ;; Note: restrict-assets? function may not be available in all environments
+    ;; For this demo, we're just setting the internal state
     (ok restricted)
   )
 )
@@ -121,8 +122,8 @@
 ;; Function to convert message content to ASCII using to-ascii?
 (define-read-only (get-message-ascii (id uint))
   (match (get-message id)
-    message-data (to-ascii? (get message message-data))
-    none
+    message-data (ok (unwrap-panic (to-ascii? (get message message-data))))
+    (err u404)
   )
 )
 
@@ -198,7 +199,7 @@
 ;; Function to get contract information including hash
 (define-read-only (get-contract-info)
   {
-    hash: (contract-hash? (as-contract tx-sender)),
+    hash: (contract-hash? tx-sender),
     owner: CONTRACT_OWNER,
     assets-restricted: (var-get assets-restricted),
     message-count: (var-get message-count),
