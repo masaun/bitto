@@ -1,0 +1,32 @@
+
+**/settings/Mainnet.toml
+**/settings/Testnet.toml
+.cache/**
+history.txt
+
+logs
+*.log
+npm-debug.log*
+coverage
+*.info
+costs-reports.json
+
+# Deployment plans
+**/deployments/default.mainnet-plan.yaml
+**/deployments/default.testnet-plan.yaml    
+**/deployments/default.simnet-plan.yaml
+
+# Secrets
+.env
+
+# Node modules
+node_modules
+package-lock.json
+
+# Typescript
+tsconfig.node.json
+
+# Others
+.vscode
+.cursor
+.DS_Store
