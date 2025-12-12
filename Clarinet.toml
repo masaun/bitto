@@ -17,6 +17,11 @@ epoch = 'latest'
 path = 'contracts/message-board-with-clarity-v4.clar'
 clarity_version = 4
 epoch = 'latest'
+
+[contracts.lending-borrowing]
+path = 'contracts/lending-borrowing.clar'
+clarity_version = 4
+epoch = 'latest'
 [repl.analysis]
 passes = ['check_checker']
 
