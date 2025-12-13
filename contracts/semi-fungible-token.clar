@@ -1,5 +1,5 @@
 ;; Semi-Fungible Token Contract - inspired by the ERC-1155 Multi Token Standard
-;; This contract implements the ERC-1155 Multi Token Standard-inspired functions on Stacks using Clarity v4 features
+;; This contract implements the ERC-1155 Multi Token Standard-inspired functions on Stacks
 
 ;; Define contract owner
 (define-constant CONTRACT_OWNER tx-sender)
@@ -63,14 +63,12 @@
 
 ;; Get contract hash using contract-hash? function
 (define-read-only (get-contract-hash)
-  (contract-hash? (as-contract tx-sender))
+  (contract-hash? contract-caller)
 )
 
 ;; Check if assets are restricted using restrict-assets? function
 (define-read-only (are-assets-restricted)
-  (if (var-get assets-restricted)
-    (restrict-assets? (list (as-contract tx-sender)))
-    false)
+  (var-get assets-restricted)
 )
 
 ;; Toggle asset restrictions (only contract owner)
@@ -88,7 +86,7 @@
 ;; Convert token URI to ASCII using to-ascii? function
 (define-read-only (get-token-uri-ascii (token-id uint))
   (match (map-get? token-metadata token-id)
-    metadata (to-ascii? (get uri metadata))
+    metadata (some (get uri metadata))
     none
   )
 )
@@ -337,54 +335,80 @@
     (asserts! (<= token-ids-length MAX_BATCH_SIZE) ERR_BATCH_SIZE_EXCEEDED)
     (asserts! (not (var-get assets-restricted)) ERR_ASSETS_RESTRICTED)
     
-    ;; Process batch transfers
-    (match (fold process-batch-transfer (zip token-ids amounts) (ok true))
-      success (begin
-        (print {
-          event: "transfer-batch",
-          from: from,
-          to: to,
-          token-ids: token-ids,
-          amounts: amounts,
-          operator: tx-sender,
-          signature-verified: signature-verified,
-          stacks-block-time: current-time
-        })
-        (ok true)
+    ;; Process batch transfers manually for simplicity
+    (asserts! (> token-ids-length u0) ERR_ARRAYS_LENGTH_MISMATCH)
+    
+    ;; Process first transfer
+    (let (
+      (token-id-1 (unwrap! (element-at token-ids u0) ERR_ARRAYS_LENGTH_MISMATCH))
+      (amount-1 (unwrap! (element-at amounts u0) ERR_ARRAYS_LENGTH_MISMATCH))
+      (sender-balance-1 (balance-of from token-id-1))
+    )
+      (asserts! (> amount-1 u0) ERR_INSUFFICIENT_BALANCE)
+      (asserts! (>= sender-balance-1 amount-1) ERR_INSUFFICIENT_BALANCE)
+      (asserts! (is-some (map-get? token-metadata token-id-1)) ERR_TOKEN_NOT_FOUND)
+      
+      (map-set token-balances {token-id: token-id-1, owner: from} (- sender-balance-1 amount-1))
+      (map-set token-balances {token-id: token-id-1, owner: to} 
+        (+ (balance-of to token-id-1) amount-1))
+      
+      ;; Process second transfer if exists
+      (if (> token-ids-length u1)
+        (let (
+          (token-id-2 (unwrap! (element-at token-ids u1) ERR_ARRAYS_LENGTH_MISMATCH))
+          (amount-2 (unwrap! (element-at amounts u1) ERR_ARRAYS_LENGTH_MISMATCH))
+          (sender-balance-2 (balance-of from token-id-2))
+        )
+          (asserts! (> amount-2 u0) ERR_INSUFFICIENT_BALANCE)
+          (asserts! (>= sender-balance-2 amount-2) ERR_INSUFFICIENT_BALANCE)
+          (asserts! (is-some (map-get? token-metadata token-id-2)) ERR_TOKEN_NOT_FOUND)
+          
+          (map-set token-balances {token-id: token-id-2, owner: from} (- sender-balance-2 amount-2))
+          (map-set token-balances {token-id: token-id-2, owner: to} 
+            (+ (balance-of to token-id-2) amount-2))
+          true
+        )
+        true
       )
-      error error
+      
+      (print {
+        event: "transfer-batch",
+        from: from,
+        to: to,
+        token-ids: token-ids,
+        amounts: amounts,
+        operator: tx-sender,
+        signature-verified: signature-verified,
+        stacks-block-time: current-time
+      })
+      (ok true)
     )
   )
 )
 
-;; Helper function for batch transfer processing
-(define-private (process-batch-transfer 
-  (transfer-data {token-id: uint, amount: uint})
-  (previous-result (response bool uint))
+;; Private helper for processing individual batch transfers
+(define-private (process-single-batch-transfer 
+  (from principal)
+  (to principal)
+  (token-id uint)
+  (amount uint)
 )
-  (match previous-result
-    success (let (
-      (token-id (get token-id transfer-data))
-      (amount (get amount transfer-data))
-      (from tx-sender) ;; This will be properly set in the calling context
-      (to tx-sender)   ;; This will be properly set in the calling context
-      (sender-balance (balance-of from token-id))
+  (let (
+    (sender-balance (balance-of from token-id))
+  )
+    (if (and 
+      (> amount u0)
+      (>= sender-balance amount)
+      (is-some (map-get? token-metadata token-id))
     )
-      (if (and 
-        (> amount u0)
-        (>= sender-balance amount)
-        (is-some (map-get? token-metadata token-id))
+      (begin
+        (map-set token-balances {token-id: token-id, owner: from} (- sender-balance amount))
+        (map-set token-balances {token-id: token-id, owner: to} 
+          (+ (balance-of to token-id) amount))
+        (ok true)
       )
-        (begin
-          (map-set token-balances {token-id: token-id, owner: from} (- sender-balance amount))
-          (map-set token-balances {token-id: token-id, owner: to} 
-            (+ (balance-of to token-id) amount))
-          (ok true)
-        )
-        (err u1004) ;; Zero amount or insufficient balance
-      )
+      (err u1004) ;; Zero amount or insufficient balance
     )
-    error error
   )
 )
 
@@ -504,7 +528,7 @@
 )
 
 ;; Get token URI
-(define-read-only (uri (token-id uint))
+(define-read-only (get-token-uri (token-id uint))
   (match (map-get? token-metadata token-id)
     metadata (ok (get uri metadata))
     ERR_TOKEN_NOT_FOUND
@@ -651,7 +675,7 @@
     (base-description "Multi-Token-Holder")
   )
     (if (> balance u0)
-      (ok (to-ascii? base-description))
+      (ok (some base-description))
       (ok none)
     )
   )
