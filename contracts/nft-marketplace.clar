@@ -2,9 +2,6 @@
 ;; Integrates with non-fungible-token.clar and uses Clarity v4 functions
 ;; Supports listing, buying, selling, bidding, and auction functionality
 
-;; Import the NFT contract
-(use-trait nft-trait 'SP1HTBVD3JG9C05J7HBJTHGR0GGW7KXW28M5JS8QE.nft-trait.nft-trait)
-
 ;; Error codes
 (define-constant ERR_UNAUTHORIZED (err u4001))
 (define-constant ERR_NOT_FOUND (err u4002))
@@ -83,6 +80,16 @@
   }
 )
 
+(define-map purchase-intents
+  { nft-contract: principal, token-id: uint }
+  {
+    buyer: principal,
+    price: uint,
+    created-at: uint,
+    active: bool
+  }
+)
+
 (define-map user-stats
   { user: principal }
   {
@@ -100,14 +107,14 @@
   (contract-hash? .nft-marketplace)
 )
 
-;; Check if assets are restricted using restrict-assets?
+;; Check if marketplace assets are restricted (simplified)
 (define-read-only (are-marketplace-assets-restricted)
-  (restrict-assets?)
+  (var-get marketplace-paused)
 )
 
 ;; Get current Stacks block time
 (define-read-only (get-current-time)
-  (stacks-block-time)
+  stacks-block-time
 )
 
 ;; Convert string to ASCII using to-ascii?
@@ -205,7 +212,7 @@
   (message-hash (optional (buff 32)))
 )
   (let (
-    (current-time (stacks-block-time))
+    (current-time stacks-block-time)
     (expires-at (+ current-time duration-blocks))
     (listing-id (+ (var-get listing-nonce) u1))
     (signature-verified 
@@ -222,7 +229,6 @@
     )
   )
     (asserts! (not (var-get marketplace-paused)) ERR_UNAUTHORIZED)
-    (asserts! (not (restrict-assets?)) ERR_ASSETS_RESTRICTED)
     (asserts! (> price u0) ERR_INVALID_PRICE)
     (asserts! (> duration-blocks u0) ERR_INVALID_PRICE)
     (asserts! (is-none (get-listing nft-contract token-id)) ERR_ALREADY_EXISTS)
@@ -285,7 +291,7 @@
       token-id: token-id,
       seller: tx-sender,
       listing-id: (get listing-id listing),
-      stacks-block-time: (stacks-block-time)
+      stacks-block-time: stacks-block-time
     })
     
     (ok true)
@@ -304,7 +310,7 @@
     (listing (unwrap! (get-listing nft-contract token-id) ERR_NOT_FOUND))
     (seller (get seller listing))
     (price (get price listing))
-    (current-time (stacks-block-time))
+    (current-time stacks-block-time)
     (marketplace-fee (calculate-marketplace-fee price))
     (seller-amount (- price marketplace-fee))
     (signature-verified 
@@ -314,23 +320,29 @@
             (verify-signature msg-hash sig pub-key)
             false
           )
+          false
         )
         false
       )
     )
   )
     (asserts! (not (var-get marketplace-paused)) ERR_UNAUTHORIZED)
-    (asserts! (not (restrict-assets?)) ERR_ASSETS_RESTRICTED)
     (asserts! (get active listing) ERR_NOT_FOUND)
     (asserts! (<= current-time (get expires-at listing)) ERR_LISTING_EXPIRED)
     (asserts! (<= price max-price) ERR_INVALID_PRICE)
     (asserts! (not (is-eq tx-sender seller)) ERR_UNAUTHORIZED)
     
-    ;; Transfer NFT from seller to buyer
+    ;; Transfer NFT from seller to buyer 
     (try! (contract-call? .non-fungible-token transfer-from 
       seller tx-sender token-id 
       signature public-key message-hash
     ))
+    
+    ;; Transfer payment to seller
+    (try! (stx-transfer? seller-amount tx-sender seller))
+    
+    ;; Transfer marketplace fee to platform
+    (try! (stx-transfer? marketplace-fee tx-sender (var-get platform-wallet)))
     
     ;; Transfer payment to seller
     (try! (stx-transfer? seller-amount tx-sender seller))
@@ -380,6 +392,48 @@
   )
 )
 
+;; Create purchase order - buyer signals intent to purchase
+(define-public (create-purchase-order
+  (nft-contract principal)
+  (token-id uint)
+  (max-price uint)
+)
+  (let (
+    (listing (unwrap! (get-listing nft-contract token-id) ERR_NOT_FOUND))
+    (price (get price listing))
+    (current-time stacks-block-time)
+  )
+    (asserts! (not (var-get marketplace-paused)) ERR_UNAUTHORIZED)
+    (asserts! (get active listing) ERR_NOT_FOUND)
+    (asserts! (<= current-time (get expires-at listing)) ERR_LISTING_EXPIRED)
+    (asserts! (<= price max-price) ERR_INVALID_PRICE)
+    (asserts! (not (is-eq tx-sender (get seller listing))) ERR_UNAUTHORIZED)
+    (asserts! (is-none (map-get? purchase-intents { nft-contract: nft-contract, token-id: token-id })) ERR_ALREADY_EXISTS)
+    
+    ;; Store purchase intent (no payment yet - will happen during completion)
+    (map-set purchase-intents
+      { nft-contract: nft-contract, token-id: token-id }
+      {
+        buyer: tx-sender,
+        price: price,
+        created-at: current-time,
+        active: true
+      }
+    )
+    
+    (print {
+      event: "purchase-order-created",
+      nft-contract: nft-contract,
+      token-id: token-id,
+      buyer: tx-sender,
+      price: price,
+      timestamp: current-time
+    })
+    
+    (ok true)
+  )
+)
+
 ;; Auction functions
 
 (define-public (create-auction 
@@ -392,7 +446,7 @@
   (message-hash (optional (buff 32)))
 )
   (let (
-    (current-time (stacks-block-time))
+    (current-time stacks-block-time)
     (ends-at (+ current-time duration-blocks))
     (auction-id (+ (var-get auction-nonce) u1))
     (signature-verified 
@@ -402,13 +456,13 @@
             (verify-signature msg-hash sig pub-key)
             false
           )
+          false
         )
         false
       )
     )
   )
     (asserts! (not (var-get marketplace-paused)) ERR_UNAUTHORIZED)
-    (asserts! (not (restrict-assets?)) ERR_ASSETS_RESTRICTED)
     (asserts! (> starting-price u0) ERR_INVALID_PRICE)
     (asserts! (> duration-blocks u0) ERR_INVALID_PRICE)
     
@@ -462,7 +516,7 @@
 )
   (let (
     (auction (unwrap! (get-auction auction-id) ERR_NOT_FOUND))
-    (current-time (stacks-block-time))
+    (current-time stacks-block-time)
     (current-bid (get current-bid auction))
     (min-bid (if (is-eq current-bid u0) 
                (get starting-price auction)
@@ -475,13 +529,13 @@
             (verify-signature msg-hash sig pub-key)
             false
           )
+          false
         )
         false
       )
     )
   )
     (asserts! (not (var-get marketplace-paused)) ERR_UNAUTHORIZED)
-    (asserts! (not (restrict-assets?)) ERR_ASSETS_RESTRICTED)
     (asserts! (get active auction) ERR_NOT_FOUND)
     (asserts! (< current-time (get ends-at auction)) ERR_AUCTION_ENDED)
     (asserts! (>= bid-amount min-bid) ERR_BID_TOO_LOW)
@@ -538,7 +592,7 @@
 (define-public (finalize-auction (auction-id uint))
   (let (
     (auction (unwrap! (get-auction auction-id) ERR_NOT_FOUND))
-    (current-time (stacks-block-time))
+    (current-time stacks-block-time)
     (seller (get seller auction))
     (current-bid (get current-bid auction))
     (marketplace-fee (calculate-marketplace-fee current-bid))
