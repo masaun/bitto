@@ -16,6 +16,11 @@ path = 'contracts/message-board.clar'
 clarity_version = 4
 epoch = 'latest'
 
+[contracts.fungible-token]
+path = 'contracts/fungible-token.clar'
+clarity_version = 4
+epoch = 'latest'
+
 [contracts.message-board-with-clarity-v4]
 path = 'contracts/message-board-with-clarity-v4.clar'
 clarity_version = 4
