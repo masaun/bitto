@@ -1,6 +1,13 @@
 import React, { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react';
 import { ChainhookClient } from './client';
-import { TokenTransferEvent, TokenApprovalEvent, ContractEvent } from './types';
+import { 
+  TokenTransferEvent, 
+  TokenApprovalEvent, 
+  ContractEvent,
+  ChainhookInfo,
+  ChainhooksList,
+  FetchChainhooksOptions
+} from './types';
 import chainhookSpec from './fungible-token.chainhook.json';
 
 interface ChainhookContextType {
@@ -11,7 +18,12 @@ interface ChainhookContextType {
   recentEvents: ContractEvent[];
   totalTransfers: number;
   totalVolume: bigint;
+  registeredChainhooks: ChainhookInfo[];
+  isLoading: boolean;
   registerChainhook: () => Promise<boolean>;
+  fetchChainhooks: (options?: FetchChainhooksOptions) => Promise<ChainhooksList | null>;
+  fetchChainhook: (uuid: string) => Promise<ChainhookInfo | null>;
+  refreshChainhooks: () => Promise<void>;
   clearEvents: () => void;
 }
 
@@ -41,13 +53,17 @@ export const ChainhookProvider: React.FC<ChainhookProviderProps> = ({
   const [recentEvents, setRecentEvents] = useState<ContractEvent[]>([]);
   const [totalTransfers, setTotalTransfers] = useState(0);
   const [totalVolume, setTotalVolume] = useState<bigint>(0n);
+  const [registeredChainhooks, setRegisteredChainhooks] = useState<ChainhookInfo[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Initialize chainhook client
   useEffect(() => {
     const chainhookClient = new ChainhookClient({
       baseUrl: 'http://localhost:20456',
       enableWebSocket: false, // For now, we'll use HTTP webhooks
-      authToken: 'fungible-token-webhook'
+      authToken: 'fungible-token-webhook',
+      apiKey: process.env.REACT_APP_HIRO_API_KEY, // Optional: for SDK features
+      network: 'testnet'
     });
 
     // Set up event listeners
@@ -126,12 +142,53 @@ export const ChainhookProvider: React.FC<ChainhookProviderProps> = ({
     }
   }, [client]);
 
+  const fetchChainhooks = useCallback(async (options?: FetchChainhooksOptions): Promise<ChainhooksList | null> => {
+    if (!client) return null;
+    
+    setIsLoading(true);
+    try {
+      const result = await client.getChainhooks(options);
+      return result;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [client]);
+
+  const fetchChainhook = useCallback(async (uuid: string): Promise<ChainhookInfo | null> => {
+    if (!client) return null;
+    
+    setIsLoading(true);
+    try {
+      const result = await client.getChainhook(uuid);
+      return result;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [client]);
+
+  const refreshChainhooks = useCallback(async (): Promise<void> => {
+    if (!client) return;
+    
+    setIsLoading(true);
+    try {
+      const result = await client.getChainhooks();
+      if (result) {
+        setRegisteredChainhooks(result.results);
+      }
+    } catch (error) {
+      console.error('Failed to refresh chainhooks:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [client]);
+
   const clearEvents = useCallback(() => {
     setRecentTransfers([]);
     setRecentApprovals([]);
     setRecentEvents([]);
     setTotalTransfers(0);
     setTotalVolume(0n);
+    setRegisteredChainhooks([]);
   }, []);
 
   const contextValue: ChainhookContextType = {
@@ -142,7 +199,12 @@ export const ChainhookProvider: React.FC<ChainhookProviderProps> = ({
     recentEvents,
     totalTransfers,
     totalVolume,
+    registeredChainhooks,
+    isLoading,
     registerChainhook,
+    fetchChainhooks,
+    fetchChainhook,
+    refreshChainhooks,
     clearEvents
   };
 

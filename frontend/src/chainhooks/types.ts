@@ -86,3 +86,33 @@ export interface ContractEvent {
   value: any;
   eventIndex: number;
 }
+
+export interface ChainhookInfo {
+  uuid: string;
+  name: string;
+  version: number;
+  networks: {
+    [key: string]: {
+      enabled: boolean;
+      start_block?: number;
+      end_block?: number;
+      predicate: any;
+      action: any;
+    };
+  };
+  created_at?: string;
+  updated_at?: string;
+  status?: string;
+}
+
+export interface ChainhooksList {
+  total: number;
+  results: ChainhookInfo[];
+  limit: number;
+  offset: number;
+}
+
+export interface FetchChainhooksOptions {
+  limit?: number;
+  offset?: number;
+}

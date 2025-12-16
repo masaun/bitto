@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useChainhook } from './provider';
+import { ChainhookManager } from './ChainhookManager';
 
 export const ChainhookDashboard: React.FC = () => {
   const {
@@ -11,6 +12,8 @@ export const ChainhookDashboard: React.FC = () => {
     registerChainhook,
     clearEvents
   } = useChainhook();
+
+  const [activeTab, setActiveTab] = useState<'events' | 'manager'>('events');
 
   const processor = useChainhook().client?.getProcessor();
 
@@ -26,7 +29,7 @@ export const ChainhookDashboard: React.FC = () => {
   return (
     <div className="chainhook-dashboard">
       <div className="dashboard-header">
-        <h2>Fungible Token Events Monitor</h2>
+        <h2>Chainhooks Dashboard</h2>
         <div className="connection-status">
           <span className={`status-indicator ${isConnected ? 'connected' : 'disconnected'}`}>
             {isConnected ? 'Connected' : 'Disconnected'}
@@ -34,14 +37,31 @@ export const ChainhookDashboard: React.FC = () => {
         </div>
       </div>
 
-      <div className="dashboard-actions">
-        <button onClick={handleRegisterChainhook} disabled={isConnected}>
-          Register Chainhook
+      <div className="dashboard-tabs">
+        <button 
+          className={`tab ${activeTab === 'events' ? 'active' : ''}`}
+          onClick={() => setActiveTab('events')}
+        >
+          Events Monitor
         </button>
-        <button onClick={clearEvents}>
-          Clear Events
+        <button 
+          className={`tab ${activeTab === 'manager' ? 'active' : ''}`}
+          onClick={() => setActiveTab('manager')}
+        >
+          Manage Chainhooks
         </button>
       </div>
+
+      {activeTab === 'events' && (
+        <>
+          <div className="dashboard-actions">
+            <button onClick={handleRegisterChainhook} disabled={isConnected}>
+              Register Chainhook
+            </button>
+            <button onClick={clearEvents}>
+              Clear Events
+            </button>
+          </div>
 
       <div className="dashboard-stats">
         <div className="stat-card">
@@ -137,6 +157,12 @@ export const ChainhookDashboard: React.FC = () => {
           </div>
         </div>
       </div>
+        </>
+      )}
+
+      {activeTab === 'manager' && (
+        <ChainhookManager />
+      )}
 
       <style jsx>{`
         .chainhook-dashboard {
@@ -152,6 +178,34 @@ export const ChainhookDashboard: React.FC = () => {
           margin-bottom: 20px;
           padding-bottom: 15px;
           border-bottom: 2px solid #e0e0e0;
+        }
+
+        .dashboard-tabs {
+          display: flex;
+          gap: 5px;
+          margin-bottom: 20px;
+          border-bottom: 1px solid #e0e0e0;
+        }
+
+        .tab {
+          padding: 12px 24px;
+          border: none;
+          background: none;
+          cursor: pointer;
+          border-bottom: 3px solid transparent;
+          transition: all 0.2s;
+          color: #666;
+        }
+
+        .tab:hover {
+          background-color: #f8f9fa;
+          color: #333;
+        }
+
+        .tab.active {
+          color: #007cba;
+          border-bottom-color: #007cba;
+          font-weight: bold;
         }
 
         .dashboard-header h2 {

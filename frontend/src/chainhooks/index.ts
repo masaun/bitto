@@ -3,6 +3,7 @@ export { ChainhookClient } from './client';
 export { ChainhookEventProcessor } from './processor';
 export { ChainhookProvider, useChainhook } from './provider';
 export { ChainhookDashboard } from './Dashboard';
+export { ChainhookManager } from './ChainhookManager';
 
 // Type exports
 export type {
@@ -10,7 +11,10 @@ export type {
   ChainhookPayload,
   TokenTransferEvent,
   TokenApprovalEvent,
-  ContractEvent
+  ContractEvent,
+  ChainhookInfo,
+  ChainhooksList,
+  FetchChainhooksOptions
 } from './types';
 
 // Configuration export

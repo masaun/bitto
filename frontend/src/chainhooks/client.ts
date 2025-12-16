@@ -1,5 +1,14 @@
 import axios from 'axios';
-import { ChainhookPayload, TokenTransferEvent, TokenApprovalEvent, ContractEvent } from './types';
+import { ChainhooksClient, CHAINHOOKS_BASE_URL } from '@hirosystems/chainhooks-client';
+import { 
+  ChainhookPayload, 
+  TokenTransferEvent, 
+  TokenApprovalEvent, 
+  ContractEvent,
+  ChainhookInfo,
+  ChainhooksList,
+  FetchChainhooksOptions
+} from './types';
 import { ChainhookEventProcessor } from './processor';
 
 export interface ChainhookClientOptions {
@@ -7,6 +16,8 @@ export interface ChainhookClientOptions {
   authToken?: string;
   enableWebSocket?: boolean;
   wsUrl?: string;
+  apiKey?: string;
+  network?: 'mainnet' | 'testnet';
 }
 
 export class ChainhookClient {
@@ -17,11 +28,24 @@ export class ChainhookClient {
   private ws: WebSocket | null = null;
   private reconnectInterval: number = 5000;
   private isConnecting: boolean = false;
+  private chainhooksClient: ChainhooksClient | null = null;
 
   constructor(options: ChainhookClientOptions = {}) {
     this.baseUrl = options.baseUrl || 'http://localhost:20456';
     this.authToken = options.authToken || '';
     this.processor = new ChainhookEventProcessor();
+
+    // Initialize Chainhooks SDK client if API key is provided
+    if (options.apiKey) {
+      const baseUrl = options.network === 'mainnet' 
+        ? CHAINHOOKS_BASE_URL.mainnet 
+        : CHAINHOOKS_BASE_URL.testnet;
+      
+      this.chainhooksClient = new ChainhooksClient({
+        baseUrl,
+        apiKey: options.apiKey
+      });
+    }
 
     if (options.enableWebSocket && options.wsUrl) {
       this.connectWebSocket(options.wsUrl);
@@ -220,6 +244,51 @@ export class ChainhookClient {
    */
   getProcessor(): ChainhookEventProcessor {
     return this.processor;
+  }
+
+  /**
+   * Fetch all chainhooks with pagination options
+   */
+  async getChainhooks(options?: FetchChainhooksOptions): Promise<ChainhooksList | null> {
+    if (!this.chainhooksClient) {
+      console.error('Chainhooks SDK client not initialized. Provide API key in constructor.');
+      return null;
+    }
+
+    try {
+      const result = await this.chainhooksClient.getChainhooks(options);
+      console.log('Fetched chainhooks:', result);
+      return result;
+    } catch (error) {
+      console.error('Failed to fetch chainhooks:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Fetch a specific chainhook by UUID
+   */
+  async getChainhook(uuid: string): Promise<ChainhookInfo | null> {
+    if (!this.chainhooksClient) {
+      console.error('Chainhooks SDK client not initialized. Provide API key in constructor.');
+      return null;
+    }
+
+    try {
+      const result = await this.chainhooksClient.getChainhook(uuid);
+      console.log('Fetched chainhook:', result);
+      return result;
+    } catch (error) {
+      console.error('Failed to fetch chainhook:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Check if Chainhooks SDK client is available
+   */
+  hasSDKClient(): boolean {
+    return this.chainhooksClient !== null;
   }
 
   /**
