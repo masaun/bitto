@@ -1,6 +1,7 @@
 import { showConnect, disconnect, openContractCall } from '@stacks/connect'
 import { Cl, Pc, fetchCallReadOnlyFunction, cvToJSON, ClarityValue, PostConditionMode } from '@stacks/transactions'
 import { useState, useEffect } from 'react'
+import { ChainhookProvider, ChainhookDashboard } from './chainhooks'
 
 // Contract configuration - update this with your deployed contract address
 const CONTRACT_ADDRESS = 'ST1V95DB4JK47QVPJBXCEN6MT35JK84CQ4F1GK7WZ'
@@ -216,11 +217,12 @@ function App() {
   }, [isConnected])
 
   return (
-    <div className="app">
-      <header className="header">
-        <h1>🟧 Stacks Dev Quickstart Message Board</h1>
-        <p>Share your message on Bitcoin via Stacks for 1 satoshi of sBTC!</p>
-      </header>
+    <ChainhookProvider>
+      <div className="app">
+        <header className="header">
+          <h1>🟧 Stacks Dev Quickstart Message Board</h1>
+          <p>Share your message on Bitcoin via Stacks for 1 satoshi of sBTC!</p>
+        </header>
 
       <div className="wallet-section">
         {isConnected ? (
@@ -299,13 +301,19 @@ function App() {
               <p className="no-messages">No messages yet. Be the first to add one!</p>
             )}
           </div>
+
+          {/* Chainhook Dashboard */}
+          <div className="chainhook-section">
+            <ChainhookDashboard />
+          </div>
         </>
       )}
 
       <footer className="footer">
         <p>Built with Stacks.js • Contract: {CONTRACT_ADDRESS}.{CONTRACT_NAME}</p>
       </footer>
-    </div>
+      </div>
+    </ChainhookProvider>
   )
 }
 

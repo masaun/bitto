@@ -1,0 +1,56 @@
+{
+  "chain": "stacks",
+  "uuid": "fungible-token-events",
+  "name": "Fungible Token Events Monitor",
+  "version": 1,
+  "networks": {
+    "simnet": {
+      "enabled": true,
+      "start_block": 0,
+      "end_block": null,
+      "predicate": {
+        "scope": "contract_call",
+        "contract_identifier": "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.fungible-token",
+        "method": ["transfer", "mint", "burn", "approve", "transfer-from"]
+      },
+      "action": {
+        "http_post": {
+          "url": "http://localhost:3000/api/chainhook/fungible-token",
+          "authorization_header": "Bearer fungible-token-webhook"
+        }
+      }
+    },
+    "testnet": {
+      "enabled": false,
+      "start_block": null,
+      "end_block": null,
+      "predicate": {
+        "scope": "contract_call",
+        "contract_identifier": "ST000000000000000000002AMW42H.fungible-token",
+        "method": ["transfer", "mint", "burn", "approve", "transfer-from"]
+      },
+      "action": {
+        "http_post": {
+          "url": "https://your-domain.com/api/chainhook/fungible-token",
+          "authorization_header": "Bearer fungible-token-webhook"
+        }
+      }
+    },
+    "mainnet": {
+      "enabled": false,
+      "start_block": null,
+      "end_block": null,
+      "predicate": {
+        "scope": "contract_call",
+        "contract_identifier": "SP000000000000000000002Q6VF78.fungible-token",
+        "method": ["transfer", "mint", "burn", "approve", "transfer-from"]
+      },
+      "action": {
+        "http_post": {
+          "url": "https://your-domain.com/api/chainhook/fungible-token",
+          "authorization_header": "Bearer fungible-token-webhook"
+        }
+      }
+    }
+  }
+}
