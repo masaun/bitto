@@ -116,3 +116,50 @@ export interface FetchChainhooksOptions {
   limit?: number;
   offset?: number;
 }
+
+export interface ChainhookFilter {
+  type: 'ft_transfer' | 'nft_transfer' | 'stx_transfer' | 'contract_call' | 'contract_deployment' | 'print_event';
+  asset_identifier?: string;
+  sender?: string;
+  recipient?: string;
+  contract_identifier?: string;
+  method?: string;
+}
+
+export interface ChainhookAction {
+  type: 'http_post' | 'file_append';
+  url?: string;
+  authorization_header?: string;
+  file_path?: string;
+}
+
+export interface ChainhookOptions {
+  decode_clarity_values?: boolean;
+  include_contract_abi?: boolean;
+  max_batch_size?: number;
+}
+
+export interface UpdateChainhookRequest {
+  name?: string;
+  version?: number;
+  filters?: {
+    events?: ChainhookFilter[];
+  };
+  action?: ChainhookAction;
+  options?: ChainhookOptions;
+}
+
+export interface ChainhookDefinition {
+  uuid: string;
+  name: string;
+  version: number;
+  filters: {
+    events?: ChainhookFilter[];
+  };
+  action: ChainhookAction;
+  options?: ChainhookOptions;
+}
+
+export interface ChainhookWithDefinition extends ChainhookInfo {
+  definition: ChainhookDefinition;
+}

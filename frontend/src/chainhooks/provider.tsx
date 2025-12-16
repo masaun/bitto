@@ -6,7 +6,10 @@ import {
   ContractEvent,
   ChainhookInfo,
   ChainhooksList,
-  FetchChainhooksOptions
+  FetchChainhooksOptions,
+  UpdateChainhookRequest,
+  ChainhookWithDefinition,
+  ChainhookFilter
 } from './types';
 import chainhookSpec from './fungible-token.chainhook.json';
 
@@ -23,6 +26,10 @@ interface ChainhookContextType {
   registerChainhook: () => Promise<boolean>;
   fetchChainhooks: (options?: FetchChainhooksOptions) => Promise<ChainhooksList | null>;
   fetchChainhook: (uuid: string) => Promise<ChainhookInfo | null>;
+  fetchChainhookWithDefinition: (uuid: string) => Promise<ChainhookWithDefinition | null>;
+  updateChainhook: (uuid: string, updates: UpdateChainhookRequest) => Promise<ChainhookWithDefinition | null>;
+  addEventFilter: (uuid: string, filter: ChainhookFilter) => Promise<ChainhookWithDefinition | null>;
+  updateWebhookUrl: (uuid: string, url: string, authHeader?: string) => Promise<ChainhookWithDefinition | null>;
   refreshChainhooks: () => Promise<void>;
   clearEvents: () => void;
 }
@@ -182,6 +189,64 @@ export const ChainhookProvider: React.FC<ChainhookProviderProps> = ({
     }
   }, [client]);
 
+  const fetchChainhookWithDefinition = useCallback(async (uuid: string): Promise<ChainhookWithDefinition | null> => {
+    if (!client) return null;
+    
+    setIsLoading(true);
+    try {
+      const result = await client.getChainhookWithDefinition(uuid);
+      return result;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [client]);
+
+  const updateChainhook = useCallback(async (uuid: string, updates: UpdateChainhookRequest): Promise<ChainhookWithDefinition | null> => {
+    if (!client) return null;
+    
+    setIsLoading(true);
+    try {
+      const result = await client.updateChainhook(uuid, updates);
+      if (result) {
+        // Refresh the chainhooks list to show updated data
+        await refreshChainhooks();
+      }
+      return result;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [client]);
+
+  const addEventFilter = useCallback(async (uuid: string, filter: ChainhookFilter): Promise<ChainhookWithDefinition | null> => {
+    if (!client) return null;
+    
+    setIsLoading(true);
+    try {
+      const result = await client.addEventFilter(uuid, filter);
+      if (result) {
+        await refreshChainhooks();
+      }
+      return result;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [client]);
+
+  const updateWebhookUrl = useCallback(async (uuid: string, url: string, authHeader?: string): Promise<ChainhookWithDefinition | null> => {
+    if (!client) return null;
+    
+    setIsLoading(true);
+    try {
+      const result = await client.updateWebhookUrl(uuid, url, authHeader);
+      if (result) {
+        await refreshChainhooks();
+      }
+      return result;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [client]);
+
   const clearEvents = useCallback(() => {
     setRecentTransfers([]);
     setRecentApprovals([]);
@@ -204,6 +269,10 @@ export const ChainhookProvider: React.FC<ChainhookProviderProps> = ({
     registerChainhook,
     fetchChainhooks,
     fetchChainhook,
+    fetchChainhookWithDefinition,
+    updateChainhook,
+    addEventFilter,
+    updateWebhookUrl,
     refreshChainhooks,
     clearEvents
   };

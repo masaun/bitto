@@ -4,6 +4,8 @@ export { ChainhookEventProcessor } from './processor';
 export { ChainhookProvider, useChainhook } from './provider';
 export { ChainhookDashboard } from './Dashboard';
 export { ChainhookManager } from './ChainhookManager';
+export { EditChainhook } from './EditChainhook';
+export { ChainhookEditExamples } from './ChainhookEditExamples';
 
 // Type exports
 export type {
@@ -14,7 +16,13 @@ export type {
   ContractEvent,
   ChainhookInfo,
   ChainhooksList,
-  FetchChainhooksOptions
+  FetchChainhooksOptions,
+  UpdateChainhookRequest,
+  ChainhookWithDefinition,
+  ChainhookFilter,
+  ChainhookAction,
+  ChainhookOptions,
+  ChainhookDefinition
 } from './types';
 
 // Configuration export

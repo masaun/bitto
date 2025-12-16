@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useChainhook } from './provider';
 import { ChainhookManager } from './ChainhookManager';
+import { ChainhookEditExamples } from './ChainhookEditExamples';
 
 export const ChainhookDashboard: React.FC = () => {
   const {
@@ -13,7 +14,7 @@ export const ChainhookDashboard: React.FC = () => {
     clearEvents
   } = useChainhook();
 
-  const [activeTab, setActiveTab] = useState<'events' | 'manager'>('events');
+  const [activeTab, setActiveTab] = useState<'events' | 'manager' | 'examples'>('events');
 
   const processor = useChainhook().client?.getProcessor();
 
@@ -49,6 +50,12 @@ export const ChainhookDashboard: React.FC = () => {
           onClick={() => setActiveTab('manager')}
         >
           Manage Chainhooks
+        </button>
+        <button 
+          className={`tab ${activeTab === 'examples' ? 'active' : ''}`}
+          onClick={() => setActiveTab('examples')}
+        >
+          Edit Examples
         </button>
       </div>
 
@@ -162,6 +169,10 @@ export const ChainhookDashboard: React.FC = () => {
 
       {activeTab === 'manager' && (
         <ChainhookManager />
+      )}
+
+      {activeTab === 'examples' && (
+        <ChainhookEditExamples />
       )}
 
       <style jsx>{`

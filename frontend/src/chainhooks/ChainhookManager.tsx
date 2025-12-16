@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useChainhook } from './provider';
-import { ChainhookInfo, FetchChainhooksOptions } from './types';
+import { ChainhookInfo, FetchChainhooksOptions, ChainhookWithDefinition } from './types';
+import { EditChainhook } from './EditChainhook';
 
 export const ChainhookManager: React.FC = () => {
   const {
     fetchChainhooks,
     fetchChainhook,
+    fetchChainhookWithDefinition,
     refreshChainhooks,
     registeredChainhooks,
     isLoading,
@@ -13,6 +15,7 @@ export const ChainhookManager: React.FC = () => {
   } = useChainhook();
 
   const [selectedChainhook, setSelectedChainhook] = useState<ChainhookInfo | null>(null);
+  const [editingChainhook, setEditingChainhook] = useState<ChainhookWithDefinition | null>(null);
   const [allChainhooks, setAllChainhooks] = useState<ChainhookInfo[]>([]);
   const [fetchOptions, setFetchOptions] = useState<FetchChainhooksOptions>({
     limit: 20,
@@ -59,6 +62,34 @@ export const ChainhookManager: React.FC = () => {
 
   const handleLimitChange = (newLimit: number) => {
     setFetchOptions(prev => ({ ...prev, limit: newLimit, offset: 0 }));
+  };
+
+  const handleEditChainhook = async (chainhook: ChainhookInfo) => {
+    const fullChainhook = await fetchChainhookWithDefinition(chainhook.uuid);
+    if (fullChainhook) {
+      setEditingChainhook(fullChainhook);
+    } else {
+      alert('Unable to fetch chainhook definition for editing');
+    }
+  };
+
+  const handleUpdateComplete = (updated: ChainhookWithDefinition) => {
+    // Update the selected chainhook if it matches
+    if (selectedChainhook?.uuid === updated.uuid) {
+      setSelectedChainhook(updated);
+    }
+    
+    // Refresh the list
+    handleFetchChainhooks();
+    
+    // Close edit modal
+    setEditingChainhook(null);
+    
+    alert('Chainhook updated successfully!');
+  };
+
+  const handleEditCancel = () => {
+    setEditingChainhook(null);
   };
 
   if (!hasSDKClient) {
@@ -200,9 +231,18 @@ export const ChainhookManager: React.FC = () => {
               </div>
             </div>
           </div>
-          <button onClick={() => setSelectedChainhook(null)} className="close-btn">
-            Close Details
-          </button>
+          <div className="detail-actions">
+            <button 
+              onClick={() => handleEditChainhook(selectedChainhook)}
+              className="edit-btn"
+              disabled={isLoading}
+            >
+              Edit Chainhook
+            </button>
+            <button onClick={() => setSelectedChainhook(null)} className="close-btn">
+              Close Details
+            </button>
+          </div>
         </div>
       )}
 
@@ -230,12 +270,21 @@ export const ChainhookManager: React.FC = () => {
                     </span>
                   ))}
                 </div>
-                <button 
-                  onClick={() => setSelectedChainhook(chainhook)}
-                  className="view-details-btn"
-                >
-                  View Details
-                </button>
+                <div className="card-actions">
+                  <button 
+                    onClick={() => setSelectedChainhook(chainhook)}
+                    className="view-details-btn"
+                  >
+                    View Details
+                  </button>
+                  <button 
+                    onClick={() => handleEditChainhook(chainhook)}
+                    className="edit-card-btn"
+                    disabled={isLoading}
+                  >
+                    Edit
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -246,6 +295,19 @@ export const ChainhookManager: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Edit Modal */}
+      {editingChainhook && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <EditChainhook 
+              chainhook={editingChainhook}
+              onUpdate={handleUpdateComplete}
+              onCancel={handleEditCancel}
+            />
+          </div>
+        </div>
+      )}
 
       <style jsx>{`
         .chainhook-manager {
@@ -297,7 +359,7 @@ export const ChainhookManager: React.FC = () => {
           max-width: 300px;
         }
 
-        .fetch-btn, .refresh-btn, .search-btn, .page-btn, .view-details-btn, .close-btn {
+        .fetch-btn, .refresh-btn, .search-btn, .page-btn, .view-details-btn, .close-btn, .edit-btn, .edit-card-btn {
           padding: 8px 16px;
           border: none;
           border-radius: 4px;
@@ -335,12 +397,26 @@ export const ChainhookManager: React.FC = () => {
           color: white;
         }
 
+        .edit-btn {
+          background-color: #fd7e14;
+          color: white;
+        }
+
+        .edit-card-btn {
+          background-color: #fd7e14;
+          color: white;
+          font-size: 12px;
+          padding: 6px 12px;
+        }
+
         .fetch-btn:hover { background-color: #005a87; }
         .refresh-btn:hover { background-color: #218838; }
         .search-btn:hover { background-color: #5a2d91; }
         .page-btn:hover { background-color: #5a6268; }
         .view-details-btn:hover { background-color: #138496; }
         .close-btn:hover { background-color: #c82333; }
+        .edit-btn:hover { background-color: #e35e00; }
+        .edit-card-btn:hover { background-color: #e35e00; }
 
         button:disabled {
           background-color: #6c757d;
@@ -501,6 +577,40 @@ export const ChainhookManager: React.FC = () => {
           color: #007cba;
         }
 
+        .modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(0, 0, 0, 0.5);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+          overflow-y: auto;
+          padding: 20px;
+        }
+
+        .modal-content {
+          background: white;
+          border-radius: 8px;
+          max-width: 90vw;
+          max-height: 90vh;
+          overflow-y: auto;
+        }
+
+        .detail-actions {
+          display: flex;
+          gap: 10px;
+        }
+
+        .card-actions {
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
+        }
+
         @media (max-width: 768px) {
           .chainhooks-grid {
             grid-template-columns: 1fr;
@@ -514,6 +624,14 @@ export const ChainhookManager: React.FC = () => {
           .results-summary {
             flex-direction: column;
             gap: 10px;
+          }
+
+          .modal-overlay {
+            padding: 10px;
+          }
+
+          .detail-actions, .card-actions {
+            flex-direction: column;
           }
         }
       `}</style>

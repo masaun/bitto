@@ -7,7 +7,9 @@ import {
   ContractEvent,
   ChainhookInfo,
   ChainhooksList,
-  FetchChainhooksOptions
+  FetchChainhooksOptions,
+  UpdateChainhookRequest,
+  ChainhookWithDefinition
 } from './types';
 import { ChainhookEventProcessor } from './processor';
 
@@ -282,6 +284,88 @@ export class ChainhookClient {
       console.error('Failed to fetch chainhook:', error);
       return null;
     }
+  }
+
+  /**
+   * Update/edit an existing chainhook
+   */
+  async updateChainhook(uuid: string, updates: UpdateChainhookRequest): Promise<ChainhookWithDefinition | null> {
+    if (!this.chainhooksClient) {
+      console.error('Chainhooks SDK client not initialized. Provide API key in constructor.');
+      return null;
+    }
+
+    try {
+      const result = await this.chainhooksClient.updateChainhook(uuid, updates);
+      console.log('Updated chainhook:', result);
+      return result;
+    } catch (error) {
+      console.error('Failed to update chainhook:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Get chainhook with full definition (useful before updating)
+   */
+  async getChainhookWithDefinition(uuid: string): Promise<ChainhookWithDefinition | null> {
+    if (!this.chainhooksClient) {
+      console.error('Chainhooks SDK client not initialized. Provide API key in constructor.');
+      return null;
+    }
+
+    try {
+      const result = await this.chainhooksClient.getChainhook(uuid);
+      console.log('Fetched chainhook with definition:', result);
+      return result as ChainhookWithDefinition;
+    } catch (error) {
+      console.error('Failed to fetch chainhook with definition:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Helper method to safely add event filter while preserving existing ones
+   */
+  async addEventFilter(uuid: string, newFilter: any): Promise<ChainhookWithDefinition | null> {
+    try {
+      // Fetch current definition
+      const current = await this.getChainhookWithDefinition(uuid);
+      if (!current?.definition) {
+        console.error('Could not fetch current chainhook definition');
+        return null;
+      }
+
+      // Add new filter while preserving existing ones
+      const existingEvents = current.definition.filters.events || [];
+      const updatedFilters = {
+        events: [...existingEvents, newFilter]
+      };
+
+      // Update the chainhook
+      return await this.updateChainhook(uuid, {
+        filters: updatedFilters
+      });
+    } catch (error) {
+      console.error('Failed to add event filter:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Helper method to update webhook URL
+   */
+  async updateWebhookUrl(uuid: string, newUrl: string, authHeader?: string): Promise<ChainhookWithDefinition | null> {
+    const action: any = {
+      type: 'http_post',
+      url: newUrl
+    };
+
+    if (authHeader) {
+      action.authorization_header = authHeader;
+    }
+
+    return await this.updateChainhook(uuid, { action });
   }
 
   /**
