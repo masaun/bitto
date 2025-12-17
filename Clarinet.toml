@@ -51,6 +51,11 @@ path = 'contracts/nft-marketplace.clar'
 clarity_version = 4
 epoch = 'latest'
 
+[contracts.non-fungible-token-royalty-std]
+path = 'contracts/non-fungible-token-royalty-std.clar'
+clarity_version = 4
+epoch = 'latest'
+
 [repl.analysis]
 passes = ['check_checker']
 
