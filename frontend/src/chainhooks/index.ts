@@ -6,6 +6,7 @@ export { ChainhookDashboard } from './Dashboard';
 export { ChainhookManager } from './ChainhookManager';
 export { EditChainhook } from './EditChainhook';
 export { ChainhookEditExamples } from './ChainhookEditExamples';
+export { BlockReplay } from './BlockReplay';
 
 // Type exports
 export type {
@@ -22,7 +23,9 @@ export type {
   ChainhookFilter,
   ChainhookAction,
   ChainhookOptions,
-  ChainhookDefinition
+  ChainhookDefinition,
+  BlockReplayParams,
+  BlockReplayResult
 } from './types';
 
 // Configuration export
