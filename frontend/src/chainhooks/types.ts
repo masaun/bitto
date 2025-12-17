@@ -163,3 +163,17 @@ export interface ChainhookDefinition {
 export interface ChainhookWithDefinition extends ChainhookInfo {
   definition: ChainhookDefinition;
 }
+
+export interface BlockReplayParams {
+  block_height?: number;
+  index_block_hash?: string;
+}
+
+export interface BlockReplayResult extends ChainhookPayload {
+  // Additional metadata for replay results
+  replayed_block?: {
+    height: number;
+    hash: string;
+    timestamp: number;
+  };
+}

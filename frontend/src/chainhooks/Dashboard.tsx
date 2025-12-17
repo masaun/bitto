@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useChainhook } from './provider';
 import { ChainhookManager } from './ChainhookManager';
 import { ChainhookEditExamples } from './ChainhookEditExamples';
+import { BlockReplay } from './BlockReplay';
 
 export const ChainhookDashboard: React.FC = () => {
   const {
@@ -14,7 +15,7 @@ export const ChainhookDashboard: React.FC = () => {
     clearEvents
   } = useChainhook();
 
-  const [activeTab, setActiveTab] = useState<'events' | 'manager' | 'examples'>('events');
+  const [activeTab, setActiveTab] = useState<'events' | 'manager' | 'examples' | 'replay'>('events');
 
   const processor = useChainhook().client?.getProcessor();
 
@@ -56,6 +57,12 @@ export const ChainhookDashboard: React.FC = () => {
           onClick={() => setActiveTab('examples')}
         >
           Edit Examples
+        </button>
+        <button 
+          className={`tab ${activeTab === 'replay' ? 'active' : ''}`}
+          onClick={() => setActiveTab('replay')}
+        >
+          Block Replay
         </button>
       </div>
 
@@ -173,6 +180,10 @@ export const ChainhookDashboard: React.FC = () => {
 
       {activeTab === 'examples' && (
         <ChainhookEditExamples />
+      )}
+
+      {activeTab === 'replay' && (
+        <BlockReplay />
       )}
 
       <style jsx>{`
@@ -392,6 +403,166 @@ export const ChainhookDashboard: React.FC = () => {
           color: #888;
         }
 
+        /* Block Replay Styles */
+        .block-replay {
+          padding: 20px;
+        }
+
+        .block-replay-header h3 {
+          margin-top: 0;
+          color: #333;
+        }
+
+        .block-replay-header p {
+          color: #666;
+          margin-bottom: 20px;
+        }
+
+        .block-replay-form {
+          background: #f8f9fa;
+          padding: 20px;
+          border-radius: 8px;
+          margin-bottom: 20px;
+        }
+
+        .form-group {
+          margin-bottom: 15px;
+        }
+
+        .form-group label {
+          display: block;
+          margin-bottom: 5px;
+          font-weight: bold;
+          color: #333;
+        }
+
+        .form-group select,
+        .form-group input {
+          width: 100%;
+          padding: 10px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          box-sizing: border-box;
+        }
+
+        .radio-group {
+          display: flex;
+          gap: 20px;
+          margin-top: 5px;
+        }
+
+        .radio-group label {
+          display: flex;
+          align-items: center;
+          font-weight: normal;
+          cursor: pointer;
+        }
+
+        .radio-group input[type="radio"] {
+          width: auto;
+          margin-right: 8px;
+        }
+
+        .error-message {
+          color: #dc3545;
+          background-color: #f8d7da;
+          border: 1px solid #f5c6cb;
+          border-radius: 4px;
+          padding: 10px;
+          margin-bottom: 15px;
+        }
+
+        .replay-button {
+          background-color: #007cba;
+          color: white;
+          border: none;
+          padding: 12px 24px;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 14px;
+          font-weight: bold;
+        }
+
+        .replay-button:hover:not(:disabled) {
+          background-color: #005a87;
+        }
+
+        .replay-button:disabled {
+          background-color: #6c757d;
+          cursor: not-allowed;
+        }
+
+        .replay-result {
+          margin-top: 20px;
+          border: 1px solid #dee2e6;
+          border-radius: 8px;
+          overflow: hidden;
+        }
+
+        .replay-result h4 {
+          background-color: #28a745;
+          color: white;
+          padding: 10px 15px;
+          margin: 0;
+        }
+
+        .result-summary {
+          padding: 15px;
+          background-color: #f8f9fa;
+        }
+
+        .result-summary p {
+          margin: 5px 0;
+        }
+
+        .result-details {
+          border-top: 1px solid #dee2e6;
+        }
+
+        .result-details summary {
+          padding: 15px;
+          cursor: pointer;
+          background-color: #e9ecef;
+          font-weight: bold;
+        }
+
+        .result-details summary:hover {
+          background-color: #dee2e6;
+        }
+
+        .result-json {
+          padding: 15px;
+          background-color: #f8f8f8;
+          overflow-x: auto;
+          font-family: 'Courier New', monospace;
+          font-size: 12px;
+          line-height: 1.4;
+          margin: 0;
+          max-height: 400px;
+          overflow-y: auto;
+        }
+
+        .block-replay-help {
+          background-color: #e7f3ff;
+          border: 1px solid #b8daff;
+          border-radius: 8px;
+          padding: 15px;
+          margin-top: 20px;
+        }
+
+        .block-replay-help h4 {
+          margin-top: 0;
+          color: #004085;
+        }
+
+        .block-replay-help ul {
+          margin-bottom: 0;
+        }
+
+        .block-replay-help li {
+          margin-bottom: 5px;
+        }
+
         @media (max-width: 768px) {
           .events-section {
             grid-template-columns: 1fr;
@@ -399,6 +570,11 @@ export const ChainhookDashboard: React.FC = () => {
           
           .dashboard-stats {
             grid-template-columns: 1fr;
+          }
+
+          .radio-group {
+            flex-direction: column;
+            gap: 10px;
           }
         }
       `}</style>

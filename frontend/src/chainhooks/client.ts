@@ -9,7 +9,8 @@ import {
   ChainhooksList,
   FetchChainhooksOptions,
   UpdateChainhookRequest,
-  ChainhookWithDefinition
+  ChainhookWithDefinition,
+  BlockReplayParams
 } from './types';
 import { ChainhookEventProcessor } from './processor';
 
@@ -366,6 +367,40 @@ export class ChainhookClient {
     }
 
     return await this.updateChainhook(uuid, { action });
+  }
+
+  /**
+   * Replay a block using the chainhook (evaluate chainhook against historical block)
+   * This is useful for testing chainhooks against specific blocks or re-processing historical data
+   */
+  async replayBlock(chainhookUuid: string, params: BlockReplayParams): Promise<ChainhookPayload | null> {
+    if (!this.chainhooksClient) {
+      console.error('Chainhooks SDK client not initialized. Provide API key in constructor.');
+      return null;
+    }
+
+    if (!params.block_height && !params.index_block_hash) {
+      console.error('Either block_height or index_block_hash must be provided');
+      return null;
+    }
+
+    if (params.block_height && params.index_block_hash) {
+      console.error('Provide either block_height or index_block_hash, not both');
+      return null;
+    }
+
+    try {
+      console.log(`Replaying block for chainhook ${chainhookUuid}:`, params);
+      
+      // Use the evaluateChainhook method from the SDK
+      const result = await this.chainhooksClient.evaluateChainhook(chainhookUuid, params);
+      
+      console.log('Block replay result:', result);
+      return result;
+    } catch (error) {
+      console.error('Failed to replay block:', error);
+      return null;
+    }
   }
 
   /**
