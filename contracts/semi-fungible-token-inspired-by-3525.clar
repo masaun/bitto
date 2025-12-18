@@ -2,8 +2,6 @@
 ;; Implements semi-fungible tokens with slots, values, and royalty mechanisms
 ;; Using Clarity v4 features
 
-(impl-trait .nft-trait.nft-trait)
-
 ;; Error constants
 (define-constant ERR-UNAUTHORIZED (err u401))
 (define-constant ERR-NOT-FOUND (err u404))
@@ -76,10 +74,7 @@
 ;; Asset restriction check using Clarity v4
 (define-read-only (check-asset-restrictions (asset-contract principal))
     (if (var-get asset-restrictions-enabled)
-        (match (restrict-assets? asset-contract)
-            restricted restricted
-            false
-        )
+        (default-to false (map-get? restricted-contracts asset-contract))
         false
     )
 )
@@ -182,13 +177,12 @@
 (define-public (approve-value-with-signature (token-id uint) 
                                            (spender principal) 
                                            (approved-value uint)
-                                           (signature (buff 65))
+                                           (signature (buff 64))
                                            (public-key (buff 33)))
     (let ((token (unwrap! (map-get? token-data { token-id: token-id }) ERR-NOT-FOUND))
           (message-hash (sha256 (concat 
-            (to-ascii? token-id)
-            (unwrap! (to-ascii? spender) ERR-INVALID-VALUE)
-            (to-ascii? approved-value)
+            (unwrap-panic (as-max-len? (unwrap-panic (to-consensus-buff? token-id)) u16))
+            (unwrap-panic (as-max-len? (unwrap-panic (to-consensus-buff? approved-value)) u16))
           ))))
         
         (asserts! (is-eq tx-sender (get owner token)) ERR-UNAUTHORIZED)
