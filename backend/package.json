@@ -1,0 +1,25 @@
+{
+  "name": "bitto-backend",
+  "version": "1.0.0",
+  "description": "Backend server for Bitto with Chainhooks integration",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": ["chainhooks", "stacks", "blockchain"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@hirosystems/chainhooks-client": "^1.0.0",
+    "fastify": "^4.25.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.0"
+  }
+}
