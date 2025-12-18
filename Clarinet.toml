@@ -61,6 +61,11 @@ path = 'contracts/semi-fungible-token-inspired-by-3525.clar'
 clarity_version = 4
 epoch = 'latest'
 
+[contracts.trustless-agents-std]
+path = 'contracts/trustless-agents-std.clar'
+clarity_version = 4
+epoch = 'latest'
+
 [repl.analysis]
 passes = ['check_checker']
 
