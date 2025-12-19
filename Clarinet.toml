@@ -71,6 +71,11 @@ path = 'contracts/identity-registry.clar'
 clarity_version = 4
 epoch = 'latest'
 
+[contracts.flash-loan]
+path = 'contracts/flash-loan.clar'
+clarity_version = 4
+epoch = 'latest'
+
 [repl.analysis]
 passes = ['check_checker']
 
