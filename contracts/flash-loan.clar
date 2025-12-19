@@ -522,7 +522,7 @@
           })
           (ok success)
         )
-      error error
+      error (err error)
     )
   )
 )
