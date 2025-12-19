@@ -1,7 +1,6 @@
-;; Rental Non-Fungible Token Contract - ERC-4907: Rental NFT Standard
-;; Reference: https://eips.ethereum.org/EIPS/eip-4907
+;; Rental Non-Fungible Token Contract
 ;;
-;; This contract extends ERC-721 to add a "user" role that can be granted
+;; This contract extends the non-fungible-token standard to add a "user" role that can be granted
 ;; to addresses with an expiration time. The user role represents permission
 ;; to "use" the NFT but not the ability to transfer it.
 ;;
