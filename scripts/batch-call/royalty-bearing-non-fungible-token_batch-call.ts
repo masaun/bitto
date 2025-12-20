@@ -2,7 +2,7 @@
  * Batch Call Script for Royalty Bearing Non-Fungible Token Contract
  * 
  * This script performs:
- * 1. Calling the set-platform-fee-rate function 100 times as batch transactions
+ * 1. Calling the set-platform-fee-rate function 100 times as batch transactions (for just testing of batch call purposes)
  * 2. Fetching events using the @hirosystems/chainhooks-client library
  * 
  * Usage:
@@ -242,28 +242,27 @@ function initChainhooksClient(): ChainhooksClient | null {
 async function registerPlatformFeeEventChainhook(client: ChainhooksClient): Promise<string | null> {
   console.log('\n=== Registering Chainhook for platform-fee-updated Events ===');
 
+  const contractIdentifier = `${CONFIG.contractAddress}.${CONFIG.contractName}`;
+  
+  // Using the simplified definition structure for the chainhooks API
   const chainhookDefinition = {
     name: 'Platform Fee Rate Update Monitor',
+    version: 1,
     chain: 'stacks' as const,
     network: CONFIG.network === 'mainnet' ? 'mainnet' as const : 'testnet' as const,
     filters: {
-      contract_call: {
-        contract_identifier: `${CONFIG.contractAddress}.${CONFIG.contractName}`,
-        method: CONFIG.functionName,
-      },
-      print_event: {
-        contract_identifier: `${CONFIG.contractAddress}.${CONFIG.contractName}`,
-        contains: 'platform-fee-updated',
-      },
-    },
-    options: {
-      decode_clarity_values: true,
+      events: [
+        {
+          principal: contractIdentifier,
+          type: 'contract_call',
+          method: CONFIG.functionName,
+        },
+      ],
     },
     action: {
-      http_post: {
-        url: process.env.WEBHOOK_URL || 'http://localhost:3000/webhook/chainhook',
-        authorization_header: process.env.WEBHOOK_AUTH_HEADER || '',
-      },
+      type: 'http_post',
+      url: process.env.WEBHOOK_URL || 'http://localhost:3000/webhook/chainhook',
+      authorization_header: process.env.WEBHOOK_AUTH_HEADER || '',
     },
   };
 
@@ -535,9 +534,10 @@ export {
   deleteChainhook,
   checkApiStatus,
   CONFIG,
-  BatchCallResult,
-  PlatformFeeEvent,
 };
+
+// Export types
+export type { BatchCallResult, PlatformFeeEvent };
 
 // Run main function
 main().catch(console.error);
