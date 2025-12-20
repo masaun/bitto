@@ -1,6 +1,6 @@
 ;; Rental Non-Fungible Token Contract
 ;;
-;; This contract extends the non-fungible-token standard to add a "user" role that can be granted
+;; This contract extends the ERC4907-inspired contract to add a "user" role that can be granted
 ;; to addresses with an expiration time. The user role represents permission
 ;; to "use" the NFT but not the ability to transfer it.
 ;;
