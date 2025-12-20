@@ -86,6 +86,11 @@ path = 'contracts/royalty-bearing-non-fungible-token.clar'
 clarity_version = 4
 epoch = 'latest'
 
+[contracts.swap-core]
+path = 'contracts/swap-core.clar'
+clarity_version = 4
+epoch = 'latest'
+
 [repl.analysis]
 passes = ['check_checker']
 
