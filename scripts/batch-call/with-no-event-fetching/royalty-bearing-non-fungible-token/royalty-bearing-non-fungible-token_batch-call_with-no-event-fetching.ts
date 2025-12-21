@@ -142,8 +142,9 @@ const CONFIG = {
   contractName: contractDetails.name,
   functionName: 'set-platform-fee-rate',
   
-  // Batch configuration
-  batchSize: 100,
+  // @dev - Batch configuration
+  batchSize: 500,
+  //batchSize: 100,
   delayBetweenCalls: 1000, // milliseconds between each call
   
   // Deployer credentials - will be set at runtime
