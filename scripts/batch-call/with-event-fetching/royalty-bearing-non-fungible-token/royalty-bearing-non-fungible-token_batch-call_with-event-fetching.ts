@@ -1,12 +1,23 @@
 /**
  * Batch Call Script for Royalty Bearing Non-Fungible Token Contract
+ * (With Event Fetching via Hiro Chainhooks)
  * 
  * This script performs:
- * 1. Calling the set-platform-fee-rate function 100 times as batch transactions (for just testing of batch call purposes)
+ * 1. Calling the set-platform-fee-rate function 100 times as batch transactions
  * 2. Fetching events using the @hirosystems/chainhooks-client library
  * 
+ * Supported Private Key Formats:
+ * - Hex string (64 or 66 characters)
+ * - Mnemonic phrase (12 or 24 words separated by spaces)
+ * 
  * Usage:
- *   npx ts-node scripts/batch-call/royalty-bearing-non-fungible-token_batch-call.ts
+ *   npx ts-node scripts/batch-call/with-event-fetching/royalty-bearing-non-fungible-token/royalty-bearing-non-fungible-token_batch-call_with-event-fetching.ts
+ * 
+ * Options:
+ *   --batch-only    Execute batch calls only (no event fetching)
+ *   --events-only   Setup event fetching only (no batch calls)
+ *   --cleanup       Delete all registered chainhooks
+ *   --cleanup --uuid <uuid>  Delete a specific chainhook
  */
 
 import { 
@@ -15,6 +26,7 @@ import {
   AnchorMode, 
   uintCV,
   PostConditionMode,
+  getAddressFromPrivateKey,
 } from '@stacks/transactions';
 import { ChainhooksClient, CHAINHOOKS_BASE_URL } from '@hirosystems/chainhooks-client';
 import * as dotenv from 'dotenv';
@@ -25,22 +37,122 @@ type NetworkType = 'mainnet' | 'testnet' | 'devnet';
 // Load environment variables
 dotenv.config();
 
-// Configuration
+/**
+ * Parse contract identifier from environment variable
+ * Handles both formats:
+ *   - Full identifier: "SP1V95DB4JK47QVPJBXCEN6MT35JK84CQ4CWS15DQ.royalty-bearing-non-fungible-token"
+ *   - Address only: "SP1V95DB4JK47QVPJBXCEN6MT35JK84CQ4CWS15DQ"
+ */
+function parseContractIdentifier(envValue: string | undefined, defaultContractName: string): { address: string; name: string } {
+  const value = envValue || 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM';
+  
+  if (value.includes('.')) {
+    // Full contract identifier format: "ADDRESS.CONTRACT_NAME"
+    const [address, name] = value.split('.');
+    return { address, name: name || defaultContractName };
+  }
+  
+  // Address only format
+  return { address: value, name: defaultContractName };
+}
+
+/**
+ * Check if the key is a mnemonic phrase
+ */
+function isMnemonicPhrase(key: string): boolean {
+  const words = key.trim().split(/\s+/);
+  return words.length === 12 || words.length === 24;
+}
+
+/**
+ * Check if the key is a valid hex string
+ */
+function isHexPrivateKey(key: string): boolean {
+  const hexRegex = /^[0-9a-fA-F]+$/;
+  const normalized = key.replace(/^0x/i, '');
+  return hexRegex.test(normalized) && (normalized.length === 64 || normalized.length === 66);
+}
+
+/**
+ * Derive private key from mnemonic phrase
+ * Note: This requires @stacks/wallet-sdk to be installed
+ */
+async function derivePrivateKeyFromMnemonic(mnemonic: string, _network: NetworkType): Promise<string> {
+  // Dynamically import @stacks/wallet-sdk to avoid requiring it if not using mnemonic
+  try {
+    // Use dynamic import with type assertion to handle optional dependency
+    const walletSdk = await import('@stacks/wallet-sdk' as string) as {
+      generateWallet: (opts: { secretKey: string; password: string }) => Promise<{
+        accounts: Array<{ stxPrivateKey: string }>;
+      }>;
+    };
+    
+    const wallet = await walletSdk.generateWallet({
+      secretKey: mnemonic,
+      password: '',
+    });
+    
+    // Get the first account's private key
+    const account = wallet.accounts[0];
+    return account.stxPrivateKey;
+  } catch (error) {
+    throw new Error(
+      `Failed to import @stacks/wallet-sdk. Please install it: npm install @stacks/wallet-sdk\n` +
+      `Original error: ${error instanceof Error ? error.message : error}`
+    );
+  }
+}
+
+/**
+ * Get the Stacks address from a private key
+ */
+function getAddressFromKey(privateKey: string, network: NetworkType): string {
+  // Use 'mainnet' or 'testnet' string for the version
+  const version = network === 'mainnet' ? 'mainnet' : 'testnet';
+  return getAddressFromPrivateKey(privateKey, version);
+}
+
+/**
+ * Normalize private key format (for hex keys)
+ * Removes any whitespace and handles common format issues
+ */
+function normalizeHexPrivateKey(key: string): string {
+  // Remove any whitespace, quotes, or newlines
+  let normalized = key.trim().replace(/[\s'"]/g, '');
+  
+  // Remove 0x prefix if present
+  if (normalized.startsWith('0x') || normalized.startsWith('0X')) {
+    normalized = normalized.slice(2);
+  }
+  
+  return normalized;
+}
+
+// Parse contract details
+const contractDetails = parseContractIdentifier(
+  process.env.CONTRACT_ADDRESS,
+  'royalty-bearing-non-fungible-token'
+);
+
+// Raw key from environment (could be hex or mnemonic)
+const RAW_KEY = process.env.SENDER_PRIVATE_KEY || '753b7cc01a1a2e86221266a154af739463fce51219d97e4f856cd7200c3bd2a601';
+
+// Configuration (senderKey will be resolved at runtime if mnemonic)
 const CONFIG = {
   // Network configuration
   network: (process.env.STACKS_NETWORK || 'testnet') as NetworkType, // 'mainnet' | 'testnet' | 'devnet'
   
-  // Contract details
-  contractAddress: process.env.CONTRACT_ADDRESS || 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM',
-  contractName: 'royalty-bearing-non-fungible-token',
+  // Contract details (parsed from CONTRACT_ADDRESS or defaults)
+  contractAddress: contractDetails.address,
+  contractName: contractDetails.name,
   functionName: 'set-platform-fee-rate',
   
   // Batch configuration
   batchSize: 100,
   delayBetweenCalls: 1000, // milliseconds between each call
   
-  // Deployer credentials (from Devnet.toml for local testing)
-  senderKey: process.env.SENDER_PRIVATE_KEY || '753b7cc01a1a2e86221266a154af739463fce51219d97e4f856cd7200c3bd2a601',
+  // Deployer credentials - will be set at runtime
+  senderKey: '',
   
   // Chainhooks API configuration
   chainhooksApiKey: process.env.CHAINHOOKS_API_KEY || '',
@@ -49,6 +161,47 @@ const CONFIG = {
   minFeeRate: 100,  // 1%
   maxFeeRate: 1000, // 10%
 };
+
+/**
+ * Initialize the sender key from environment variable
+ * Handles both hex private keys and mnemonic phrases
+ */
+async function initializeSenderKey(): Promise<{ success: boolean; address?: string; error?: string }> {
+  const rawKey = RAW_KEY.trim();
+  
+  if (isMnemonicPhrase(rawKey)) {
+    console.log('Detected mnemonic phrase, deriving private key...');
+    try {
+      CONFIG.senderKey = await derivePrivateKeyFromMnemonic(rawKey, CONFIG.network);
+      const address = getAddressFromKey(CONFIG.senderKey, CONFIG.network);
+      console.log(`  Derived address: ${address}`);
+      return { success: true, address };
+    } catch (error) {
+      return { 
+        success: false, 
+        error: `Failed to derive key from mnemonic: ${error instanceof Error ? error.message : error}` 
+      };
+    }
+  } else if (isHexPrivateKey(rawKey)) {
+    CONFIG.senderKey = normalizeHexPrivateKey(rawKey);
+    try {
+      const address = getAddressFromKey(CONFIG.senderKey, CONFIG.network);
+      return { success: true, address };
+    } catch (error) {
+      return { 
+        success: false, 
+        error: `Invalid hex private key: ${error instanceof Error ? error.message : error}` 
+      };
+    }
+  } else {
+    return {
+      success: false,
+      error: `Unrecognized key format (${rawKey.length} characters). Expected:\n` +
+             `  - Hex private key: 64 or 66 hex characters\n` +
+             `  - Mnemonic phrase: 12 or 24 words separated by spaces`
+    };
+  }
+}
 
 // Get the network string for API calls
 function getNetworkForBroadcast(): 'mainnet' | 'testnet' {
@@ -72,6 +225,44 @@ interface PlatformFeeEvent {
   stacksBlockTime: number;
   txId: string;
   blockHeight: number;
+}
+
+/**
+ * Get the Stacks API base URL for the current network
+ */
+function getStacksApiUrl(): string {
+  return CONFIG.network === 'mainnet'
+    ? 'https://api.hiro.so'
+    : 'https://api.testnet.hiro.so';
+}
+
+/**
+ * Fetch the current nonce for an address from the Stacks API
+ */
+async function fetchAccountNonce(address: string): Promise<bigint> {
+  const apiUrl = getStacksApiUrl();
+  const url = `${apiUrl}/extended/v1/address/${address}/nonces`;
+  
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`API responded with status ${response.status}`);
+    }
+    
+    const data = await response.json() as {
+      last_executed_tx_nonce: number | null;
+      last_mempool_tx_nonce: number | null;
+      possible_next_nonce: number;
+      detected_missing_nonces: number[];
+    };
+    
+    // Use possible_next_nonce which accounts for pending transactions
+    return BigInt(data.possible_next_nonce);
+  } catch (error) {
+    console.warn(`  Warning: Failed to fetch nonce from API: ${error instanceof Error ? error.message : error}`);
+    console.warn('  Using nonce 0 as fallback...');
+    return BigInt(0);
+  }
 }
 
 /**
@@ -111,7 +302,7 @@ async function callSetPlatformFeeRate(
       anchorMode: AnchorMode.Any,
       postConditionMode: PostConditionMode.Allow,
       nonce,
-      fee: 1000n, // fee in microSTX
+      fee: CONFIG.network === 'mainnet' ? 10000n : 1000n, // fee in microSTX (higher for mainnet)
     };
 
     const transaction = await makeContractCall(txOptions);
@@ -150,10 +341,13 @@ async function executeBatchCalls(): Promise<BatchCallResult[]> {
 
   const feeRates = generateFeeRates(CONFIG.batchSize);
   const results: BatchCallResult[] = [];
-  let nonce = BigInt(0);
-
-  // Get initial nonce (in production, fetch from chain)
-  // For devnet, we start from 0 or fetch from node
+  
+  // Fetch current nonce from the Stacks API
+  const senderAddress = getAddressFromKey(CONFIG.senderKey, CONFIG.network);
+  console.log(`Fetching nonce for ${senderAddress}...`);
+  let nonce = await fetchAccountNonce(senderAddress);
+  console.log(`Starting nonce: ${nonce}`);
+  console.log('');
   
   for (let i = 0; i < feeRates.length; i++) {
     const feeRate = feeRates[i];
@@ -216,6 +410,10 @@ function printBatchSummary(results: BatchCallResult[]): void {
   }
 }
 
+// ============================================================================
+// Chainhooks Event Fetching Functions
+// ============================================================================
+
 /**
  * Initialize and configure the Chainhooks client
  */
@@ -238,24 +436,34 @@ function initChainhooksClient(): ChainhooksClient | null {
 
 /**
  * Register a chainhook to monitor platform-fee-updated events
+ * This will receive events when set-platform-fee-rate is called
  */
 async function registerPlatformFeeEventChainhook(client: ChainhooksClient): Promise<string | null> {
   console.log('\n=== Registering Chainhook for platform-fee-updated Events ===');
 
   const contractIdentifier = `${CONFIG.contractAddress}.${CONFIG.contractName}`;
   
-  // Using the simplified definition structure for the chainhooks API
+  // Chainhook definition to monitor the set-platform-fee-rate function calls
+  // and capture the emitted "platform-fee-updated" events
   const chainhookDefinition = {
     name: 'Platform Fee Rate Update Monitor',
     version: 1,
     chain: 'stacks' as const,
     network: CONFIG.network === 'mainnet' ? 'mainnet' as const : 'testnet' as const,
     filters: {
+      // Filter for contract calls to set-platform-fee-rate
       events: [
         {
           principal: contractIdentifier,
           type: 'contract_call',
           method: CONFIG.functionName,
+        },
+      ],
+      // Also filter for print events (where platform-fee-updated is emitted)
+      print_events: [
+        {
+          contract_identifier: contractIdentifier,
+          contains: 'platform-fee-updated',
         },
       ],
     },
@@ -271,6 +479,8 @@ async function registerPlatformFeeEventChainhook(client: ChainhooksClient): Prom
     console.log(`✓ Chainhook registered successfully`);
     console.log(`  UUID: ${result.uuid}`);
     console.log(`  Name: ${result.definition?.name || 'Platform Fee Rate Update Monitor'}`);
+    console.log(`  Contract: ${contractIdentifier}`);
+    console.log(`  Function: ${CONFIG.functionName}`);
     return result.uuid;
   } catch (error) {
     console.error('✗ Failed to register chainhook:', error instanceof Error ? error.message : error);
@@ -306,7 +516,7 @@ async function fetchRegisteredChainhooks(client: ChainhooksClient): Promise<void
 }
 
 /**
- * Check API status
+ * Check Chainhooks API status
  */
 async function checkApiStatus(client: ChainhooksClient): Promise<boolean> {
   console.log('\n=== Checking Chainhooks API Status ===');
@@ -323,7 +533,7 @@ async function checkApiStatus(client: ChainhooksClient): Promise<boolean> {
 }
 
 /**
- * Fetch events for a specific chainhook
+ * Fetch details for a specific chainhook
  */
 async function fetchChainhookDetails(client: ChainhooksClient, uuid: string): Promise<void> {
   console.log(`\n=== Fetching Chainhook Details (${uuid}) ===`);
@@ -375,10 +585,11 @@ async function deleteChainhook(client: ChainhooksClient, uuid: string): Promise<
 }
 
 /**
- * Demo function to show event handling workflow
+ * Setup event fetching with Chainhooks
+ * This registers a chainhook to monitor platform-fee-updated events
  */
-async function demonstrateEventFetching(): Promise<void> {
-  console.log('\n=== Demonstrating Event Fetching with Chainhooks Client ===');
+async function setupEventFetching(): Promise<void> {
+  console.log('\n=== Setting Up Event Fetching with Chainhooks Client ===');
   
   const client = initChainhooksClient();
   
@@ -411,7 +622,7 @@ async function demonstrateEventFetching(): Promise<void> {
     console.log('The chainhook is now registered and will send events to your webhook URL.');
     console.log('Events will be triggered when set-platform-fee-rate is called on the contract.');
     console.log('');
-    console.log('Event payload structure (platform-fee-updated):');
+    console.log('Expected event payload structure (platform-fee-updated):');
     console.log(JSON.stringify({
       event: 'platform-fee-updated',
       'fee-rate': '<uint>',
@@ -480,10 +691,29 @@ async function cleanupChainhooks(uuid?: string): Promise<void> {
  * Main execution function
  */
 async function main(): Promise<void> {
-  console.log('================================================');
+  console.log('==========================================================');
   console.log('  Royalty Bearing NFT - Batch Call Script');
-  console.log('  set-platform-fee-rate Function');
-  console.log('================================================');
+  console.log('  set-platform-fee-rate Function (With Event Fetching)');
+  console.log('==========================================================');
+
+  // Display configuration
+  console.log('\n=== Configuration ===');
+  console.log(`Network: ${CONFIG.network}`);
+  console.log(`Contract Address: ${CONFIG.contractAddress}`);
+  console.log(`Contract Name: ${CONFIG.contractName}`);
+  console.log(`Chainhooks API Key: ${CONFIG.chainhooksApiKey ? '✓ Set' : '✗ Not set'}`);
+  
+  // Initialize sender key (handles both hex and mnemonic)
+  console.log('\n=== Initializing Sender Key ===');
+  const keyInit = await initializeSenderKey();
+  
+  if (!keyInit.success) {
+    console.error(`\n✗ Key Initialization Failed: ${keyInit.error}`);
+    process.exit(1);
+  }
+  
+  console.log(`✓ Sender Address: ${keyInit.address}`);
+  console.log(`  Private Key Length: ${CONFIG.senderKey.length} characters`);
 
   const { mode, chainhookUuid } = parseArgs();
 
@@ -496,8 +726,8 @@ async function main(): Promise<void> {
         break;
 
       case 'events':
-        // Demonstrate event fetching only
-        await demonstrateEventFetching();
+        // Setup event fetching only
+        await setupEventFetching();
         break;
 
       case 'cleanup':
@@ -507,10 +737,13 @@ async function main(): Promise<void> {
 
       case 'both':
       default:
-        // Execute both batch calls and event fetching
+        // Execute both batch calls and event fetching setup
+        // First setup event fetching so we can capture events from the batch calls
+        await setupEventFetching();
+        
+        // Then execute batch calls
         const results = await executeBatchCalls();
         printBatchSummary(results);
-        await demonstrateEventFetching();
         break;
     }
 
@@ -526,6 +759,7 @@ export {
   executeBatchCalls,
   callSetPlatformFeeRate,
   generateFeeRates,
+  initializeSenderKey,
   initChainhooksClient,
   registerPlatformFeeEventChainhook,
   fetchRegisteredChainhooks,
@@ -533,6 +767,8 @@ export {
   toggleChainhook,
   deleteChainhook,
   checkApiStatus,
+  setupEventFetching,
+  cleanupChainhooks,
   CONFIG,
 };
 
