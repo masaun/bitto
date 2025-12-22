@@ -96,6 +96,11 @@ path = 'contracts/hook-enabled-fungible-token.clar'
 clarity_version = 4
 epoch = 'latest'
 
+[contracts.notary]
+path = 'contracts/notary.clar'
+clarity_version = 4
+epoch = 'latest'
+
 [repl.analysis]
 passes = ['check_checker']
 

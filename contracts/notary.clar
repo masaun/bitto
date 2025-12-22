@@ -118,7 +118,7 @@
     signer: signer,
     document-id: document-id,
     timestamp: stacks-block-time,
-    block-height: block-height,
+    block-height: stacks-block-height,
   })
 )
 
@@ -173,10 +173,7 @@
 ;; Get document title as ASCII (using Clarity v4 to-ascii?)
 (define-read-only (get-document-title-ascii (document-id uint))
   (match (map-get? legal-documents document-id)
-    doc (match (to-ascii? (get title doc))
-      ascii-title (ok ascii-title)
-      ERR_CONVERSION_FAILED
-    )
+    doc (ok (unwrap-panic (to-ascii? (get title doc))))
     ERR_DOCUMENT_NOT_FOUND
   )
 )
@@ -184,10 +181,7 @@
 ;; Get document URI as ASCII (using Clarity v4 to-ascii?)
 (define-read-only (get-document-uri-ascii (document-id uint))
   (match (map-get? legal-documents document-id)
-    doc (match (to-ascii? (get document-uri doc))
-      ascii-uri (ok ascii-uri)
-      ERR_CONVERSION_FAILED
-    )
+    doc (ok (unwrap-panic (to-ascii? (get document-uri doc))))
     ERR_DOCUMENT_NOT_FOUND
   )
 )
@@ -199,7 +193,7 @@
 
 ;; Get contract hash (Clarity v4)
 (define-read-only (get-contract-hash)
-  (contract-hash? (as-contract tx-sender))
+  (contract-hash? tx-sender)
 )
 
 ;; Get contract hash for a specific principal
@@ -249,7 +243,7 @@
     document-count: (var-get document-count),
     assets-restricted: (var-get assets-restricted),
     current-time: stacks-block-time,
-    block-height: block-height,
+    block-height: stacks-block-height,
   }
 )
 
@@ -278,7 +272,7 @@
       created-at: stacks-block-time,
       is-active: true,
       content-hash: content-hash,
-      contract-hash-at-creation: (get-contract-hash),
+      contract-hash-at-creation: (match (get-contract-hash) hash (some hash) err-val none),
     })
     
     ;; Initialize signature count
@@ -314,7 +308,7 @@
         signed-at: stacks-block-time,
         signature: 0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,
         public-key: 0x000000000000000000000000000000000000000000000000000000000000000000,
-        block-height: block-height,
+        block-height: stacks-block-height,
       }
     )
     
@@ -358,7 +352,7 @@
         signed-at: stacks-block-time,
         signature: signature,
         public-key: public-key,
-        block-height: block-height,
+        block-height: stacks-block-height,
       }
     )
     
@@ -511,8 +505,8 @@
 
 ;; Batch check if user has signed all specified documents
 (define-public (require-documents-signed (user principal) (document-ids (list 10 uint)))
-  (begin
-    (fold require-document-signed-fold document-ids { user: user, result: (ok true) })
+  (let ((result (fold require-document-signed-fold document-ids { user: user, result: (ok true) })))
+    (get result result)
   )
 )
 
