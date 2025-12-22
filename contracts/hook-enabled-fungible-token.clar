@@ -44,8 +44,8 @@
 (define-constant ERR_OPERATOR_ALREADY_DEFAULT (err u1020))
 
 ;; Token constants
-(define-constant TOKEN_NAME "Hook-Enabled Token")
-(define-constant TOKEN_SYMBOL "HOOK")
+(define-constant TOKEN_NAME u"Hook-Enabled Token")
+(define-constant TOKEN_SYMBOL u"HOOK")
 (define-constant TOKEN_DECIMALS u18) ;;  requires 18 decimals
 (define-constant TOTAL_SUPPLY u1000000000000000000000000) ;; 1 million tokens with 18 decimals
 (define-constant TOKEN_GRANULARITY u1) ;; Smallest divisible unit (1 wei equivalent)
@@ -339,7 +339,7 @@
 (define-public (register-tokens-to-send-hook (implementer principal))
   (let ((holder tx-sender))
     ;; Verify the implementer contract exists using Clarity v4 contract-hash?
-    (asserts! (is-some (contract-hash? implementer)) ERR_INVALID_HOOK_CONTRACT)
+    (asserts! (is-ok (contract-hash? implementer)) ERR_INVALID_HOOK_CONTRACT)
     
     ;; Register the hook implementer
     (map-set tokens-to-send-hooks holder implementer)
@@ -361,7 +361,7 @@
 (define-public (register-tokens-received-hook (implementer principal))
   (let ((recipient tx-sender))
     ;; Verify the implementer contract exists using Clarity v4 contract-hash?
-    (asserts! (is-some (contract-hash? implementer)) ERR_INVALID_HOOK_CONTRACT)
+    (asserts! (is-ok (contract-hash? implementer)) ERR_INVALID_HOOK_CONTRACT)
     
     ;; Register the hook implementer
     (map-set tokens-received-hooks recipient implementer)
@@ -513,7 +513,7 @@
       user-data: user-data,
       operator-data: operator-data,
       timestamp: stacks-block-time,
-      block-height: block-height
+      block-height: stacks-block-height
     })
     
     (ok amount)
@@ -639,6 +639,7 @@
 ;; ============================================================================
 
 ;; Call tokensToSend hook for registered holders
+;; Returns (response uint (response uint uint)) to match calling context
 (define-private (call-tokens-to-send-hook 
   (operator principal) 
   (from principal) 
@@ -646,44 +647,47 @@
   (amount uint) 
   (user-data (buff 256)) 
   (operator-data (buff 256)))
-  (match (map-get? tokens-to-send-hooks from)
-    hook-implementer (begin
-      ;; Store hook call data for verification
-      (let ((hook-id (+ (var-get operation-nonce) u1)))
-        (map-set hook-data hook-id {
-          operator: operator,
-          from: from,
-          to: to,
-          amount: amount,
-          user-data: user-data,
-          operator-data: operator-data,
-          timestamp: stacks-block-time,
-          hook-type: "tokens-to-send"
-        })
-        
-        ;; Print hook call for off-chain processing
-        (print {
-          event: "TokensToSendHookCalled",
-          hook-id: hook-id,
-          implementer: hook-implementer,
-          operator: operator,
-          from: from,
-          to: to,
-          amount: amount,
-          timestamp: stacks-block-time
-        })
-        
-        ;; In a real implementation, this would call the hook contract
-        ;; For this demo, we simulate successful hook execution
-        (ok true)
+  (begin
+    (match (map-get? tokens-to-send-hooks from)
+      hook-implementer (begin
+        ;; Store hook call data for verification
+        (let ((hook-id (+ (var-get operation-nonce) u1)))
+          (map-set hook-data hook-id {
+            operator: operator,
+            from: from,
+            to: to,
+            amount: amount,
+            user-data: user-data,
+            operator-data: operator-data,
+            timestamp: stacks-block-time,
+            hook-type: "tokens-to-send"
+          })
+          
+          ;; Print hook call for off-chain processing
+          (print {
+            event: "TokensToSendHookCalled",
+            hook-id: hook-id,
+            implementer: hook-implementer,
+            operator: operator,
+            from: from,
+            to: to,
+            amount: amount,
+            timestamp: stacks-block-time
+          })
+          
+          ;; In a real implementation, this would call the hook contract
+          ;; Return with explicit error type matching parent context
+          (if true (ok u1) ERR_HOOK_REJECTED)
+        )
       )
+      ;; No hook registered, continue with explicit error type
+      (if true (ok u0) ERR_HOOK_REJECTED)
     )
-    ;; No hook registered, continue
-    (ok true)
   )
 )
 
 ;; Call tokensReceived hook for registered recipients
+;; Returns (response uint (response uint uint)) to match calling context
 (define-private (call-tokens-received-hook 
   (operator principal) 
   (from principal) 
@@ -691,38 +695,41 @@
   (amount uint) 
   (user-data (buff 256)) 
   (operator-data (buff 256)))
-  (match (map-get? tokens-received-hooks to)
-    hook-implementer (begin
-      ;; Store hook call data for verification
-      (let ((hook-id (+ (var-get operation-nonce) u1)))
-        (map-set hook-data hook-id {
-          operator: operator,
-          from: from,
-          to: to,
-          amount: amount,
-          user-data: user-data,
-          operator-data: operator-data,
-          timestamp: stacks-block-time,
-          hook-type: "tokens-received"
-        })
-        
-        ;; Print hook call for off-chain processing
-        (print {
-          event: "TokensReceivedHookCalled",
-          hook-id: hook-id,
-          implementer: hook-implementer,
-          operator: operator,
-          from: from,
-          to: to,
-          amount: amount,
-          timestamp: stacks-block-time
-        })
-        
-        (ok true)
+  (begin
+    (match (map-get? tokens-received-hooks to)
+      hook-implementer (begin
+        ;; Store hook call data for verification
+        (let ((hook-id (+ (var-get operation-nonce) u1)))
+          (map-set hook-data hook-id {
+            operator: operator,
+            from: from,
+            to: to,
+            amount: amount,
+            user-data: user-data,
+            operator-data: operator-data,
+            timestamp: stacks-block-time,
+            hook-type: "tokens-received"
+          })
+          
+          ;; Print hook call for off-chain processing
+          (print {
+            event: "TokensReceivedHookCalled",
+            hook-id: hook-id,
+            implementer: hook-implementer,
+            operator: operator,
+            from: from,
+            to: to,
+            amount: amount,
+            timestamp: stacks-block-time
+          })
+          
+          ;; Return with explicit error type matching parent context
+          (if true (ok u1) ERR_HOOK_REJECTED)
+        )
       )
+      ;; No hook registered, continue with explicit error type
+      (if true (ok u0) ERR_HOOK_REJECTED)
     )
-    ;; No hook registered, continue
-    (ok true)
   )
 )
 
@@ -748,6 +755,11 @@
 ;; ============================================================================
 ;; ADMINISTRATIVE FUNCTIONS
 ;; ============================================================================
+
+;; Check if contract is paused
+(define-read-only (is-paused)
+  (var-get contract-paused)
+)
 
 ;; Pause contract (only owner)
 (define-public (pause-contract)
@@ -927,7 +939,7 @@
   (let ((from tx-sender))
     
     ;; 1. Check contract hash using Clarity v4 contract-hash?
-    (asserts! (is-some (get-contract-hash)) ERR_UNAUTHORIZED)
+    (asserts! (is-ok (get-contract-hash)) ERR_UNAUTHORIZED)
     
     ;; 2. Check asset restrictions (simulates restrict-assets?)
     (asserts! (not (are-assets-restricted)) ERR_ASSETS_RESTRICTED)
