@@ -11,95 +11,100 @@ contract_id = 'SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-deposit'
 [[project.requirements]]
 contract_id = 'SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token'
 
-[contracts.message-board-v2]
-path = 'contracts/message-board.clar'
-clarity_version = 4
-epoch = 'latest'
+# [contracts.message-board-v2]
+# path = 'contracts/message-board.clar'
+# clarity_version = 4
+# epoch = 'latest'
 
-[contracts.fungible-token]
-path = 'contracts/fungible-token.clar'
-clarity_version = 4
-epoch = 'latest'
+# [contracts.fungible-token]
+# path = 'contracts/fungible-token.clar'
+# clarity_version = 4
+# epoch = 'latest'
 
-[contracts.message-board-with-clarity-v4]
-path = 'contracts/message-board-with-clarity-v4.clar'
-clarity_version = 4
-epoch = 'latest'
+# [contracts.message-board-with-clarity-v4]
+# path = 'contracts/message-board-with-clarity-v4.clar'
+# clarity_version = 4
+# epoch = 'latest'
 
-[contracts.lending-borrowing]
-path = 'contracts/lending-borrowing.clar'
-clarity_version = 4
-epoch = 'latest'
+# [contracts.lending-borrowing]
+# path = 'contracts/lending-borrowing.clar'
+# clarity_version = 4
+# epoch = 'latest'
 
-[contracts.tokenized-vault]
-path = 'contracts/tokenized-vault.clar'
-clarity_version = 4
-epoch = 'latest'
+# [contracts.tokenized-vault]
+# path = 'contracts/tokenized-vault.clar'
+# clarity_version = 4
+# epoch = 'latest'
 
-[contracts.semi-fungible-token]
-path = 'contracts/semi-fungible-token.clar'
-clarity_version = 4
-epoch = 'latest'
+# [contracts.semi-fungible-token]
+# path = 'contracts/semi-fungible-token.clar'
+# clarity_version = 4
+# epoch = 'latest'
 
-[contracts.non-fungible-token]
-path = 'contracts/non-fungible-token.clar'
-clarity_version = 4
-epoch = 'latest'
+# [contracts.non-fungible-token]
+# path = 'contracts/non-fungible-token.clar'
+# clarity_version = 4
+# epoch = 'latest'
 
-[contracts.nft-marketplace]
-path = 'contracts/nft-marketplace.clar'
-clarity_version = 4
-epoch = 'latest'
+# [contracts.nft-marketplace]
+# path = 'contracts/nft-marketplace.clar'
+# clarity_version = 4
+# epoch = 'latest'
 
-[contracts.non-fungible-token-royalty-std]
-path = 'contracts/non-fungible-token-royalty-std.clar'
-clarity_version = 4
-epoch = 'latest'
+# [contracts.non-fungible-token-royalty-std]
+# path = 'contracts/non-fungible-token-royalty-std.clar'
+# clarity_version = 4
+# epoch = 'latest'
 
-[contracts.semi-fungible-token-inspired-by-3525]
-path = 'contracts/semi-fungible-token-inspired-by-3525.clar'
-clarity_version = 4
-epoch = 'latest'
+# [contracts.semi-fungible-token-inspired-by-3525]
+# path = 'contracts/semi-fungible-token-inspired-by-3525.clar'
+# clarity_version = 4
+# epoch = 'latest'
 
-[contracts.trustless-agents-std]
-path = 'contracts/trustless-agents-std.clar'
-clarity_version = 4
-epoch = 'latest'
+# [contracts.trustless-agents-std]
+# path = 'contracts/trustless-agents-std.clar'
+# clarity_version = 4
+# epoch = 'latest'
 
-[contracts.identity-registry]
-path = 'contracts/identity-registry.clar'
-clarity_version = 4
-epoch = 'latest'
+# [contracts.identity-registry]
+# path = 'contracts/identity-registry.clar'
+# clarity_version = 4
+# epoch = 'latest'
 
-[contracts.flash-loan]
-path = 'contracts/flash-loan.clar'
-clarity_version = 4
-epoch = 'latest'
+# [contracts.flash-loan]
+# path = 'contracts/flash-loan.clar'
+# clarity_version = 4
+# epoch = 'latest'
 
-[contracts.rental-non-fungible-token]
-path = 'contracts/rental-non-fungible-token.clar'
-clarity_version = 4
-epoch = 'latest'
+# [contracts.rental-non-fungible-token]
+# path = 'contracts/rental-non-fungible-token.clar'
+# clarity_version = 4
+# epoch = 'latest'
 
-[contracts.royalty-bearing-non-fungible-token]
-path = 'contracts/royalty-bearing-non-fungible-token.clar'
-clarity_version = 4
-epoch = 'latest'
+# [contracts.royalty-bearing-non-fungible-token]
+# path = 'contracts/royalty-bearing-non-fungible-token.clar'
+# clarity_version = 4
+# epoch = 'latest'
 
-[contracts.swap-core]
-path = 'contracts/swap-core.clar'
-clarity_version = 4
-epoch = 'latest'
+# [contracts.swap-core]
+# path = 'contracts/swap-core.clar'
+# clarity_version = 4
+# epoch = 'latest'
 
-[contracts.hook-enabled-fungible-token]
-path = 'contracts/hook-enabled-fungible-token.clar'
-clarity_version = 4
-epoch = 'latest'
+# [contracts.hook-enabled-fungible-token]
+# path = 'contracts/hook-enabled-fungible-token.clar'
+# clarity_version = 4
+# epoch = 'latest'
 
-[contracts.notary]
-path = 'contracts/notary.clar'
-clarity_version = 4
-epoch = 'latest'
+# [contracts.notary]
+# path = 'contracts/notary.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.minimal-soulbound-nft]
+# path = 'contracts/minimal-soulbound-nft.clar'
+# clarity_version = 4
+# epoch = 'latest'
 
 [repl.analysis]
 passes = ['check_checker']
