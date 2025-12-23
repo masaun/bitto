@@ -91,6 +91,31 @@ path = 'contracts/swap-core.clar'
 clarity_version = 4
 epoch = 'latest'
 
+[contracts.hook-enabled-fungible-token]
+path = 'contracts/hook-enabled-fungible-token.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.notary]
+path = 'contracts/notary.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.minimal-soulbound-nft]
+path = 'contracts/minimal-soulbound-nft.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.meta-proxy]
+path = 'contracts/meta-proxy.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.consumable-nft]
+path = 'contracts/consumable-nft.clar'
+clarity_version = 4
+epoch = 'latest'
+
 [repl.analysis]
 passes = ['check_checker']
 

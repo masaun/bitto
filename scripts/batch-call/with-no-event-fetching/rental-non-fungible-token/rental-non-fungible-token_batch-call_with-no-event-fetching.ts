@@ -164,8 +164,8 @@ const CONFIG = {
   
   // NFT metadata configuration
   baseUri: 'https://api.bitto.io/rental-nft/metadata/',
-  nftNamePrefix: 'Bitto Rental NFT #',
-  nftDescriptionPrefix: 'A rentable NFT from Bitto collection - Token #',
+  nftNamePrefix: 'Rental NFT',
+  nftDescriptionPrefix: 'A rentable NFT from Bitto collection - Token',
 };
 
 /**
