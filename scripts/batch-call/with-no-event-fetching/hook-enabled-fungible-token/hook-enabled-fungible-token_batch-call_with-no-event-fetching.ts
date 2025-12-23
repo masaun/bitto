@@ -58,8 +58,6 @@ dotenv.config();
 /**
  * Parse contract identifier from environment variable
  * Handles both formats:
- *   - Full identifier: "SP1V95DB4JK47QVPJBXCEN6MT35JK84CQ4CWS15DQ.hook-enabled-fungible-token"
- *   - Address only: "SP1V95DB4JK47QVPJBXCEN6MT35JK84CQ4CWS15DQ"
  */
 function parseContractIdentifier(envValue: string | undefined, defaultContractName: string): { address: string; name: string } {
   const value = envValue || 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM';
