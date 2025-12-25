@@ -116,28 +116,53 @@ contract_id = 'SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token'
 # clarity_version = 4
 # epoch = 'latest'
 
-[contracts.account-abstraction]
-path = 'contracts/account-abstraction.clar'
+# [contracts.account-abstraction]
+# path = 'contracts/account-abstraction.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.diamonds]
+# path = 'contracts/diamonds.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.non-fungible-token-with-physical-assets]
+# path = 'contracts/non-fungible-token-with-physical-assets.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.rental-nft-with-user-extension]
+# path = 'contracts/rental-nft-with-user-extension.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.time-non-fungible-token]
+# path = 'contracts/time-non-fungible-token.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+[contracts.payable-token]
+path = 'contracts/payable-token.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.diamonds]
-path = 'contracts/diamonds.clar'
+[contracts.native-meta-tx]
+path = 'contracts/native-meta-tx.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.non-fungible-token-with-physical-assets]
-path = 'contracts/non-fungible-token-with-physical-assets.clar'
+[contracts.security-token]
+path = 'contracts/security-token.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.rental-nft-with-user-extension]
-path = 'contracts/rental-nft-with-user-extension.clar'
+[contracts.consensual-soulbound-token]
+path = 'contracts/consensual-soulbound-token.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.time-non-fungible-token]
-path = 'contracts/time-non-fungible-token.clar'
+[contracts.hyperlink-nft]
+path = 'contracts/hyperlink-nft.clar'
 clarity_version = 4
 epoch = 'latest'
 
