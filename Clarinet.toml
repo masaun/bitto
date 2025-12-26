@@ -141,30 +141,55 @@ contract_id = 'SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token'
 # clarity_version = 4
 # epoch = 'latest'
 
-[contracts.payable-token]
-path = 'contracts/payable-token.clar'
+# [contracts.payable-token]
+# path = 'contracts/payable-token.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.native-meta-tx]
+# path = 'contracts/native-meta-tx.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.security-token]
+# path = 'contracts/security-token.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.consensual-soulbound-token]
+# path = 'contracts/consensual-soulbound-token.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.hyperlink-nft]
+# path = 'contracts/hyperlink-nft.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+[contracts.refundable-token]
+path = 'contracts/refundable-token.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.native-meta-tx]
-path = 'contracts/native-meta-tx.clar'
+[contracts.referable-non-fungible-token]
+path = 'contracts/referable-non-fungible-token.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.security-token]
-path = 'contracts/security-token.clar'
-clarity_version = 4
-epoch = 'latest'
+# [contracts.escrow-refundable-token]
+# path = 'contracts/escrow-refundable-token.clar'
+# clarity_version = 4
+# epoch = 'latest'
 
-[contracts.consensual-soulbound-token]
-path = 'contracts/consensual-soulbound-token.clar'
-clarity_version = 4
-epoch = 'latest'
+# [contracts.stealth-address-generator]
+# path = 'contracts/stealth-address-generator.clar'
+# clarity_version = 4
+# epoch = 'latest'
 
-[contracts.hyperlink-nft]
-path = 'contracts/hyperlink-nft.clar'
-clarity_version = 4
-epoch = 'latest'
+# [contracts.nft-authorization]
+# path = 'contracts/nft-authorization.clar'
+# clarity_version = 4
+# epoch = 'latest'
 
 [repl.analysis]
 passes = ['check_checker']
