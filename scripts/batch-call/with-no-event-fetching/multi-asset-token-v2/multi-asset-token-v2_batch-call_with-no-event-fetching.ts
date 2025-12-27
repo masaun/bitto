@@ -7,8 +7,8 @@ import {
   principalCV,
   uintCV,
   stringAsciiCV,
+  boolCV,
   listCV,
-  tupleCV,
 } from '@stacks/transactions';
 import * as dotenv from 'dotenv';
 
@@ -71,8 +71,8 @@ function normalizeHexPrivateKey(key: string): string {
 }
 
 const contractDetails = parseContractIdentifier(
-  process.env.MULTIVERSE_NON_FUNGIBLE_TOKEN_CONTRACT_ADDRESS,
-  'multiverse-non-fungible-token'
+  process.env.MULTI_ASSET_TOKEN_V2_CONTRACT_ADDRESS,
+  'multi-asset-token-v2'
 );
 
 const RAW_KEY = process.env.SENDER_PRIVATE_KEY || '';
@@ -94,18 +94,6 @@ interface FunctionCall {
 function getWriteFunctions(): FunctionCall[] {
   return [
     {
-      name: 'init-bundle',
-      args: (cycle: number, senderAddress: string, _tokenId: number) => [
-        listCV([
-          tupleCV({
-            'contract-address': principalCV(`${senderAddress}.sft-with-supply-extension`),
-            'token-id': uintCV(cycle + 1),
-            'quantity': uintCV(1),
-          }),
-        ]),
-      ],
-    },
-    {
       name: 'transfer',
       args: (_cycle: number, senderAddress: string, tokenId: number) => [
         uintCV(tokenId),
@@ -114,36 +102,68 @@ function getWriteFunctions(): FunctionCall[] {
       ],
     },
     {
-      name: 'bundle',
-      args: (cycle: number, senderAddress: string, tokenId: number) => [
-        uintCV(tokenId),
-        listCV([
-          tupleCV({
-            'contract-address': principalCV(`${senderAddress}.sft-with-supply-extension`),
-            'token-id': uintCV(cycle + 2),
-            'quantity': uintCV(1),
-          }),
-        ]),
+      name: 'mint',
+      args: (_cycle: number, senderAddress: string, _tokenId: number) => [
+        principalCV(senderAddress),
       ],
     },
     {
-      name: 'unbundle',
-      args: (cycle: number, senderAddress: string, tokenId: number) => [
+      name: 'add-asset-to-token',
+      args: (cycle: number, _senderAddress: string, tokenId: number) => [
         uintCV(tokenId),
-        listCV([
-          tupleCV({
-            'contract-address': principalCV(`${senderAddress}.sft-with-supply-extension`),
-            'token-id': uintCV(cycle + 2),
-            'quantity': uintCV(1),
-          }),
-        ]),
+        stringAsciiCV(`https://api.bitto.io/asset-v2/${tokenId}-${cycle}`),
+        uintCV(0),
+      ],
+    },
+    {
+      name: 'accept-asset',
+      args: (cycle: number, _senderAddress: string, tokenId: number) => [
+        uintCV(tokenId),
+        uintCV(0),
+        uintCV(cycle + 1),
+      ],
+    },
+    {
+      name: 'reject-asset',
+      args: (cycle: number, _senderAddress: string, tokenId: number) => [
+        uintCV(tokenId),
+        uintCV(0),
+        uintCV(cycle + 2),
+      ],
+    },
+    {
+      name: 'reject-all-assets',
+      args: (_cycle: number, _senderAddress: string, tokenId: number) => [
+        uintCV(tokenId),
+        uintCV(10),
+      ],
+    },
+    {
+      name: 'set-priority',
+      args: (_cycle: number, _senderAddress: string, tokenId: number) => [
+        uintCV(tokenId),
+        listCV([uintCV(1), uintCV(2), uintCV(3)]),
+      ],
+    },
+    {
+      name: 'approve-for-assets',
+      args: (_cycle: number, senderAddress: string, tokenId: number) => [
+        principalCV(senderAddress),
+        uintCV(tokenId),
+      ],
+    },
+    {
+      name: 'set-approval-for-all-for-assets',
+      args: (_cycle: number, senderAddress: string, _tokenId: number) => [
+        principalCV(senderAddress),
+        boolCV(true),
       ],
     },
     {
       name: 'set-token-uri',
       args: (cycle: number, _senderAddress: string, tokenId: number) => [
         uintCV(tokenId),
-        stringAsciiCV(`https://api.bitto.io/multiverse/${tokenId}-${cycle}`),
+        stringAsciiCV(`https://api.bitto.io/multi-asset-v2/${tokenId}-${cycle}`),
       ],
     },
     {
@@ -183,7 +203,6 @@ async function fetchAccountNonce(address: string): Promise<bigint> {
       possible_next_nonce: number;
       detected_missing_nonces: number[];
     };
-    // Use last_executed_tx_nonce + 1 instead of possible_next_nonce to avoid chaining issues
     const executedNonce = data.last_executed_tx_nonce !== null ? data.last_executed_tx_nonce : -1;
     const nextNonce = BigInt(executedNonce + 1);
     console.log(`  API nonces: executed=${data.last_executed_tx_nonce}, mempool=${data.last_mempool_tx_nonce}, possible=${data.possible_next_nonce}`);
@@ -281,7 +300,7 @@ async function executeCycle(
 }
 
 async function executeAllCycles(): Promise<BatchCallResult[]> {
-  console.log('\n=== Starting Batch Calls for Multiverse Non-Fungible Token Contract ===');
+  console.log('\n=== Starting Batch Calls for Multi-Asset Token V2 Contract ===');
   console.log(`Network: ${CONFIG.network}`);
   console.log(`Contract: ${CONFIG.contractAddress}.${CONFIG.contractName}`);
   console.log(`Cycles: ${CONFIG.cycles}`);
@@ -385,7 +404,7 @@ async function initializeSenderKey(): Promise<{ success: boolean; address?: stri
 
 async function main(): Promise<void> {
   console.log('==========================================================');
-  console.log('  Multiverse Non-Fungible Token Contract - Batch Call Script');
+  console.log('  Multi-Asset Token V2 Contract - Batch Call Script');
   console.log('  (Without Event Fetching)');
   console.log('==========================================================');
 
@@ -394,10 +413,10 @@ async function main(): Promise<void> {
   console.log(`Contract Address: ${CONFIG.contractAddress}`);
   console.log(`Contract Name: ${CONFIG.contractName}`);
   console.log(`Cycles: ${CONFIG.cycles}`);
-  console.log(`Environment Variable: MULTIVERSE_NON_FUNGIBLE_TOKEN_CONTRACT_ADDRESS`);
+  console.log(`Environment Variable: MULTI_ASSET_TOKEN_V2_CONTRACT_ADDRESS`);
 
-  if (!process.env.MULTIVERSE_NON_FUNGIBLE_TOKEN_CONTRACT_ADDRESS) {
-    console.warn('\n⚠ Warning: MULTIVERSE_NON_FUNGIBLE_TOKEN_CONTRACT_ADDRESS not set in environment.');
+  if (!process.env.MULTI_ASSET_TOKEN_V2_CONTRACT_ADDRESS) {
+    console.warn('\n⚠ Warning: MULTI_ASSET_TOKEN_V2_CONTRACT_ADDRESS not set in environment.');
     console.warn(`  Using default: ${CONFIG.contractAddress}.${CONFIG.contractName}`);
   }
 
