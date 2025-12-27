@@ -166,15 +166,15 @@ contract_id = 'SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token'
 # clarity_version = 4
 # epoch = 'latest'
 
-[contracts.refundable-token]
-path = 'contracts/refundable-token.clar'
-clarity_version = 4
-epoch = 'latest'
+# [contracts.refundable-token]
+# path = 'contracts/refundable-token.clar'
+# clarity_version = 4
+# epoch = 'latest'
 
-[contracts.referable-non-fungible-token]
-path = 'contracts/referable-non-fungible-token.clar'
-clarity_version = 4
-epoch = 'latest'
+# [contracts.referable-non-fungible-token]
+# path = 'contracts/referable-non-fungible-token.clar'
+# clarity_version = 4
+# epoch = 'latest'
 
 # [contracts.escrow-refundable-token]
 # path = 'contracts/escrow-refundable-token.clar'
@@ -190,6 +190,56 @@ epoch = 'latest'
 # path = 'contracts/nft-authorization.clar'
 # clarity_version = 4
 # epoch = 'latest'
+
+# [contracts.multiverse-non-fungible-token]
+# path = 'contracts/multiverse-non-fungible-token.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.sft-with-supply-extension]
+# path = 'contracts/sft-with-supply-extension.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.nft-with-state-fingerprint]
+# path = 'contracts/nft-with-state-fingerprint.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.vesting-nft]
+# path = 'contracts/vesting-nft.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.multi-asset-token]
+# path = 'contracts/multi-asset-token.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+[contracts.multiverse-non-fungible-token-v2]
+path = 'contracts/multiverse-non-fungible-token-v2.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.sft-with-supply-extension-v2]
+path = 'contracts/sft-with-supply-extension-v2.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.nft-with-state-fingerprint-v2]
+path = 'contracts/nft-with-state-fingerprint-v2.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.vesting-nft-v2]
+path = 'contracts/vesting-nft-v2.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.multi-asset-token-v2]
+path = 'contracts/multi-asset-token-v2.clar'
+clarity_version = 4
+epoch = 'latest'
 
 [repl.analysis]
 passes = ['check_checker']
