@@ -216,28 +216,53 @@ contract_id = 'SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token'
 # clarity_version = 4
 # epoch = 'latest'
 
-[contracts.multiverse-non-fungible-token-v2]
-path = 'contracts/multiverse-non-fungible-token-v2.clar'
+# [contracts.multiverse-non-fungible-token-v2]
+# path = 'contracts/multiverse-non-fungible-token-v2.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.sft-with-supply-extension-v2]
+# path = 'contracts/sft-with-supply-extension-v2.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.nft-with-state-fingerprint-v2]
+# path = 'contracts/nft-with-state-fingerprint-v2.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.vesting-nft-v2]
+# path = 'contracts/vesting-nft-v2.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.multi-asset-token-v2]
+# path = 'contracts/multi-asset-token-v2.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+[contracts.nestable-nft]
+path = 'contracts/nestable-nft.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.sft-with-supply-extension-v2]
-path = 'contracts/sft-with-supply-extension-v2.clar'
+[contracts.diversified-royalty-nft]
+path = 'contracts/diversified-royalty-nft.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.nft-with-state-fingerprint-v2]
-path = 'contracts/nft-with-state-fingerprint-v2.clar'
+[contracts.hierarchical-non-fungible-token]
+path = 'contracts/hierarchical-non-fungible-token.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.vesting-nft-v2]
-path = 'contracts/vesting-nft-v2.clar'
+[contracts.composable-non-fungible-token]
+path = 'contracts/composable-non-fungible-token.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.multi-asset-token-v2]
-path = 'contracts/multi-asset-token-v2.clar'
+[contracts.semantic-sbd-token]
+path = 'contracts/semantic-sbd-token.clar'
 clarity_version = 4
 epoch = 'latest'
 
