@@ -241,10 +241,10 @@ contract_id = 'SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token'
 # clarity_version = 4
 # epoch = 'latest'
 
-[contracts.nestable-nft]
-path = 'contracts/nestable-nft.clar'
-clarity_version = 4
-epoch = 'latest'
+# [contracts.nestable-nft]
+# path = 'contracts/nestable-nft.clar'
+# clarity_version = 4
+# epoch = 'latest'
 
 [contracts.diversified-royalty-nft]
 path = 'contracts/diversified-royalty-nft.clar'
@@ -256,15 +256,40 @@ path = 'contracts/hierarchical-non-fungible-token.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.composable-non-fungible-token]
-path = 'contracts/composable-non-fungible-token.clar'
+# [contracts.composable-non-fungible-token]
+# path = 'contracts/composable-non-fungible-token.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.semantic-sbd-token]
+# path = 'contracts/semantic-sbd-token.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+[contracts.stealth-address-registry]
+path = 'contracts/stealth-address-registry.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.semantic-sbd-token]
-path = 'contracts/semantic-sbd-token.clar'
-clarity_version = 4
-epoch = 'latest'
+# [contracts.multi-redemption-nft]
+# path = 'contracts/multi-redemption-nft.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.key-bound-nft]
+# path = 'contracts/key-bound-nft.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.ai-generated-token]
+# path = 'contracts/ai-generated-token.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.aggregated-ids-nft]
+# path = 'contracts/aggregated-ids-nft.clar'
+# clarity_version = 4
+# epoch = 'latest'
 
 [repl.analysis]
 passes = ['check_checker']
