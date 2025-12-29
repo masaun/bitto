@@ -246,13 +246,78 @@ contract_id = 'SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token'
 # clarity_version = 4
 # epoch = 'latest'
 
-[contracts.diversified-royalty-nft]
-path = 'contracts/diversified-royalty-nft.clar'
+[contracts.lockable-nft]
+path = 'contracts/lockable-nft.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.hierarchical-non-fungible-token]
-path = 'contracts/hierarchical-non-fungible-token.clar'
+[contracts.media-index-registry]
+path = 'contracts/media-index-registry.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.fixed-income-bond]
+path = 'contracts/fixed-income-bond.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.odc]
+path = 'contracts/odc.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.payment-specific-sft]
+path = 'contracts/payment-specific-sft.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.parent-child-nft]
+path = 'contracts/parent-child-nft.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.emoji-nft]
+path = 'contracts/emoji-nft.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.nft-role-management]
+path = 'contracts/nft-role-management.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.authorized-resellable-nft]
+path = 'contracts/authorized-resellable-nft.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.async-vault-token]
+path = 'contracts/async-vault-token.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.multi-asset-vault]
+path = 'contracts/multi-asset-vault.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.physical-asset-backed-nft]
+path = 'contracts/physical-asset-backed-nft.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.e2e-encryption-messaging]
+path = 'contracts/e2e-encryption-messaging.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.dual-token]
+path = 'contracts/dual-token.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.did-verification]
+path = 'contracts/did-verification.clar'
 clarity_version = 4
 epoch = 'latest'
 
@@ -265,11 +330,6 @@ epoch = 'latest'
 # path = 'contracts/semantic-sbd-token.clar'
 # clarity_version = 4
 # epoch = 'latest'
-
-[contracts.stealth-address-registry]
-path = 'contracts/stealth-address-registry.clar'
-clarity_version = 4
-epoch = 'latest'
 
 # [contracts.multi-redemption-nft]
 # path = 'contracts/multi-redemption-nft.clar'
