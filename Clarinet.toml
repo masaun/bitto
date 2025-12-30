@@ -551,6 +551,106 @@ path = 'contracts/reserved-account.clar'
 clarity_version = 4
 epoch = 'latest'
 
+[contracts.employment-system]
+path = 'contracts/employment-system.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.financial-statement]
+path = 'contracts/financial-statement.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.robot-identity-manager]
+path = 'contracts/robot-identity-manager.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.relational-nft]
+path = 'contracts/relational-nft.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.revenue-sharing]
+path = 'contracts/revenue-sharing.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.audit-report]
+path = 'contracts/audit-report.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.intent-centric-nft]
+path = 'contracts/intent-centric-nft.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.ip-license]
+path = 'contracts/ip-license.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.perpetual-nft]
+path = 'contracts/perpetual-nft.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.multiplayer-communication]
+path = 'contracts/multiplayer-communication.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.conditional-decryption]
+path = 'contracts/conditional-decryption.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.advertisement-counting]
+path = 'contracts/advertisement-counting.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.revenue-sharing-pool]
+path = 'contracts/revenue-sharing-pool.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.fractional-nft]
+path = 'contracts/fractional-nft.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.fractional-reserve-fungible-token]
+path = 'contracts/fractional-reserve-fungible-token.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.permanent-abt]
+path = 'contracts/permanent-abt.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.ai-agent-council]
+path = 'contracts/ai-agent-council.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.mvt-token]
+path = 'contracts/mvt-token.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.attestation-management]
+path = 'contracts/attestation-management.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.basket-reserve-token]
+path = 'contracts/basket-reserve-token.clar'
+clarity_version = 4
+epoch = 'latest'
+
 [repl.analysis]
 passes = ['check_checker']
 
