@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ACC Bounded Token</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    .section {
+      margin: 30px 0;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+    h1, h2 {
+      color: #333;
+    }
+    button {
+      margin: 5px;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    .wallet-info {
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #f0f0f0;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>ACC Bounded Token Frontend</h1>
+  
+  <div class="section">
+    <h2>Wallet Connection</h2>
+    <button id="connect-stacks-wallet">Connect Stacks Wallet</button>
+    <button id="connect-wallet-connect">Connect WalletConnect</button>
+    <button id="connect-reown">Connect Reown AppKit</button>
+    <div class="wallet-info" id="wallet-info"></div>
+  </div>
+
+  <div class="section">
+    <h2>Give Token</h2>
+    <input type="text" id="give-to" placeholder="Recipient principal">
+    <input type="text" id="give-metadata" placeholder="Metadata (hex string, max 512 chars)">
+    <input type="text" id="give-signature" placeholder="Signature (hex string, max 128 chars)">
+    <input type="text" id="give-uri" placeholder="URI (max 256 chars)">
+    <button id="give-btn">Give</button>
+  </div>
+
+  <div class="section">
+    <h2>Take Token</h2>
+    <input type="text" id="take-from" placeholder="From principal">
+    <input type="text" id="take-metadata" placeholder="Metadata (hex string, max 512 chars)">
+    <input type="text" id="take-signature" placeholder="Signature (hex string, max 128 chars)">
+    <input type="text" id="take-uri" placeholder="URI (max 256 chars)">
+    <button id="take-btn">Take</button>
+  </div>
+
+  <div class="section">
+    <h2>Unequip Token</h2>
+    <input type="number" id="unequip-token-id" placeholder="Token ID">
+    <button id="unequip-btn">Unequip</button>
+  </div>
+
+  <div class="section">
+    <h2>Transfer Token</h2>
+    <input type="number" id="transfer-token-id" placeholder="Token ID">
+    <input type="text" id="transfer-sender" placeholder="Sender principal">
+    <input type="text" id="transfer-recipient" placeholder="Recipient principal">
+    <button id="transfer-btn">Transfer</button>
+  </div>
+
+  <script type="module" src="/main.ts"></script>
+</body>
+</html>

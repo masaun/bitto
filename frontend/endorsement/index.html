@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Endorsement DApp</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      padding: 40px;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 2.5em;
+    }
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 1.1em;
+    }
+    .section {
+      margin-bottom: 30px;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border-left: 4px solid #667eea;
+    }
+    .section h2 {
+      color: #333;
+      margin-bottom: 15px;
+      font-size: 1.3em;
+    }
+    .wallet-buttons {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    button {
+      padding: 12px 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    button:active {
+      transform: translateY(0);
+    }
+    .wallet-button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    .function-button {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+    }
+    .input-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #555;
+      font-weight: 600;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: 'Courier New', monospace;
+      transition: border-color 0.3s ease;
+    }
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+    #status {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      display: none;
+    }
+    #status.show {
+      display: block;
+    }
+    #status.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    #status.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    #status.info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+    .connected-wallet {
+      background: #d4edda;
+      padding: 10px 15px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      color: #155724;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎖️ Endorsement DApp</h1>
+    <p class="subtitle">Submit and verify endorsements on Stacks blockchain</p>
+
+    <div class="section">
+      <h2>Connect Wallet</h2>
+      <div class="wallet-buttons">
+        <button id="connect-hiro" class="wallet-button">Connect Hiro Wallet</button>
+        <button id="connect-leather" class="wallet-button">Connect Leather Wallet</button>
+        <button id="connect-reown" class="wallet-button">Connect Reown AppKit</button>
+      </div>
+      <div id="wallet-address" class="connected-wallet" style="display: none;"></div>
+    </div>
+
+    <div class="section">
+      <h2>Submit Endorsement</h2>
+      <div class="input-group">
+        <label for="submit-endorsee">Endorsee Principal</label>
+        <input type="text" id="submit-endorsee" placeholder="SP2...">
+      </div>
+      <div class="input-group">
+        <label for="submit-endorser">Endorser Principal</label>
+        <input type="text" id="submit-endorser" placeholder="SP2...">
+      </div>
+      <div class="input-group">
+        <label for="submit-type">Endorsement Type (max 64 chars)</label>
+        <input type="text" id="submit-type" placeholder="skill-verification">
+      </div>
+      <div class="input-group">
+        <label for="submit-metadata">Metadata (max 512 chars)</label>
+        <textarea id="submit-metadata" placeholder="Additional endorsement information"></textarea>
+      </div>
+      <div class="input-group">
+        <label for="submit-signature">Signature (65 bytes hex)</label>
+        <input type="text" id="submit-signature" placeholder="0x...">
+      </div>
+      <div class="input-group">
+        <label for="submit-public-key">Public Key (33 bytes hex)</label>
+        <input type="text" id="submit-public-key" placeholder="0x...">
+      </div>
+      <div class="input-group">
+        <label for="submit-hash">Endorsement Hash (32 bytes hex)</label>
+        <input type="text" id="submit-hash" placeholder="0x...">
+      </div>
+      <button id="submit-endorsement" class="function-button">Submit Endorsement</button>
+    </div>
+
+    <div class="section">
+      <h2>Verify Endorsement</h2>
+      <div class="input-group">
+        <label for="verify-hash">Endorsement Hash (32 bytes hex)</label>
+        <input type="text" id="verify-hash" placeholder="0x...">
+      </div>
+      <button id="verify-endorsement" class="function-button">Verify Endorsement</button>
+    </div>
+
+    <div id="status"></div>
+  </div>
+
+  <script type="module" src="/main.ts"></script>
+</body>
+</html>

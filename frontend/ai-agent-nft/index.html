@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent NFT</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        h2 {
+            margin-top: 0;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        input, textarea {
+            margin: 5px 0;
+            padding: 8px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>AI Agent NFT Interface</h1>
+
+    <div class="section">
+        <h2>Wallet Connection</h2>
+        <button id="connect-stacks">Connect Wallet (Stacks Connect)</button>
+        <button id="connect-walletkit">Connect Wallet (WalletKit)</button>
+        <button id="connect-appkit">Connect Wallet (AppKit)</button>
+        <div id="wallet-status" class="status"></div>
+    </div>
+
+    <div class="section">
+        <h2>Mint NFT</h2>
+        <input type="text" id="mint-data-hash" placeholder="Data Hash (32 bytes hex)">
+        <input type="text" id="mint-description" placeholder="Description (max 256 chars)">
+        <input type="text" id="mint-recipient" placeholder="Recipient Address">
+        <button id="mint">Mint</button>
+    </div>
+
+    <div class="section">
+        <h2>Transfer NFT</h2>
+        <input type="number" id="transfer-token-id" placeholder="Token ID">
+        <input type="text" id="transfer-sender" placeholder="Sender Address">
+        <input type="text" id="transfer-recipient" placeholder="Recipient Address">
+        <button id="transfer">Transfer</button>
+    </div>
+
+    <div class="section">
+        <h2>Authorize Usage</h2>
+        <input type="number" id="authorize-token-id" placeholder="Token ID">
+        <input type="text" id="authorize-user" placeholder="User Address">
+        <button id="authorize-usage">Authorize Usage</button>
+    </div>
+
+    <div class="section">
+        <h2>Revoke Authorization</h2>
+        <input type="number" id="revoke-token-id" placeholder="Token ID">
+        <input type="text" id="revoke-user" placeholder="User Address">
+        <button id="revoke-authorization">Revoke Authorization</button>
+    </div>
+
+    <div class="section">
+        <h2>Approve</h2>
+        <input type="text" id="approve-spender" placeholder="Spender Address">
+        <input type="number" id="approve-token-id" placeholder="Token ID">
+        <button id="approve">Approve</button>
+    </div>
+
+    <div class="section">
+        <h2>Set Approval For All</h2>
+        <input type="text" id="approval-operator" placeholder="Operator Address">
+        <label>
+            <input type="checkbox" id="approval-approved"> Approved
+        </label>
+        <button id="set-approval-for-all">Set Approval For All</button>
+    </div>
+
+    <div class="section">
+        <h2>Delegate Access</h2>
+        <input type="text" id="delegate-assistant" placeholder="Assistant Address">
+        <button id="delegate-access-to">Delegate Access To</button>
+    </div>
+
+    <div id="tx-status" class="status"></div>
+
+    <script type="module" src="/main.ts"></script>
+</body>
+</html>

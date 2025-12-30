@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Designate Executor</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    button {
+      margin: 10px 5px;
+      padding: 10px 20px;
+      font-size: 14px;
+      cursor: pointer;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .wallet-section {
+      margin-bottom: 30px;
+      padding: 20px;
+      background-color: #f8f9fa;
+      border-radius: 8px;
+    }
+    .contract-section {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: #e9ecef;
+      border-radius: 8px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0 15px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+    }
+    #status {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #d4edda;
+      border: 1px solid #c3e6cb;
+      border-radius: 4px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Designate Executor</h1>
+  
+  <div class="wallet-section">
+    <h2>Connect Wallet</h2>
+    <button id="connect-stacks">Connect Wallet (Stacks Connect)</button>
+    <button id="connect-walletkit">Connect Wallet (WalletKit)</button>
+    <button id="connect-appkit">Connect Wallet (AppKit)</button>
+    <p id="wallet-address"></p>
+  </div>
+
+  <div class="contract-section">
+    <h2>Contract Functions</h2>
+    
+    <div>
+      <h3>Mint</h3>
+      <label>Recipient (principal):</label>
+      <input type="text" id="mint-recipient" placeholder="SP...">
+      <button id="mint-btn">mint</button>
+    </div>
+
+    <div>
+      <h3>Set Will</h3>
+      <label>Token ID (uint):</label>
+      <input type="number" id="set-will-token-id" placeholder="1">
+      <label>Executors (comma-separated principals, max 10):</label>
+      <textarea id="set-will-executors" rows="3" placeholder="SP..., SP..., SP..."></textarea>
+      <label>Moratorium TTL (uint):</label>
+      <input type="number" id="set-will-moratorium" placeholder="144">
+      <button id="set-will-btn">set-will</button>
+    </div>
+
+    <div>
+      <h3>Announce Obit</h3>
+      <label>Token ID (uint):</label>
+      <input type="number" id="announce-token-id" placeholder="1">
+      <label>Owner (principal):</label>
+      <input type="text" id="announce-owner" placeholder="SP...">
+      <label>Inheritor (principal):</label>
+      <input type="text" id="announce-inheritor" placeholder="SP...">
+      <button id="announce-obit-btn">announce-obit</button>
+    </div>
+
+    <div>
+      <h3>Cancel Obit</h3>
+      <label>Token ID (uint):</label>
+      <input type="number" id="cancel-token-id" placeholder="1">
+      <button id="cancel-obit-btn">cancel-obit</button>
+    </div>
+
+    <div>
+      <h3>Bequeath</h3>
+      <label>Token ID (uint):</label>
+      <input type="number" id="bequeath-token-id" placeholder="1">
+      <label>Owner (principal):</label>
+      <input type="text" id="bequeath-owner" placeholder="SP...">
+      <button id="bequeath-btn">bequeath</button>
+    </div>
+  </div>
+
+  <div id="status"></div>
+
+  <script type="module" src="/main.ts"></script>
+</body>
+</html>

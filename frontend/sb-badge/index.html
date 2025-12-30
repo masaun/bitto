@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SB Badge Frontend</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        input {
+            margin: 5px;
+            padding: 8px;
+            width: 300px;
+        }
+        h2 {
+            margin-top: 0;
+        }
+        #status {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>SB Badge Frontend</h1>
+
+    <div class="section">
+        <h2>Wallet Connection</h2>
+        <button id="connectHiro">Connect Hiro Wallet</button>
+        <button id="connectWalletConnect">Connect WalletConnect</button>
+        <button id="connectReown">Connect Reown AppKit</button>
+        <div id="walletStatus"></div>
+    </div>
+
+    <div class="section">
+        <h2>Mint Badge</h2>
+        <input type="text" id="mintNftContract" placeholder="NFT Contract (principal)">
+        <input type="number" id="mintNftTokenId" placeholder="NFT Token ID (uint)">
+        <input type="text" id="mintUri" placeholder="URI (string-ascii 256)">
+        <button id="mintBtn">Mint</button>
+    </div>
+
+    <div class="section">
+        <h2>Transfer Badge</h2>
+        <input type="number" id="transferBadgeId" placeholder="Badge ID (uint)">
+        <input type="text" id="transferSender" placeholder="Sender (principal)">
+        <input type="text" id="transferRecipient" placeholder="Recipient (principal)">
+        <button id="transferBtn">Transfer</button>
+    </div>
+
+    <div id="status"></div>
+
+    <script type="module" src="/main.ts"></script>
+</body>
+</html>

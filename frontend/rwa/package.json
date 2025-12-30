@@ -1,0 +1,23 @@
+{
+  "name": "rwa-frontend",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vite": "^5.0.0",
+    "typescript": "^5.3.3",
+    "@stacks/connect": "^7.8.2",
+    "@stacks/transactions": "^6.16.1",
+    "@stacks/network": "^6.16.0",
+    "@walletconnect/web3wallet": "^1.11.0",
+    "@reown/appkit": "^1.0.0",
+    "@reown/appkit-adapter-stacks": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0"
+  }
+}

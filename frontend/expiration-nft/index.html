@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expiration NFT</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    h1 {
+      color: #333;
+    }
+    .section {
+      margin: 30px 0;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+    button {
+      margin: 10px 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #5546ff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    button:hover {
+      background-color: #4435dd;
+    }
+    input {
+      padding: 8px;
+      margin: 5px;
+      width: 300px;
+      font-size: 14px;
+    }
+    #status {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f0f0f0;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Expiration NFT Frontend</h1>
+  
+  <div class="section">
+    <h2>Wallet Connection</h2>
+    <button id="connectStacksConnect">Connect Wallet (Stacks Connect)</button>
+    <button id="connectWalletKit">Connect Wallet (WalletKit)</button>
+    <button id="connectAppKit">Connect Wallet (AppKit)</button>
+    <div id="walletStatus"></div>
+  </div>
+
+  <div class="section">
+    <h2>Mint NFT</h2>
+    <input type="text" id="mintRecipient" placeholder="Recipient Principal Address">
+    <button id="mintBtn">Mint</button>
+  </div>
+
+  <div class="section">
+    <h2>Transfer NFT</h2>
+    <input type="text" id="transferTokenId" placeholder="Token ID (uint)">
+    <input type="text" id="transferSender" placeholder="Sender Principal Address">
+    <input type="text" id="transferRecipient" placeholder="Recipient Principal Address">
+    <button id="transferBtn">Transfer</button>
+  </div>
+
+  <div id="status"></div>
+
+  <script type="module" src="/main.ts"></script>
+</body>
+</html>

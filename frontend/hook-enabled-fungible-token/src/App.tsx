@@ -6,6 +6,8 @@ import {
   PostConditionMode,
   callReadOnlyFunction,
 } from '@stacks/transactions'
+import { createAppKit } from '@reown/appkit'
+import { Web3Wallet } from '@walletconnect/web3wallet'
 import { useState, useEffect, useCallback } from 'react'
 
 // Contract configuration - loaded from environment variables
@@ -166,6 +168,44 @@ function App() {
     setTokenInfo(null)
     setContractStatus(null)
     setUserBalance('0')
+  }
+
+  async function connectWalletKit() {
+    try {
+      const web3Wallet = await Web3Wallet.init({
+        core: {
+          projectId: WALLET_CONNECT_PROJECT_ID
+        },
+        metadata: {
+          name: 'Hook Enabled Fungible Token',
+          description: 'Hook Enabled Fungible Token Frontend',
+          url: window.location.origin,
+          icons: []
+        }
+      })
+      console.log('WalletKit initialized')
+    } catch (error) {
+      console.error('Failed to initialize WalletKit:', error)
+    }
+  }
+
+  async function connectAppKit() {
+    try {
+      const appKit = createAppKit({
+        projectId: WALLET_CONNECT_PROJECT_ID,
+        chains: [],
+        metadata: {
+          name: 'Hook Enabled Fungible Token',
+          description: 'Hook Enabled Fungible Token Frontend',
+          url: window.location.origin,
+          icons: []
+        }
+      })
+      appKit.open()
+      console.log('AppKit initialized')
+    } catch (error) {
+      console.error('Failed to initialize AppKit:', error)
+    }
   }
 
   // Load token info
@@ -917,10 +957,13 @@ function App() {
         {!isConnected ? (
           <div className="connect-buttons">
             <button onClick={connectWallet} className="connect-btn">
-              Connect with WalletConnect
+              Connect (@stacks/connect)
             </button>
-            <button onClick={connectWithWalletSelect} className="connect-btn secondary">
-              Select Wallet
+            <button onClick={connectWalletKit} className="connect-btn">
+              Connect (WalletKit)
+            </button>
+            <button onClick={connectAppKit} className="connect-btn">
+              Connect (AppKit)
             </button>
           </div>
         ) : (

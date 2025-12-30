@@ -10,6 +10,8 @@ import {
   bufferCV,
   fetchCallReadOnlyFunction,
 } from '@stacks/transactions'
+import { createAppKit } from '@reown/appkit'
+import { Web3Wallet } from '@walletconnect/web3wallet'
 import { useState, useEffect, useCallback } from 'react'
 
 const CONTRACT_ADDRESS = import.meta.env.VITE_META_PROXY_CONTRACT_ADDRESS?.split('.')[0] || ''
@@ -96,6 +98,44 @@ function App() {
     setUserAddress('')
     setProxies([])
     setProxyCount(0)
+  }
+
+  async function connectWalletKit() {
+    try {
+      const web3Wallet = await Web3Wallet.init({
+        core: {
+          projectId: WALLET_CONNECT_PROJECT_ID
+        },
+        metadata: {
+          name: 'Meta Proxy',
+          description: 'Meta Proxy Frontend',
+          url: window.location.origin,
+          icons: []
+        }
+      })
+      setMessage({ type: 'success', text: 'WalletKit initialized' })
+    } catch (error) {
+      setMessage({ type: 'error', text: 'Failed to initialize WalletKit' })
+    }
+  }
+
+  async function connectAppKit() {
+    try {
+      const appKit = createAppKit({
+        projectId: WALLET_CONNECT_PROJECT_ID,
+        chains: [],
+        metadata: {
+          name: 'Meta Proxy',
+          description: 'Meta Proxy Frontend',
+          url: window.location.origin,
+          icons: []
+        }
+      })
+      appKit.open()
+      setMessage({ type: 'success', text: 'AppKit initialized' })
+    } catch (error) {
+      setMessage({ type: 'error', text: 'Failed to initialize AppKit' })
+    }
   }
 
   const loadContractInfo = useCallback(async () => {
@@ -357,7 +397,11 @@ function App() {
             <button onClick={disconnectWallet} className="secondary">Disconnect</button>
           </div>
         ) : (
-          <button onClick={connectWallet}>Connect Wallet</button>
+          <div className="wallet-buttons">
+            <button onClick={connectWallet}>Connect (@stacks/connect)</button>
+            <button onClick={connectWalletKit}>Connect (WalletKit)</button>
+            <button onClick={connectAppKit}>Connect (AppKit)</button>
+          </div>
         )}
       </header>
 

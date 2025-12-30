@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cultural Historical Token</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: white;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2.5em;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    .wallet-section {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    h2 {
+      color: #333;
+      margin-bottom: 20px;
+      border-bottom: 3px solid #667eea;
+      padding-bottom: 10px;
+    }
+    .wallet-buttons {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      flex: 1;
+      min-width: 200px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #333;
+    }
+    .btn-secondary:hover {
+      background: #e0e0e0;
+    }
+    .status {
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      color: #666;
+    }
+    .function-section {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+      font-weight: 600;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      background: #e8f5e9;
+      border-left: 4px solid #4caf50;
+      border-radius: 4px;
+      display: none;
+    }
+    .error {
+      margin-top: 20px;
+      padding: 15px;
+      background: #ffebee;
+      border-left: 4px solid #f44336;
+      border-radius: 4px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Cultural Historical Token</h1>
+    
+    <div class="wallet-section">
+      <h2>Wallet Connection</h2>
+      <div class="wallet-buttons">
+        <button id="connect-hiro" class="btn-primary">Connect Hiro Wallet</button>
+        <button id="connect-xverse" class="btn-primary">Connect Xverse Wallet</button>
+        <button id="connect-reown" class="btn-primary">Connect via Reown AppKit</button>
+      </div>
+      <div class="status" id="wallet-status">No wallet connected</div>
+    </div>
+
+    <div class="function-section">
+      <h2>Mint Token</h2>
+      <div class="form-group">
+        <label>Recipient Address</label>
+        <input type="text" id="mint-recipient" placeholder="SP...">
+      </div>
+      <div class="form-group">
+        <label>Catalog Level (max 64 chars)</label>
+        <input type="text" id="mint-catalog-level" placeholder="Primary">
+      </div>
+      <div class="form-group">
+        <label>Creation Date (max 64 chars)</label>
+        <input type="text" id="mint-creation-date" placeholder="2024-01-01">
+      </div>
+      <div class="form-group">
+        <label>Creator Name (max 128 chars)</label>
+        <input type="text" id="mint-creator-name" placeholder="Artist Name">
+      </div>
+      <div class="form-group">
+        <label>Asset Type (max 64 chars)</label>
+        <input type="text" id="mint-asset-type" placeholder="Painting">
+      </div>
+      <div class="form-group">
+        <label>Materials (max 256 chars)</label>
+        <input type="text" id="mint-materials" placeholder="Oil on canvas">
+      </div>
+      <div class="form-group">
+        <label>Dimensions (max 128 chars)</label>
+        <input type="text" id="mint-dimensions" placeholder="100x150cm">
+      </div>
+      <div class="form-group">
+        <label>Provenance (max 512 chars)</label>
+        <textarea id="mint-provenance" placeholder="Historical ownership information"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Copyright (max 256 chars)</label>
+        <input type="text" id="mint-copyright" placeholder="Copyright information">
+      </div>
+      <button id="mint-btn" class="btn-primary">Mint Token</button>
+      <div class="result" id="mint-result"></div>
+      <div class="error" id="mint-error"></div>
+    </div>
+
+    <div class="function-section">
+      <h2>Set Extended Information</h2>
+      <div class="form-group">
+        <label>Token ID</label>
+        <input type="number" id="extended-token-id" placeholder="1">
+      </div>
+      <div class="form-group">
+        <label>Full Text (max 1024 chars)</label>
+        <textarea id="extended-full-text" placeholder="Detailed description"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Exhibitions (max 512 chars)</label>
+        <textarea id="extended-exhibitions" placeholder="Exhibition history"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Documents (max 512 chars)</label>
+        <textarea id="extended-documents" placeholder="Related documents"></textarea>
+      </div>
+      <div class="form-group">
+        <label>URLs (max 256 chars)</label>
+        <input type="text" id="extended-urls" placeholder="https://...">
+      </div>
+      <button id="set-extended-btn" class="btn-primary">Set Extended Info</button>
+      <div class="result" id="extended-result"></div>
+      <div class="error" id="extended-error"></div>
+    </div>
+
+    <div class="function-section">
+      <h2>Transfer Token</h2>
+      <div class="form-group">
+        <label>Token ID</label>
+        <input type="number" id="transfer-token-id" placeholder="1">
+      </div>
+      <div class="form-group">
+        <label>Sender Address</label>
+        <input type="text" id="transfer-sender" placeholder="SP...">
+      </div>
+      <div class="form-group">
+        <label>Recipient Address</label>
+        <input type="text" id="transfer-recipient" placeholder="SP...">
+      </div>
+      <button id="transfer-btn" class="btn-primary">Transfer Token</button>
+      <div class="result" id="transfer-result"></div>
+      <div class="error" id="transfer-error"></div>
+    </div>
+  </div>
+
+  <script type="module" src="/main.ts"></script>
+</body>
+</html>

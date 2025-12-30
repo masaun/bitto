@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real Estate NFT</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    h1 {
+      color: #333;
+      text-align: center;
+    }
+    .section {
+      background: white;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .wallet-section {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    button {
+      background-color: #5546ff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover {
+      background-color: #4335ee;
+    }
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    .form-group {
+      margin: 15px 0;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #555;
+    }
+    #status {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+      display: none;
+    }
+    #status.success {
+      background-color: #d4edda;
+      color: #155724;
+      display: block;
+    }
+    #status.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      display: block;
+    }
+    #walletAddress {
+      font-weight: bold;
+      color: #5546ff;
+    }
+  </style>
+</head>
+<body>
+  <h1>Real Estate NFT</h1>
+  
+  <div class="section">
+    <h2>Wallet Connection</h2>
+    <div class="wallet-section">
+      <button id="connectHiro">Connect Hiro Wallet</button>
+      <button id="connectXverse">Connect Xverse Wallet</button>
+      <button id="connectReown">Connect Reown (WalletConnect)</button>
+    </div>
+    <p>Connected: <span id="walletAddress">Not connected</span></p>
+  </div>
+
+  <div id="status"></div>
+
+  <div class="section">
+    <h2>Mint Real Estate NFT</h2>
+    <div class="form-group">
+      <label for="propertyAddress">Property Address:</label>
+      <input type="text" id="propertyAddress" placeholder="123 Main St, City, State 12345" maxlength="256">
+    </div>
+    <div class="form-group">
+      <label for="jurisdiction">Jurisdiction:</label>
+      <input type="text" id="jurisdiction" placeholder="City, State" maxlength="64">
+    </div>
+    <div class="form-group">
+      <label for="propertyId">Property ID:</label>
+      <input type="text" id="propertyId" placeholder="PROP-12345" maxlength="128">
+    </div>
+    <div class="form-group">
+      <label for="propertyType">Property Type:</label>
+      <input type="text" id="propertyType" placeholder="Residential, Commercial, etc." maxlength="32">
+    </div>
+    <div class="form-group">
+      <label for="parcelNumber">Parcel Number:</label>
+      <input type="text" id="parcelNumber" placeholder="123-456-789" maxlength="64">
+    </div>
+    <div class="form-group">
+      <label for="dimensions">Dimensions:</label>
+      <input type="text" id="dimensions" placeholder="100x150 sq ft" maxlength="128">
+    </div>
+    <div class="form-group">
+      <label for="valuation">Valuation (micro-STX):</label>
+      <input type="number" id="valuation" placeholder="1000000">
+    </div>
+    <div class="form-group">
+      <label for="recipient">Recipient Address:</label>
+      <input type="text" id="recipient" placeholder="SP2...">
+    </div>
+    <button id="mintBtn">Mint NFT</button>
+  </div>
+
+  <div class="section">
+    <h2>Set Debt</h2>
+    <div class="form-group">
+      <label for="setDebtTokenId">Token ID:</label>
+      <input type="number" id="setDebtTokenId" placeholder="1">
+    </div>
+    <div class="form-group">
+      <label for="debtToken">Debt Token Principal:</label>
+      <input type="text" id="debtToken" placeholder="SP2...token-contract">
+    </div>
+    <div class="form-group">
+      <label for="debtAmount">Debt Amount:</label>
+      <input type="number" id="debtAmount" placeholder="1000000">
+    </div>
+    <button id="setDebtBtn">Set Debt</button>
+  </div>
+
+  <div class="section">
+    <h2>Foreclose</h2>
+    <div class="form-group">
+      <label for="forecloseTokenId">Token ID:</label>
+      <input type="number" id="forecloseTokenId" placeholder="1">
+    </div>
+    <button id="forecloseBtn">Foreclose</button>
+  </div>
+
+  <div class="section">
+    <h2>Transfer</h2>
+    <div class="form-group">
+      <label for="transferTokenId">Token ID:</label>
+      <input type="number" id="transferTokenId" placeholder="1">
+    </div>
+    <div class="form-group">
+      <label for="sender">Sender Address:</label>
+      <input type="text" id="sender" placeholder="SP2...">
+    </div>
+    <div class="form-group">
+      <label for="transferRecipient">Recipient Address:</label>
+      <input type="text" id="transferRecipient" placeholder="SP2...">
+    </div>
+    <button id="transferBtn">Transfer</button>
+  </div>
+
+  <script type="module" src="/main.ts"></script>
+</body>
+</html>

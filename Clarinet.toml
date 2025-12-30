@@ -246,78 +246,178 @@ contract_id = 'SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token'
 # clarity_version = 4
 # epoch = 'latest'
 
-[contracts.lockable-nft]
-path = 'contracts/lockable-nft.clar'
+# [contracts.lockable-nft]
+# path = 'contracts/lockable-nft.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.media-index-registry]
+# path = 'contracts/media-index-registry.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.fixed-income-bond]
+# path = 'contracts/fixed-income-bond.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.odc]
+# path = 'contracts/odc.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.payment-specific-sft]
+# path = 'contracts/payment-specific-sft.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.parent-child-nft]
+# path = 'contracts/parent-child-nft.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.emoji-nft]
+# path = 'contracts/emoji-nft.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.nft-role-management]
+# path = 'contracts/nft-role-management.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.authorized-resellable-nft]
+# path = 'contracts/authorized-resellable-nft.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.async-vault-token]
+# path = 'contracts/async-vault-token.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.multi-asset-vault]
+# path = 'contracts/multi-asset-vault.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.physical-asset-backed-nft]
+# path = 'contracts/physical-asset-backed-nft.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.e2e-encryption-messaging]
+# path = 'contracts/e2e-encryption-messaging.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.dual-token]
+# path = 'contracts/dual-token.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.did-verification]
+# path = 'contracts/did-verification.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+[contracts.shared-ownership-nft]
+path = 'contracts/shared-ownership-nft.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.media-index-registry]
-path = 'contracts/media-index-registry.clar'
+[contracts.expirable-token]
+path = 'contracts/expirable-token.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.fixed-income-bond]
-path = 'contracts/fixed-income-bond.clar'
+# [contracts.ac-registry]
+# path = 'contracts/ac-registry.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.cappable-token]
+# path = 'contracts/cappable-token.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+# [contracts.ai-agent-nft]
+# path = 'contracts/ai-agent-nft.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+[contracts.expiration-nft]
+path = 'contracts/expiration-nft.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.odc]
-path = 'contracts/odc.clar'
+[contracts.designate-executor]
+path = 'contracts/designate-executor.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.payment-specific-sft]
-path = 'contracts/payment-specific-sft.clar'
+[contracts.non-addr-held-device-sig-verifier]
+path = 'contracts/non-addr-held-device-sig-verifier.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.parent-child-nft]
-path = 'contracts/parent-child-nft.clar'
+[contracts.ai-agent-coordination]
+path = 'contracts/ai-agent-coordination.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.emoji-nft]
-path = 'contracts/emoji-nft.clar'
+[contracts.sb-badge]
+path = 'contracts/sb-badge.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.nft-role-management]
-path = 'contracts/nft-role-management.clar'
+[contracts.endorsement]
+path = 'contracts/endorsement.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.authorized-resellable-nft]
-path = 'contracts/authorized-resellable-nft.clar'
+[contracts.shareable-rights-nft]
+path = 'contracts/shareable-rights-nft.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.async-vault-token]
-path = 'contracts/async-vault-token.clar'
+[contracts.sc-dependencies-registry]
+path = 'contracts/sc-dependencies-registry.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.multi-asset-vault]
-path = 'contracts/multi-asset-vault.clar'
+[contracts.cap-tf-nft]
+path = 'contracts/cap-tf-nft.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.physical-asset-backed-nft]
-path = 'contracts/physical-asset-backed-nft.clar'
+[contracts.generic-services-factory]
+path = 'contracts/generic-services-factory.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.e2e-encryption-messaging]
-path = 'contracts/e2e-encryption-messaging.clar'
+# [contracts.acc-bounded-token]
+# path = 'contracts/acc-bounded-token.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+[contracts.real-estate-nft]
+path = 'contracts/real-estate-nft.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.dual-token]
-path = 'contracts/dual-token.clar'
+# [contracts.cultural-historical-token]
+# path = 'contracts/cultural-historical-token.clar'
+# clarity_version = 4
+# epoch = 'latest'
+
+[contracts.interoperable-security-token]
+path = 'contracts/interoperable-security-token.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.did-verification]
-path = 'contracts/did-verification.clar'
+[contracts.rwa]
+path = 'contracts/rwa.clar'
 clarity_version = 4
 epoch = 'latest'
 

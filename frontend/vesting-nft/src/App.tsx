@@ -13,6 +13,8 @@ import {
   cvToJSON,
   standardPrincipalCV
 } from '@stacks/transactions'
+import { createAppKit } from '@reown/appkit'
+import { Web3Wallet } from '@walletconnect/web3wallet'
 
 const appConfig = new AppConfig(['store_write', 'publish_data'])
 const userSession = new UserSession({ appConfig })
@@ -87,6 +89,46 @@ function App() {
       userSession,
       walletConnectProjectId: projectId,
     })
+  }
+
+  const connectWalletKit = async () => {
+    try {
+      const projectId = import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID
+      const web3Wallet = await Web3Wallet.init({
+        core: {
+          projectId: projectId
+        },
+        metadata: {
+          name: 'Vesting NFT',
+          description: 'Vesting NFT Frontend',
+          url: window.location.origin,
+          icons: []
+        }
+      })
+      setStatus('WalletKit initialized')
+    } catch (error) {
+      setStatus('Failed to initialize WalletKit')
+    }
+  }
+
+  const connectAppKit = async () => {
+    try {
+      const projectId = import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID
+      const appKit = createAppKit({
+        projectId: projectId,
+        chains: [],
+        metadata: {
+          name: 'Vesting NFT',
+          description: 'Vesting NFT Frontend',
+          url: window.location.origin,
+          icons: []
+        }
+      })
+      appKit.open()
+      setStatus('AppKit initialized')
+    } catch (error) {
+      setStatus('Failed to initialize AppKit')
+    }
   }
 
   const disconnectWallet = () => {
@@ -418,7 +460,11 @@ function App() {
 
       <div className="wallet-section">
         {!userData ? (
-          <button onClick={connectWallet}>Connect Wallet</button>
+          <div className="wallet-buttons">
+            <button onClick={connectWallet}>Connect (@stacks/connect)</button>
+            <button onClick={connectWalletKit}>Connect (WalletKit)</button>
+            <button onClick={connectAppKit}>Connect (AppKit)</button>
+          </div>
         ) : (
           <div>
             <p>Connected: {userData.profile.stxAddress.mainnet}</p>
