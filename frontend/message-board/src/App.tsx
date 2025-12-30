@@ -1,5 +1,7 @@
 import { showConnect, disconnect, openContractCall } from '@stacks/connect'
 import { Cl, Pc, fetchCallReadOnlyFunction, cvToJSON, ClarityValue, PostConditionMode } from '@stacks/transactions'
+import { createAppKit } from '@reown/appkit'
+import { Web3Wallet } from '@walletconnect/web3wallet'
 import { useState, useEffect } from 'react'
 import { ChainhookProvider, ChainhookDashboard } from './chainhooks'
 
@@ -7,6 +9,7 @@ import { ChainhookProvider, ChainhookDashboard } from './chainhooks'
 const CONTRACT_ADDRESS = 'ST1V95DB4JK47QVPJBXCEN6MT35JK84CQ4F1GK7WZ'
 const CONTRACT_NAME = 'message-board-v2'
 const SBTC_CONTRACT = 'ST1F7QA2MDF17S807EPA36TSS8AMEFY4KA9TVGWXT.sbtc-token'
+const WALLET_CONNECT_PROJECT_ID = import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID || ''
 
 function App() {
   const [isConnected, setIsConnected] = useState<boolean>(false)
@@ -54,6 +57,44 @@ function App() {
     setIsConnected(false)
     setUserAddress('')
     setBns('')
+  }
+
+  async function connectWalletKit() {
+    try {
+      const web3Wallet = await Web3Wallet.init({
+        core: {
+          projectId: WALLET_CONNECT_PROJECT_ID
+        },
+        metadata: {
+          name: 'Message Board',
+          description: 'Message Board Frontend',
+          url: window.location.origin,
+          icons: []
+        }
+      })
+      console.log('WalletKit initialized')
+    } catch (error) {
+      console.error('Failed to initialize WalletKit:', error)
+    }
+  }
+
+  async function connectAppKit() {
+    try {
+      const appKit = createAppKit({
+        projectId: WALLET_CONNECT_PROJECT_ID,
+        chains: [],
+        metadata: {
+          name: 'Message Board',
+          description: 'Message Board Frontend',
+          url: window.location.origin,
+          icons: []
+        }
+      })
+      appKit.open()
+      console.log('AppKit initialized')
+    } catch (error) {
+      console.error('Failed to initialize AppKit:', error)
+    }
   }
 
   // Get BNS name for an address
@@ -242,9 +283,17 @@ function App() {
             </button>
           </div>
         ) : (
-          <button onClick={connectWallet} className="connect-btn">
-            Connect Leather Wallet
-          </button>
+          <div className="wallet-buttons">
+            <button onClick={connectWallet} className="connect-btn">
+              Connect (@stacks/connect)
+            </button>
+            <button onClick={connectWalletKit} className="connect-btn">
+              Connect (WalletKit)
+            </button>
+            <button onClick={connectAppKit} className="connect-btn">
+              Connect (AppKit)
+            </button>
+          </div>
         )}
       </div>
 

@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { AppConfig, UserSession, showConnect } from '@stacks/connect'
 import { StacksMainnet } from '@stacks/network'
+import { createAppKit } from '@reown/appkit'
+import { Web3Wallet } from '@walletconnect/web3wallet'
 import {
   uintCV,
   stringAsciiCV,
@@ -16,6 +18,7 @@ import {
 const appConfig = new AppConfig(['store_write', 'publish_data'])
 const userSession = new UserSession({ appConfig })
 const network = new StacksMainnet()
+const WALLET_CONNECT_PROJECT_ID = import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID || ''
 
 function App() {
   const [userData, setUserData] = useState<any>(null)
@@ -79,6 +82,44 @@ function App() {
       userSession,
       walletConnectProjectId: projectId,
     })
+  }
+
+  const connectWalletKit = async () => {
+    try {
+      const web3Wallet = await Web3Wallet.init({
+        core: {
+          projectId: WALLET_CONNECT_PROJECT_ID
+        },
+        metadata: {
+          name: 'NFT with State Fingerprint',
+          description: 'NFT with State Fingerprint Frontend',
+          url: window.location.origin,
+          icons: []
+        }
+      })
+      setStatus('WalletKit initialized')
+    } catch (error) {
+      setStatus('Failed to initialize WalletKit')
+    }
+  }
+
+  const connectAppKit = async () => {
+    try {
+      const appKit = createAppKit({
+        projectId: WALLET_CONNECT_PROJECT_ID,
+        chains: [],
+        metadata: {
+          name: 'NFT with State Fingerprint',
+          description: 'NFT with State Fingerprint Frontend',
+          url: window.location.origin,
+          icons: []
+        }
+      })
+      appKit.open()
+      setStatus('AppKit initialized')
+    } catch (error) {
+      setStatus('Failed to initialize AppKit')
+    }
   }
 
   const disconnectWallet = () => {

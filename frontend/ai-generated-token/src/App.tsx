@@ -2,6 +2,8 @@ import { connect, disconnect, isConnected, getLocalStorage, request } from '@sta
 import { Cl, cvToJSON, fetchCallReadOnlyFunction } from '@stacks/transactions'
 import { useState, useEffect } from 'react'
 import { StacksMainnet, StacksTestnet, StacksDevnet } from '@stacks/network'
+import { createAppKit } from '@reown/appkit'
+import { Web3Wallet } from '@walletconnect/web3wallet'
 
 const CONTRACT_ADDRESS = import.meta.env.VITE_CONTRACT_ADDRESS || ''
 const WALLET_CONNECT_PROJECT_ID = import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID || ''
@@ -79,6 +81,44 @@ function App() {
       }
     } catch (error) {
       showToast('Failed to connect wallet', 'error')
+    }
+  }
+
+  async function connectWalletKit() {
+    try {
+      const web3Wallet = await Web3Wallet.init({
+        core: {
+          projectId: WALLET_CONNECT_PROJECT_ID
+        },
+        metadata: {
+          name: 'AI Generated Token',
+          description: 'AI Generated Token Frontend',
+          url: window.location.origin,
+          icons: []
+        }
+      })
+      showToast('WalletKit initialized', 'success')
+    } catch (error) {
+      showToast('Failed to initialize WalletKit', 'error')
+    }
+  }
+
+  async function connectAppKit() {
+    try {
+      const appKit = createAppKit({
+        projectId: WALLET_CONNECT_PROJECT_ID,
+        chains: [],
+        metadata: {
+          name: 'AI Generated Token',
+          description: 'AI Generated Token Frontend',
+          url: window.location.origin,
+          icons: []
+        }
+      })
+      appKit.open()
+      showToast('AppKit initialized', 'success')
+    } catch (error) {
+      showToast('Failed to initialize AppKit', 'error')
     }
   }
 
@@ -266,9 +306,17 @@ function App() {
 
       <div style={{ marginBottom: '20px' }}>
         {!connected ? (
-          <button onClick={connectWallet} style={{ padding: '10px 20px', fontSize: '16px' }}>
-            Connect Wallet
-          </button>
+          <div className="wallet-buttons" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <button onClick={connectWallet} style={{ padding: '10px 20px', fontSize: '16px' }}>
+              Connect (@stacks/connect)
+            </button>
+            <button onClick={connectWalletKit} style={{ padding: '10px 20px', fontSize: '16px' }}>
+              Connect (WalletKit)
+            </button>
+            <button onClick={connectAppKit} style={{ padding: '10px 20px', fontSize: '16px' }}>
+              Connect (AppKit)
+            </button>
+          </div>
         ) : (
           <div>
             <p>Connected: {userAddress}</p>

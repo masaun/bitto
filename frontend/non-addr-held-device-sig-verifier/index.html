@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Non-Addr Held Device Sig Verifier</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 30px;
+    }
+    .wallet-section, .action-section {
+      margin-bottom: 30px;
+    }
+    h2 {
+      color: #555;
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+    button {
+      background-color: #5546ff;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      margin: 5px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover {
+      background-color: #4435ee;
+    }
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    .input-group {
+      margin: 15px 0;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #555;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-family: monospace;
+    }
+    #status {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f0f0f0;
+      border-radius: 4px;
+      min-height: 50px;
+      word-wrap: break-word;
+    }
+    .status-success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .status-error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Non-Addr Held Device Sig Verifier</h1>
+    
+    <div class="wallet-section">
+      <h2>Connect Wallet</h2>
+      <button id="connect-stacks">Connect Wallet (Stacks Connect)</button>
+      <button id="connect-walletkit">Connect Wallet (WalletKit)</button>
+      <button id="connect-appkit">Connect Wallet (AppKit)</button>
+    </div>
+
+    <div class="action-section">
+      <h2>Register Key</h2>
+      <div class="input-group">
+        <label for="register-key-input">Key (33 bytes hex):</label>
+        <input type="text" id="register-key-input" placeholder="0x02..." maxlength="68">
+      </div>
+      <button id="register-key-btn">Register Key</button>
+    </div>
+
+    <div class="action-section">
+      <h2>Unregister Key</h2>
+      <div class="input-group">
+        <label for="unregister-key-input">Key (33 bytes hex):</label>
+        <input type="text" id="unregister-key-input" placeholder="0x02..." maxlength="68">
+      </div>
+      <button id="unregister-key-btn">Unregister Key</button>
+    </div>
+
+    <div id="status">Status: Not connected</div>
+  </div>
+
+  <script type="module" src="/main.ts"></script>
+</body>
+</html>

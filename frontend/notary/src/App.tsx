@@ -137,6 +137,44 @@ function App() {
     }
   }
 
+  async function connectWalletKit() {
+    try {
+      const web3Wallet = await Web3Wallet.init({
+        core: {
+          projectId: WALLET_CONNECT_PROJECT_ID
+        },
+        metadata: {
+          name: 'Notary',
+          description: 'Notary Frontend',
+          url: window.location.origin,
+          icons: []
+        }
+      })
+      console.log('WalletKit initialized')
+    } catch (error) {
+      console.error('Failed to initialize WalletKit:', error)
+    }
+  }
+
+  async function connectAppKit() {
+    try {
+      const appKit = createAppKit({
+        projectId: WALLET_CONNECT_PROJECT_ID,
+        chains: [],
+        metadata: {
+          name: 'Notary',
+          description: 'Notary Frontend',
+          url: window.location.origin,
+          icons: []
+        }
+      })
+      appKit.open()
+      console.log('AppKit initialized')
+    } catch (error) {
+      console.error('Failed to initialize AppKit:', error)
+    }
+  }
+
   // Disconnect wallet
   async function disconnectWallet() {
     disconnect()
@@ -582,9 +620,17 @@ function App() {
               <br />
               <small>Supports Leather, Xverse, and WalletConnect-compatible wallets via @stacks/connect</small>
             </p>
-            <button onClick={connectWallet} className="connect-btn">
-              Connect Wallet
-            </button>
+            <div className="wallet-buttons">
+              <button className="connect-btn" onClick={connectWallet}>
+                Connect (@stacks/connect)
+              </button>
+              <button className="connect-btn" onClick={connectWalletKit}>
+                Connect (WalletKit)
+              </button>
+              <button className="connect-btn" onClick={connectAppKit}>
+                Connect (AppKit)
+              </button>
+            </div>
           </div>
         )}
       </div>

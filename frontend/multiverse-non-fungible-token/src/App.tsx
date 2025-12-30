@@ -11,6 +11,8 @@ import {
   tupleCV,
   fetchCallReadOnlyFunction,
 } from '@stacks/transactions'
+import { createAppKit } from '@reown/appkit'
+import { Web3Wallet } from '@walletconnect/web3wallet'
 import { useState, useEffect, useCallback } from 'react'
 
 const CONTRACT_ADDRESS = import.meta.env.VITE_MULTIVERSE_NON_FUNGIBLE_TOKEN_CONTRACT_ADDRESS?.split('.')[0] || ''
@@ -101,6 +103,44 @@ function App() {
     setUserAddress('')
     setTokens([])
     setTokenCount(0)
+  }
+
+  async function connectWalletKit() {
+    try {
+      const web3Wallet = await Web3Wallet.init({
+        core: {
+          projectId: WALLET_CONNECT_PROJECT_ID
+        },
+        metadata: {
+          name: 'Multiverse Non-Fungible Token',
+          description: 'Multiverse Non-Fungible Token Frontend',
+          url: window.location.origin,
+          icons: []
+        }
+      })
+      setMessage({ type: 'success', text: 'WalletKit initialized' })
+    } catch (error) {
+      setMessage({ type: 'error', text: 'Failed to initialize WalletKit' })
+    }
+  }
+
+  async function connectAppKit() {
+    try {
+      const appKit = createAppKit({
+        projectId: WALLET_CONNECT_PROJECT_ID,
+        chains: [],
+        metadata: {
+          name: 'Multiverse Non-Fungible Token',
+          description: 'Multiverse Non-Fungible Token Frontend',
+          url: window.location.origin,
+          icons: []
+        }
+      })
+      appKit.open()
+      setMessage({ type: 'success', text: 'AppKit initialized' })
+    } catch (error) {
+      setMessage({ type: 'error', text: 'Failed to initialize AppKit' })
+    }
   }
 
   const loadContractInfo = useCallback(async () => {
@@ -350,9 +390,17 @@ function App() {
             <p className="connect-info">
               Connect your wallet to interact with the Multiverse NFT contract
             </p>
-            <button className="connect-btn" onClick={connectWallet}>
-              Connect Wallet
-            </button>
+            <div className="wallet-buttons">
+              <button className="connect-btn" onClick={connectWallet}>
+                Connect (@stacks/connect)
+              </button>
+              <button className="connect-btn" onClick={connectWalletKit}>
+                Connect (WalletKit)
+              </button>
+              <button className="connect-btn" onClick={connectAppKit}>
+                Connect (AppKit)
+              </button>
+            </div>
           </div>
         ) : (
           <div className="connected">

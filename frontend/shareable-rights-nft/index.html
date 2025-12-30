@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shareable Rights NFT</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: white;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2.5rem;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    .wallet-section {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+    button:active {
+      transform: translateY(0);
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .input-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+      color: #333;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    .status {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 14px;
+      display: none;
+    }
+    .status.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+      display: block;
+    }
+    .status.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+      display: block;
+    }
+    .status.info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+      display: block;
+    }
+    h2 {
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+    }
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+    #walletAddress {
+      text-align: center;
+      color: #667eea;
+      font-weight: 600;
+      margin-top: 15px;
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Shareable Rights NFT</h1>
+    
+    <div class="card">
+      <h2>Connect Wallet</h2>
+      <div class="wallet-section">
+        <button id="connectStacksWallet">Connect Stacks Wallet</button>
+        <button id="connectWalletConnect">Connect WalletConnect</button>
+        <button id="connectReown">Connect Reown AppKit</button>
+      </div>
+      <div id="walletAddress"></div>
+      <div id="connectionStatus" class="status"></div>
+    </div>
+
+    <div class="card">
+      <h2>Mint NFT</h2>
+      <div class="input-group">
+        <label for="mintRecipient">Recipient Address</label>
+        <input type="text" id="mintRecipient" placeholder="SP..." />
+      </div>
+      <div class="form-actions">
+        <button id="mintBtn">Mint</button>
+      </div>
+      <div id="mintStatus" class="status"></div>
+    </div>
+
+    <div class="card">
+      <h2>Set Privilege</h2>
+      <div class="input-group">
+        <label for="privilegeTokenId">Token ID</label>
+        <input type="number" id="privilegeTokenId" placeholder="1" />
+      </div>
+      <div class="input-group">
+        <label for="privilegeDelegate">Delegate Address</label>
+        <input type="text" id="privilegeDelegate" placeholder="SP..." />
+      </div>
+      <div class="input-group">
+        <label for="privilegeRight">Right (max 64 characters)</label>
+        <input type="text" id="privilegeRight" placeholder="view" maxlength="64" />
+      </div>
+      <div class="input-group">
+        <label for="privilegeCan">Can Access</label>
+        <select id="privilegeCan">
+          <option value="true">True</option>
+          <option value="false">False</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button id="setPrivilegeBtn">Set Privilege</button>
+      </div>
+      <div id="privilegeStatus" class="status"></div>
+    </div>
+
+    <div class="card">
+      <h2>Transfer NFT</h2>
+      <div class="input-group">
+        <label for="transferTokenId">Token ID</label>
+        <input type="number" id="transferTokenId" placeholder="1" />
+      </div>
+      <div class="input-group">
+        <label for="transferSender">Sender Address</label>
+        <input type="text" id="transferSender" placeholder="SP..." />
+      </div>
+      <div class="input-group">
+        <label for="transferRecipient">Recipient Address</label>
+        <input type="text" id="transferRecipient" placeholder="SP..." />
+      </div>
+      <div class="form-actions">
+        <button id="transferBtn">Transfer</button>
+      </div>
+      <div id="transferStatus" class="status"></div>
+    </div>
+  </div>
+
+  <script type="module" src="/main.ts"></script>
+</body>
+</html>
