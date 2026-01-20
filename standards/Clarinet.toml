@@ -421,35 +421,35 @@ path = 'contracts/rwa.clar'
 clarity_version = 4
 epoch = 'latest'
 
-# [contracts.composable-non-fungible-token]
-# path = 'contracts/composable-non-fungible-token.clar'
-# clarity_version = 4
-# epoch = 'latest'
+[contracts.composable-non-fungible-token]
+path = 'contracts/composable-non-fungible-token.clar'
+clarity_version = 4
+epoch = 'latest'
 
-# [contracts.semantic-sbd-token]
-# path = 'contracts/semantic-sbd-token.clar'
-# clarity_version = 4
-# epoch = 'latest'
+[contracts.semantic-sbd-token]
+path = 'contracts/semantic-sbd-token.clar'
+clarity_version = 4
+epoch = 'latest'
 
-# [contracts.multi-redemption-nft]
-# path = 'contracts/multi-redemption-nft.clar'
-# clarity_version = 4
-# epoch = 'latest'
+[contracts.multi-redemption-nft]
+path = 'contracts/multi-redemption-nft.clar'
+clarity_version = 4
+epoch = 'latest'
 
-# [contracts.key-bound-nft]
-# path = 'contracts/key-bound-nft.clar'
-# clarity_version = 4
-# epoch = 'latest'
+[contracts.key-bound-nft]
+path = 'contracts/key-bound-nft.clar'
+clarity_version = 4
+epoch = 'latest'
 
-# [contracts.ai-generated-token]
-# path = 'contracts/ai-generated-token.clar'
-# clarity_version = 4
-# epoch = 'latest'
+[contracts.ai-generated-token]
+path = 'contracts/ai-generated-token.clar'
+clarity_version = 4
+epoch = 'latest'
 
-# [contracts.aggregated-ids-nft]
-# path = 'contracts/aggregated-ids-nft.clar'
-# clarity_version = 4
-# epoch = 'latest'
+[contracts.aggregated-ids-nft]
+path = 'contracts/aggregated-ids-nft.clar'
+clarity_version = 4
+epoch = 'latest'
 
 [contracts.data-nft]
 path = 'contracts/data-nft.clar'
