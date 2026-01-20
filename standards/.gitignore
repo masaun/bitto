@@ -13,6 +13,8 @@ coverage
 *.info
 costs-reports.json
 
+.cache
+
 # Deployment plans
 **/deployments/default.mainnet-plan.yaml
 **/deployments/default.testnet-plan.yaml    
