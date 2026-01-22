@@ -6,122 +6,122 @@ telemetry = true
 cache_dir = "./.cache"
 requirements = []
 
-[contracts.infrastructure-debt]
-path = "contracts/infrastructure-debt.clar"
-clarity_version = 4
-epoch = "latest"
+# [contracts.infrastructure-debt]
+# path = "contracts/infrastructure-debt.clar"
+# clarity_version = 4
+# epoch = "latest"
 
-[contracts.senior-direct-lending]
-path = "contracts/senior-direct-lending.clar"
-clarity_version = 4
-epoch = "latest"
+# [contracts.senior-direct-lending]
+# path = "contracts/senior-direct-lending.clar"
+# clarity_version = 4
+# epoch = "latest"
 
-[contracts.mezzanine-junior-debt]
-path = "contracts/mezzanine-junior-debt.clar"
-clarity_version = 4
-epoch = "latest"
+# [contracts.mezzanine-junior-debt]
+# path = "contracts/mezzanine-junior-debt.clar"
+# clarity_version = 4
+# epoch = "latest"
 
-[contracts.distressed-debt]
-path = "contracts/distressed-debt.clar"
-clarity_version = 4
-epoch = "latest"
+# [contracts.distressed-debt]
+# path = "contracts/distressed-debt.clar"
+# clarity_version = 4
+# epoch = "latest"
 
-[contracts.asset-based-lending]
-path = "contracts/asset-based-lending.clar"
-clarity_version = 4
-epoch = "latest"
+# [contracts.asset-based-lending]
+# path = "contracts/asset-based-lending.clar"
+# clarity_version = 4
+# epoch = "latest"
 
-[contracts.real-estate-finance]
-path = "contracts/real-estate-finance.clar"
-clarity_version = 4
-epoch = "latest"
+# [contracts.real-estate-finance]
+# path = "contracts/real-estate-finance.clar"
+# clarity_version = 4
+# epoch = "latest"
 
-[contracts.venture-debt]
-path = "contracts/venture-debt.clar"
-clarity_version = 4
-epoch = "latest"
+# [contracts.venture-debt]
+# path = "contracts/venture-debt.clar"
+# clarity_version = 4
+# epoch = "latest"
 
-[contracts.specialty-finance]
-path = "contracts/specialty-finance.clar"
-clarity_version = 4
-epoch = "latest"
+# [contracts.specialty-finance]
+# path = "contracts/specialty-finance.clar"
+# clarity_version = 4
+# epoch = "latest"
 
-[contracts.cash-flow-modeling]
-path = "contracts/cash-flow-modeling.clar"
-clarity_version = 4
-epoch = "latest"
+# [contracts.cash-flow-modeling]
+# path = "contracts/cash-flow-modeling.clar"
+# clarity_version = 4
+# epoch = "latest"
 
-[contracts.dcf-valuation-modeling]
-path = "contracts/dcf-valuation-modeling.clar"
-clarity_version = 4
-epoch = "latest"
+# [contracts.dcf-valuation-modeling]
+# path = "contracts/dcf-valuation-modeling.clar"
+# clarity_version = 4
+# epoch = "latest"
 
-[contracts.leveraged-buyout-modeling]
-path = "contracts/leveraged-buyout-modeling.clar"
-clarity_version = 4
-epoch = "latest"
+# [contracts.leveraged-buyout-modeling]
+# path = "contracts/leveraged-buyout-modeling.clar"
+# clarity_version = 4
+# epoch = "latest"
 
-[contracts.virtual-power-plants]
-path = "contracts/virtual-power-plants.clar"
-clarity_version = 4
-epoch = "latest"
+# [contracts.virtual-power-plants]
+# path = "contracts/virtual-power-plants.clar"
+# clarity_version = 4
+# epoch = "latest"
 
-[contracts.microgrids]
-path = "contracts/microgrids.clar"
-clarity_version = 4
-epoch = "latest"
+# [contracts.microgrids]
+# path = "contracts/microgrids.clar"
+# clarity_version = 4
+# epoch = "latest"
 
-[contracts.small-modular-nuclear-reactors]
-path = "contracts/small-modular-nuclear-reactors.clar"
-clarity_version = 4
-epoch = "latest"
+# [contracts.small-modular-nuclear-reactors]
+# path = "contracts/small-modular-nuclear-reactors.clar"
+# clarity_version = 4
+# epoch = "latest"
 
-[contracts.incentives-to-deploy-new-solar-panels]
-path = "contracts/incentives-to-deploy-new-solar-panels.clar"
-clarity_version = 4
-epoch = "latest"
+# [contracts.incentives-to-deploy-new-solar-panels]
+# path = "contracts/incentives-to-deploy-new-solar-panels.clar"
+# clarity_version = 4
+# epoch = "latest"
 
-[contracts.carbon-credit-tokenization]
-path = "contracts/carbon-credit-tokenization.clar"
-clarity_version = 4
-epoch = "latest"
+# [contracts.carbon-credit-tokenization]
+# path = "contracts/carbon-credit-tokenization.clar"
+# clarity_version = 4
+# epoch = "latest"
 
-[contracts.decentralized-cellular-network]
-path = "contracts/decentralized-cellular-network.clar"
-clarity_version = 4
-epoch = "latest"
+# [contracts.decentralized-cellular-network]
+# path = "contracts/decentralized-cellular-network.clar"
+# clarity_version = 4
+# epoch = "latest"
 
-[contracts.decentralized-telecom-network]
-path = "contracts/decentralized-telecom-network.clar"
-clarity_version = 4
-epoch = "latest"
+# [contracts.decentralized-telecom-network]
+# path = "contracts/decentralized-telecom-network.clar"
+# clarity_version = 4
+# epoch = "latest"
 
-[contracts.long-range-wireless-network]
-path = "contracts/long-range-wireless-network.clar"
-clarity_version = 4
-epoch = "latest"
+# [contracts.long-range-wireless-network]
+# path = "contracts/long-range-wireless-network.clar"
+# clarity_version = 4
+# epoch = "latest"
 
-[contracts.fixed-wireless-access-network]
-path = "contracts/fixed-wireless-access-network.clar"
-clarity_version = 4
-epoch = "latest"
+# [contracts.fixed-wireless-access-network]
+# path = "contracts/fixed-wireless-access-network.clar"
+# clarity_version = 4
+# epoch = "latest"
 
-[contracts.decentralizing-food-delivery]
-path = "contracts/decentralizing-food-delivery.clar"
-clarity_version = 4
-epoch = "latest"
+# [contracts.decentralizing-food-delivery]
+# path = "contracts/decentralizing-food-delivery.clar"
+# clarity_version = 4
+# epoch = "latest"
 
-[contracts.decentralized-ridesharing]
-path = "contracts/decentralized-ridesharing.clar"
-clarity_version = 4
-epoch = "latest"
+# [contracts.decentralized-ridesharing]
+# path = "contracts/decentralized-ridesharing.clar"
+# clarity_version = 4
+# epoch = "latest"
 
-[contracts.decentralized-geolocation-network]
-path = "contracts/decentralized-geolocation-network.clar"
-clarity_version = 4
-epoch = "latest"
+# [contracts.decentralized-geolocation-network]
+# path = "contracts/decentralized-geolocation-network.clar"
+# clarity_version = 4
+# epoch = "latest"
 
-[contracts.decentralized-satellite-network]
-path = "contracts/decentralized-satellite-network.clar"
-clarity_version = 4
-epoch = "latest"
+# [contracts.decentralized-satellite-network]
+# path = "contracts/decentralized-satellite-network.clar"
+# clarity_version = 4
+# epoch = "latest"
