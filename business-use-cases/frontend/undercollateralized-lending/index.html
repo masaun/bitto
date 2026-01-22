@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Undercollateralized Lending</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; }
+    button { margin: 5px; padding: 10px 15px; cursor: pointer; }
+    input { margin: 5px; padding: 8px; width: 300px; }
+    .section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+  </style>
+</head>
+<body>
+  <h1>Undercollateralized Lending</h1>
+  <div id="wallet-status"></div>
+  <button id="connect-wallet">Connect Wallet</button>
+  
+  <div class="section">
+    <h2>Create Credit Profile</h2>
+    <button id="create-credit-profile">Create Credit Profile</button>
+  </div>
+
+  <div class="section">
+    <h2>Request Loan</h2>
+    <button id="request-loan">Request Loan</button>
+  </div>
+
+  <div class="section">
+    <h2>Approve Loan</h2>
+    <button id="approve-loan">Approve Loan</button>
+  </div>
+
+  <div class="section">
+    <h2>Repay Loan</h2>
+    <button id="repay-loan">Repay Loan</button>
+  </div>
+
+  <div class="section">
+    <h2>Default Loan</h2>
+    <button id="default-loan">Default Loan</button>
+  </div>
+
+  <div class="section">
+    <h2>Update Credit Score</h2>
+    <button id="update-credit-score">Update Credit Score</button>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

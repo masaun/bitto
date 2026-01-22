@@ -6,6 +6,151 @@ telemetry = true
 cache_dir = "./.cache"
 requirements = []
 
+# [contracts.decentralized-ai-models-network]
+# path = "contracts/decentralized-ai-models-network.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.decentralized-ai-marketplace]
+# path = "contracts/decentralized-ai-marketplace.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.llm-training-network]
+# path = "contracts/llm-training-network.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+[contracts.robot-training-data-marketplace]
+path = "contracts/robot-training-data-marketplace.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.robot-realtime-data-marketplace]
+path = "contracts/robot-realtime-data-marketplace.clar"
+clarity_version = 3
+epoch = "latest"
+
+# [contracts.robot-communication-network]
+# path = "contracts/robot-communication-network.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.robot-payment-network]
+# path = "contracts/robot-payment-network.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.medical-data-exchange-for-enterprise]
+# path = "contracts/medical-data-exchange-for-enterprise.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.clinical-trial-data-marketplace]
+# path = "contracts/clinical-trial-data-marketplace.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.epidemiological-data-marketplace]
+# path = "contracts/epidemiological-data-marketplace.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.decentralized-clinical-trial-network]
+# path = "contracts/decentralized-clinical-trial-network.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.decentralized-scientific-research]
+# path = "contracts/decentralized-scientific-research.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.ip-property-registry]
+# path = "contracts/ip-property-registry.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.decentralized-salesforce]
+# path = "contracts/decentralized-salesforce.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.micropayment-with-revenue-sharing]
+# path = "contracts/micropayment-with-revenue-sharing.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.ip-registry]
+# path = "contracts/ip-registry.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.insurance-for-ip-breach]
+# path = "contracts/insurance-for-ip-breach.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.decentralized-cdn-network]
+# path = "contracts/decentralized-cdn-network.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.decentralized-gpu-network]
+# path = "contracts/decentralized-gpu-network.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.decentralized-advertisement-network]
+# path = "contracts/decentralized-advertisement-network.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.legal-counsel-network]
+# path = "contracts/legal-counsel-network.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.prediction-market]
+# path = "contracts/prediction-market.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.perp-dex-for-prediction-market]
+# path = "contracts/perp-dex-for-prediction-market.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+[contracts.tokenized-equity-platform]
+path = "contracts/tokenized-equity-platform.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.undercollateralized-lending]
+path = "contracts/undercollateralized-lending.clar"
+clarity_version = 3
+epoch = "latest"
+
+# [contracts.onchain-fx-market]
+# path = "contracts/onchain-fx-market.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.onchain-kyc]
+# path = "contracts/onchain-kyc.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.onchain-etf-market]
+# path = "contracts/onchain-etf-market.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.gpu-backed-private-credit]
+# path = "contracts/gpu-backed-private-credit.clar"
+# clarity_version = 3
+# epoch = "latest"
+
 # [contracts.infrastructure-debt]
 # path = "contracts/infrastructure-debt.clar"
 # clarity_version = 4
