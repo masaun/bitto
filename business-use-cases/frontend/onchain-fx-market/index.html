@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Onchain Fx Market</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; }
+    button { margin: 5px; padding: 10px 15px; cursor: pointer; }
+    input { margin: 5px; padding: 8px; width: 300px; }
+    .section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+  </style>
+</head>
+<body>
+  <h1>Onchain Fx Market</h1>
+  <div id="wallet-status"></div>
+  <button id="connect-wallet">Connect Wallet</button>
+  
+  <div class="section">
+    <h2>Create Pair</h2>
+    <button id="create-pair">Create Pair</button>
+  </div>
+
+  <div class="section">
+    <h2>Add Liquidity</h2>
+    <button id="add-liquidity">Add Liquidity</button>
+  </div>
+
+  <div class="section">
+    <h2>Remove Liquidity</h2>
+    <button id="remove-liquidity">Remove Liquidity</button>
+  </div>
+
+  <div class="section">
+    <h2>Create Limit Order</h2>
+    <button id="create-limit-order">Create Limit Order</button>
+  </div>
+
+  <div class="section">
+    <h2>Execute Limit Order</h2>
+    <button id="execute-limit-order">Execute Limit Order</button>
+  </div>
+
+  <div class="section">
+    <h2>Market Swap</h2>
+    <button id="market-swap">Market Swap</button>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prediction Market</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; }
+    button { margin: 5px; padding: 10px 15px; cursor: pointer; }
+    input { margin: 5px; padding: 8px; width: 300px; }
+    .section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+  </style>
+</head>
+<body>
+  <h1>Prediction Market</h1>
+  <div id="wallet-status"></div>
+  <button id="connect-wallet">Connect Wallet</button>
+  
+  <div class="section">
+    <h2>Create Market</h2>
+    <button id="create-market">Create Market</button>
+  </div>
+
+  <div class="section">
+    <h2>Stake Yes</h2>
+    <button id="stake-yes">Stake Yes</button>
+  </div>
+
+  <div class="section">
+    <h2>Stake No</h2>
+    <button id="stake-no">Stake No</button>
+  </div>
+
+  <div class="section">
+    <h2>Resolve Market</h2>
+    <button id="resolve-market">Resolve Market</button>
+  </div>
+
+  <div class="section">
+    <h2>Claim Winnings</h2>
+    <button id="claim-winnings">Claim Winnings</button>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
