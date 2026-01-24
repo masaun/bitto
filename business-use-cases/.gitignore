@@ -43,3 +43,7 @@ generate_frontends.py
 
 # README
 BATCH_SCRIPTS_AND_FRONTENDS.md
+
+# Deloyment scripts
+deploy-batch.sh
+deploy-single.sh

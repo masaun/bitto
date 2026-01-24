@@ -1,0 +1,133 @@
+import { AppConfig, UserSession, showConnect } from '@stacks/connect';
+import { StacksMainnet } from '@stacks/network';
+import { 
+  makeContractCall,
+  broadcastTransaction,
+  AnchorMode,
+  uintCV,
+  principalCV,
+  stringUtf8CV,
+  stringAsciiCV,
+  someCV,
+  noneCV,
+  bufferCV,
+  listCV
+} from '@stacks/transactions';
+
+const appConfig = new AppConfig(['store_write', 'publish_data']);
+const userSession = new UserSession({ appConfig });
+const network = new StacksMainnet();
+
+const contractAddress = process.env.NEXT_PUBLIC_CITY_TOKEN_CONTRACT?.split('.')[0] || '';
+const contractName = process.env.NEXT_PUBLIC_CITY_TOKEN_CONTRACT?.split('.')[1] || 'city-token';
+
+export const connectWallet = () => {
+  showConnect({
+    appDetails: {
+      name: 'City Token',
+      icon: window.location.origin + '/logo.png',
+    },
+    redirectTo: '/',
+    onFinish: () => {
+      window.location.reload();
+    },
+    userSession,
+  });
+};
+
+export const disconnect = () => {
+  userSession.signUserOut('/');
+};
+
+export const transfer = async (...args: any[]) => {
+  const txOptions = {
+    contractAddress,
+    contractName,
+    functionName: 'transfer',
+    functionArgs: [...args],
+    senderKey: userSession.loadUserData().profile.stxAddress.mainnet,
+    network,
+    anchorMode: AnchorMode.Any,
+  };
+
+  const transaction = await makeContractCall(txOptions);
+  return broadcastTransaction(transaction, network);
+};
+
+export const mint = async (...args: any[]) => {
+  const txOptions = {
+    contractAddress,
+    contractName,
+    functionName: 'mint',
+    functionArgs: [...args],
+    senderKey: userSession.loadUserData().profile.stxAddress.mainnet,
+    network,
+    anchorMode: AnchorMode.Any,
+  };
+
+  const transaction = await makeContractCall(txOptions);
+  return broadcastTransaction(transaction, network);
+};
+
+export const stake = async (...args: any[]) => {
+  const txOptions = {
+    contractAddress,
+    contractName,
+    functionName: 'stake',
+    functionArgs: [...args],
+    senderKey: userSession.loadUserData().profile.stxAddress.mainnet,
+    network,
+    anchorMode: AnchorMode.Any,
+  };
+
+  const transaction = await makeContractCall(txOptions);
+  return broadcastTransaction(transaction, network);
+};
+
+export const unstake = async (...args: any[]) => {
+  const txOptions = {
+    contractAddress,
+    contractName,
+    functionName: 'unstake',
+    functionArgs: [...args],
+    senderKey: userSession.loadUserData().profile.stxAddress.mainnet,
+    network,
+    anchorMode: AnchorMode.Any,
+  };
+
+  const transaction = await makeContractCall(txOptions);
+  return broadcastTransaction(transaction, network);
+};
+
+export const create_proposal = async (...args: any[]) => {
+  const txOptions = {
+    contractAddress,
+    contractName,
+    functionName: 'create-proposal',
+    functionArgs: [...args],
+    senderKey: userSession.loadUserData().profile.stxAddress.mainnet,
+    network,
+    anchorMode: AnchorMode.Any,
+  };
+
+  const transaction = await makeContractCall(txOptions);
+  return broadcastTransaction(transaction, network);
+};
+
+export const vote = async (...args: any[]) => {
+  const txOptions = {
+    contractAddress,
+    contractName,
+    functionName: 'vote',
+    functionArgs: [...args],
+    senderKey: userSession.loadUserData().profile.stxAddress.mainnet,
+    network,
+    anchorMode: AnchorMode.Any,
+  };
+
+  const transaction = await makeContractCall(txOptions);
+  return broadcastTransaction(transaction, network);
+};
+
+
+export { userSession };

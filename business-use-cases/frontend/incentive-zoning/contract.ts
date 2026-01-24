@@ -1,0 +1,103 @@
+import { AppConfig, UserSession, showConnect } from '@stacks/connect';
+import { StacksMainnet } from '@stacks/network';
+import { 
+  makeContractCall,
+  broadcastTransaction,
+  AnchorMode,
+  uintCV,
+  principalCV,
+  stringUtf8CV,
+  stringAsciiCV,
+  someCV,
+  noneCV,
+  bufferCV,
+  listCV
+} from '@stacks/transactions';
+
+const appConfig = new AppConfig(['store_write', 'publish_data']);
+const userSession = new UserSession({ appConfig });
+const network = new StacksMainnet();
+
+const contractAddress = process.env.NEXT_PUBLIC_INCENTIVE_ZONING_CONTRACT?.split('.')[0] || '';
+const contractName = process.env.NEXT_PUBLIC_INCENTIVE_ZONING_CONTRACT?.split('.')[1] || 'incentive-zoning';
+
+export const connectWallet = () => {
+  showConnect({
+    appDetails: {
+      name: 'Incentive Zoning',
+      icon: window.location.origin + '/logo.png',
+    },
+    redirectTo: '/',
+    onFinish: () => {
+      window.location.reload();
+    },
+    userSession,
+  });
+};
+
+export const disconnect = () => {
+  userSession.signUserOut('/');
+};
+
+export const create_zone = async (...args: any[]) => {
+  const txOptions = {
+    contractAddress,
+    contractName,
+    functionName: 'create-zone',
+    functionArgs: [...args],
+    senderKey: userSession.loadUserData().profile.stxAddress.mainnet,
+    network,
+    anchorMode: AnchorMode.Any,
+  };
+
+  const transaction = await makeContractCall(txOptions);
+  return broadcastTransaction(transaction, network);
+};
+
+export const submit_proposal = async (...args: any[]) => {
+  const txOptions = {
+    contractAddress,
+    contractName,
+    functionName: 'submit-proposal',
+    functionArgs: [...args],
+    senderKey: userSession.loadUserData().profile.stxAddress.mainnet,
+    network,
+    anchorMode: AnchorMode.Any,
+  };
+
+  const transaction = await makeContractCall(txOptions);
+  return broadcastTransaction(transaction, network);
+};
+
+export const approve_proposal = async (...args: any[]) => {
+  const txOptions = {
+    contractAddress,
+    contractName,
+    functionName: 'approve-proposal',
+    functionArgs: [...args],
+    senderKey: userSession.loadUserData().profile.stxAddress.mainnet,
+    network,
+    anchorMode: AnchorMode.Any,
+  };
+
+  const transaction = await makeContractCall(txOptions);
+  return broadcastTransaction(transaction, network);
+};
+
+export const reject_proposal = async (...args: any[]) => {
+  const txOptions = {
+    contractAddress,
+    contractName,
+    functionName: 'reject-proposal',
+    functionArgs: [...args],
+    senderKey: userSession.loadUserData().profile.stxAddress.mainnet,
+    network,
+    anchorMode: AnchorMode.Any,
+  };
+
+  const transaction = await makeContractCall(txOptions);
+  return broadcastTransaction(transaction, network);
+};
+
+
+export { userSession };

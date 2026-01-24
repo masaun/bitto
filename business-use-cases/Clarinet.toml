@@ -430,3 +430,163 @@ epoch = "latest"
 # path = "contracts/onchain-kya.clar"
 # clarity_version = 3
 # epoch = "latest"
+
+[contracts.kgst-stablecoin]
+path = "contracts/kgst-stablecoin.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.gold-backed-stablecoin]
+path = "contracts/gold-backed-stablecoin.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.cbdc]
+path = "contracts/cbdc.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.tokenized-deposit]
+path = "contracts/tokenized-deposit.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.outcome-linked-public-spending]
+path = "contracts/outcome-linked-public-spending.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.transferable-innovation-across-cities]
+path = "contracts/transferable-innovation-across-cities.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.cross-organizational-service-orchestration]
+path = "contracts/cross-organizational-service-orchestration.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.outcome-based-bond]
+path = "contracts/outcome-based-bond.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.milestone-based-funding]
+path = "contracts/milestone-based-funding.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.programmable-policy-making]
+path = "contracts/programmable-policy-making.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.fractional-investment-fund]
+path = "contracts/fractional-investment-fund.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.cross-agency-coordination]
+path = "contracts/cross-agency-coordination.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.smart-city]
+path = "contracts/smart-city.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.cross-sector-coordination]
+path = "contracts/cross-sector-coordination.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.real-time-service-delivery]
+path = "contracts/real-time-service-delivery.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.multi-actor-funding]
+path = "contracts/multi-actor-funding.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.data-sharing]
+path = "contracts/data-sharing.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.automated-policy-making]
+path = "contracts/automated-policy-making.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.dynamic-zoning]
+path = "contracts/dynamic-zoning.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.municiple-program-execution]
+path = "contracts/municiple-program-execution.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.municiple-bond]
+path = "contracts/municiple-bond.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.outcome-based-vendor-payment]
+path = "contracts/outcome-based-vendor-payment.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.programmable-climate-policy]
+path = "contracts/programmable-climate-policy.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.agentic-state]
+path = "contracts/agentic-state.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.NFT-for-local-art-funding]
+path = "contracts/NFT-for-local-art-funding.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.city-token]
+path = "contracts/city-token.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.tokenized-city-land-nft]
+path = "contracts/tokenized-city-land-nft.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.government-procurement]
+path = "contracts/government-procurement.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.car-title-registry]
+path = "contracts/car-title-registry.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.performance-zoning]
+path = "contracts/performance-zoning.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.incentive-zoning]
+path = "contracts/incentive-zoning.clar"
+clarity_version = 3
+epoch = "latest"
+
+[contracts.form-based-codes]
+path = "contracts/form-based-codes.clar"
+clarity_version = 3
+epoch = "latest"
