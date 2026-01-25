@@ -1,0 +1,22 @@
+{
+  "name": "onchain-kyt-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3029",
+    "build": "next build",
+    "start": "next start -p 3029"
+  },
+  "dependencies": {
+    "@stacks/connect": "^7.8.2",
+    "@stacks/transactions": "^6.13.0",
+    "@stacks/network": "^6.13.0",
+    "next": "14.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^5.3.3",
+    "@types/react": "^18.2.48",
+    "@types/node": "^20.11.5",
+    "@types/react-dom": "^18.2.18"
+  }
+}
