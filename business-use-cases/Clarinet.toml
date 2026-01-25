@@ -21,15 +21,15 @@ requirements = []
 # clarity_version = 3
 # epoch = "latest"
 
-# [contracts.robot-training-data-marketplace]
-# path = "contracts/robot-training-data-marketplace.clar"
-# clarity_version = 3
-# epoch = "latest"
+[contracts.robot-training-data-marketplace]
+path = "contracts/robot-training-data-marketplace.clar"
+clarity_version = 3
+epoch = "latest"
 
-# [contracts.robot-realtime-data-marketplace]
-# path = "contracts/robot-realtime-data-marketplace.clar"
-# clarity_version = 3
-# epoch = "latest"
+[contracts.robot-realtime-data-marketplace]
+path = "contracts/robot-realtime-data-marketplace.clar"
+clarity_version = 3
+epoch = "latest"
 
 # [contracts.robot-communication-network]
 # path = "contracts/robot-communication-network.clar"
@@ -121,15 +121,15 @@ requirements = []
 # clarity_version = 3
 # epoch = "latest"
 
-# [contracts.tokenized-equity-platform]
-# path = "contracts/tokenized-equity-platform.clar"
-# clarity_version = 3
-# epoch = "latest"
+[contracts.tokenized-equity-platform]
+path = "contracts/tokenized-equity-platform.clar"
+clarity_version = 3
+epoch = "latest"
 
-# [contracts.undercollateralized-lending]
-# path = "contracts/undercollateralized-lending.clar"
-# clarity_version = 3
-# epoch = "latest"
+[contracts.undercollateralized-lending]
+path = "contracts/undercollateralized-lending.clar"
+clarity_version = 3
+epoch = "latest"
 
 # [contracts.onchain-fx-market]
 # path = "contracts/onchain-fx-market.clar"
@@ -303,7 +303,7 @@ requirements = []
 
 [contracts.tokenized-stocks-platform]
 path = "contracts/tokenized-stocks-platform.clar"
-clarity_version = 3
+clarity_version = 4
 epoch = "latest"
 
 # [contracts.airline-seat-ticketing-service]
@@ -338,7 +338,7 @@ epoch = "latest"
 
 [contracts.wafer-fabrication-process]
 path = "contracts/wafer-fabrication-process.clar"
-clarity_version = 3
+clarity_version = 4
 epoch = "latest"
 
 # [contracts.chip-atp-process]
@@ -431,162 +431,330 @@ epoch = "latest"
 # clarity_version = 3
 # epoch = "latest"
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 [contracts.kgst-stablecoin]
 path = "contracts/kgst-stablecoin.clar"
-clarity_version = 3
+clarity_version = 4
 epoch = "latest"
 
-[contracts.gold-backed-stablecoin]
-path = "contracts/gold-backed-stablecoin.clar"
-clarity_version = 3
+# [contracts.gold-backed-stablecoin]
+# path = "contracts/gold-backed-stablecoin.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.cbdc]
+# path = "contracts/cbdc.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.tokenized-deposit]
+# path = "contracts/tokenized-deposit.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.outcome-linked-public-spending]
+# path = "contracts/outcome-linked-public-spending.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.transferable-innovation-across-cities]
+# path = "contracts/transferable-innovation-across-cities.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.cross-organizational-service-orchestration]
+# path = "contracts/cross-organizational-service-orchestration.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.outcome-based-bond]
+# path = "contracts/outcome-based-bond.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.milestone-based-funding]
+# path = "contracts/milestone-based-funding.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.programmable-policy-making]
+# path = "contracts/programmable-policy-making.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.fractional-investment-fund]
+# path = "contracts/fractional-investment-fund.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.cross-agency-coordination]
+# path = "contracts/cross-agency-coordination.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.smart-city]
+# path = "contracts/smart-city.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.cross-sector-coordination]
+# path = "contracts/cross-sector-coordination.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.real-time-service-delivery]
+# path = "contracts/real-time-service-delivery.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.multi-actor-funding]
+# path = "contracts/multi-actor-funding.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.data-sharing]
+# path = "contracts/data-sharing.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.automated-policy-making]
+# path = "contracts/automated-policy-making.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.dynamic-zoning]
+# path = "contracts/dynamic-zoning.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.municiple-program-execution]
+# path = "contracts/municiple-program-execution.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.municiple-bond]
+# path = "contracts/municiple-bond.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.outcome-based-vendor-payment]
+# path = "contracts/outcome-based-vendor-payment.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.programmable-climate-policy]
+# path = "contracts/programmable-climate-policy.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.agentic-state]
+# path = "contracts/agentic-state.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.NFT-for-local-art-funding]
+# path = "contracts/NFT-for-local-art-funding.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.city-token]
+# path = "contracts/city-token.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.tokenized-city-land-nft]
+# path = "contracts/tokenized-city-land-nft.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.government-procurement]
+# path = "contracts/government-procurement.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.car-title-registry]
+# path = "contracts/car-title-registry.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.performance-zoning]
+# path = "contracts/performance-zoning.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.incentive-zoning]
+# path = "contracts/incentive-zoning.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+# [contracts.form-based-codes]
+# path = "contracts/form-based-codes.clar"
+# clarity_version = 3
+# epoch = "latest"
+
+[contracts.automated-leadership-team-in-company]
+path = "contracts/automated-leadership-team-in-company.clar"
+clarity_version = 4
 epoch = "latest"
 
-[contracts.cbdc]
-path = "contracts/cbdc.clar"
-clarity_version = 3
+[contracts.auto-directors-board-members]
+path = "contracts/automated-directors-and-board-members-in-company.clar"
+clarity_version = 4
 epoch = "latest"
 
-[contracts.tokenized-deposit]
-path = "contracts/tokenized-deposit.clar"
-clarity_version = 3
+[contracts.auto-ceo]
+path = "contracts/automated-chief-executive-officer-in-company.clar"
+clarity_version = 4
 epoch = "latest"
 
-[contracts.outcome-linked-public-spending]
-path = "contracts/outcome-linked-public-spending.clar"
-clarity_version = 3
+[contracts.auto-cto]
+path = "contracts/automated-chief-technical-officer-in-company.clar"
+clarity_version = 4
 epoch = "latest"
 
-[contracts.transferable-innovation-across-cities]
-path = "contracts/transferable-innovation-across-cities.clar"
-clarity_version = 3
+[contracts.auto-cmo]
+path = "contracts/automated-chief-marketing-officer-in-company.clar"
+clarity_version = 4
 epoch = "latest"
 
-[contracts.cross-organizational-service-orchestration]
-path = "contracts/cross-organizational-service-orchestration.clar"
-clarity_version = 3
+[contracts.auto-coo]
+path = "contracts/automated-chief-operating-officer-in-company.clar"
+clarity_version = 4
 epoch = "latest"
 
-[contracts.outcome-based-bond]
-path = "contracts/outcome-based-bond.clar"
-clarity_version = 3
+[contracts.secure-drop-whistleblower]
+path = "contracts/secure-drop-style-whistleblowing-platform.clar"
+clarity_version = 4
 epoch = "latest"
 
-[contracts.milestone-based-funding]
-path = "contracts/milestone-based-funding.clar"
-clarity_version = 3
+[contracts.globa-leaks-whistleblower]
+path = "contracts/globa-leaks-style-whistleblowing-platform.clar"
+clarity_version = 4
 epoch = "latest"
 
-[contracts.programmable-policy-making]
-path = "contracts/programmable-policy-making.clar"
-clarity_version = 3
+[contracts.wiki-leaks-whistleblower]
+path = "contracts/wiki-leaks-style-whistleblowing-platform.clar"
+clarity_version = 4
 epoch = "latest"
 
-[contracts.fractional-investment-fund]
-path = "contracts/fractional-investment-fund.clar"
-clarity_version = 3
+[contracts.gap-style-whistleblowing-platform]
+path = "contracts/gap-style-whistleblowing-platform.clar"
+clarity_version = 4
 epoch = "latest"
 
-[contracts.cross-agency-coordination]
-path = "contracts/cross-agency-coordination.clar"
-clarity_version = 3
+[contracts.alacs-style-whistleblowing-platform]
+path = "contracts/alacs-style-whistleblowing-platform.clar"
+clarity_version = 4
 epoch = "latest"
 
-[contracts.smart-city]
-path = "contracts/smart-city.clar"
-clarity_version = 3
+[contracts.navex-global-whistleblower]
+path = "contracts/navex-global-style-whistleblowing-platform.clar"
+clarity_version = 4
 epoch = "latest"
 
-[contracts.cross-sector-coordination]
-path = "contracts/cross-sector-coordination.clar"
-clarity_version = 3
+[contracts.convercent-whistleblower]
+path = "contracts/convercent-style-whistleblowing-platform.clar"
+clarity_version = 4
 epoch = "latest"
 
-[contracts.real-time-service-delivery]
-path = "contracts/real-time-service-delivery.clar"
-clarity_version = 3
+[contracts.sec-whistleblower]
+path = "contracts/sec-whistleblower-program-style-whistleblowing-platform.clar"
+clarity_version = 4
 epoch = "latest"
 
-[contracts.multi-actor-funding]
-path = "contracts/multi-actor-funding.clar"
-clarity_version = 3
+[contracts.cftc-whistleblower]
+path = "contracts/cftc-whistleblower-program-style-whistleblowing-platform.clar"
+clarity_version = 4
 epoch = "latest"
 
-[contracts.data-sharing]
-path = "contracts/data-sharing.clar"
-clarity_version = 3
+[contracts.osha-whistleblower]
+path = "contracts/osha-whistleblower-protection-program-style-whistleblowing-platform.clar"
+clarity_version = 4
 epoch = "latest"
 
-[contracts.automated-policy-making]
-path = "contracts/automated-policy-making.clar"
-clarity_version = 3
+[contracts.flnra-tips-whistleblower]
+path = "contracts/flnra-tips-style-whistleblowing-platform.clar"
+clarity_version = 4
 epoch = "latest"
 
-[contracts.dynamic-zoning]
-path = "contracts/dynamic-zoning.clar"
-clarity_version = 3
+[contracts.fca-style-whistleblowing-platform]
+path = "contracts/fca-style-whistleblowing-platform.clar"
+clarity_version = 4
 epoch = "latest"
 
-[contracts.municiple-program-execution]
-path = "contracts/municiple-program-execution.clar"
-clarity_version = 3
+[contracts.hhs-oig-whistleblower]
+path = "contracts/hhs-oig-hotline-style-whistleblowing-platform.clar"
+clarity_version = 4
 epoch = "latest"
 
-[contracts.municiple-bond]
-path = "contracts/municiple-bond.clar"
-clarity_version = 3
+[contracts.nhs-speak-up-whistleblower]
+path = "contracts/nhs-speak-up-guardians-style-whistleblowing-platform.clar"
+clarity_version = 4
 epoch = "latest"
 
-[contracts.outcome-based-vendor-payment]
-path = "contracts/outcome-based-vendor-payment.clar"
-clarity_version = 3
+[contracts.keybase-style-whistleblowing-platform]
+path = "contracts/keybase-style-whistleblowing-platform.clar"
+clarity_version = 4
 epoch = "latest"
 
-[contracts.programmable-climate-policy]
-path = "contracts/programmable-climate-policy.clar"
-clarity_version = 3
+[contracts.tor-onion-style-whistleblowing-platform]
+path = "contracts/tor-onion-style-whistleblowing-platform.clar"
+clarity_version = 4
 epoch = "latest"
 
-[contracts.agentic-state]
-path = "contracts/agentic-state.clar"
-clarity_version = 3
+[contracts.allvoices-style-whistleblowing-platform]
+path = "contracts/allvoices-style-whistleblowing-platform.clar"
+clarity_version = 4
 epoch = "latest"
 
-[contracts.NFT-for-local-art-funding]
-path = "contracts/NFT-for-local-art-funding.clar"
-clarity_version = 3
+[contracts.faceup-style-whistleblowing-platform]
+path = "contracts/faceup-style-whistleblowing-platform.clar"
+clarity_version = 4
 epoch = "latest"
 
-[contracts.city-token]
-path = "contracts/city-token.clar"
-clarity_version = 3
+[contracts.automated-asset-management-firm]
+path = "contracts/automated-asset-management-firm.clar"
+clarity_version = 4
 epoch = "latest"
 
-[contracts.tokenized-city-land-nft]
-path = "contracts/tokenized-city-land-nft.clar"
-clarity_version = 3
+[contracts.esim-activation-manager]
+path = "contracts/esim-activation-manager.clar"
+clarity_version = 4
 epoch = "latest"
 
-[contracts.government-procurement]
-path = "contracts/government-procurement.clar"
-clarity_version = 3
+[contracts.white-labeled-stablecoin-issurance]
+path = "contracts/white-labeled-stablecoin-issurance.clar"
+clarity_version = 4
 epoch = "latest"
 
-[contracts.car-title-registry]
-path = "contracts/car-title-registry.clar"
-clarity_version = 3
+[contracts.buy-now-pay-later]
+path = "contracts/buy-now-pay-later.clar"
+clarity_version = 4
 epoch = "latest"
 
-[contracts.performance-zoning]
-path = "contracts/performance-zoning.clar"
-clarity_version = 3
+[contracts.token-curation-platform]
+path = "contracts/token-curation-platform.clar"
+clarity_version = 4
 epoch = "latest"
 
-[contracts.incentive-zoning]
-path = "contracts/incentive-zoning.clar"
-clarity_version = 3
-epoch = "latest"
-
-[contracts.form-based-codes]
-path = "contracts/form-based-codes.clar"
-clarity_version = 3
+[contracts.token-launchpad]
+path = "contracts/token-launchpad.clar"
+clarity_version = 4
 epoch = "latest"
