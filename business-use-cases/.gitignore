@@ -47,3 +47,13 @@ BATCH_SCRIPTS_AND_FRONTENDS.md
 # Deloyment scripts
 deploy-batch.sh
 deploy-single.sh
+check-pending-transactions.sh
+deploy-with-delays.sh
+deploy-remaining-one-by-one.sh
+check-deployed-contracts.sh
+DEPLOYMENT_GUIDE.md
+
+deployments/*.yaml
+
+# MD.file
+*.md

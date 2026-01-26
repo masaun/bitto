@@ -36,7 +36,7 @@
 )
 
 (define-map data-packets
-  {stream-id: uint, block-height: uint}
+  {stream-id: uint, stacks-block-height: uint}
   {
     data-hash: (buff 32),
     timestamp: uint,
@@ -112,7 +112,7 @@
     )
     (asserts! (is-eq tx-sender (get provider stream)) err-unauthorized)
     (asserts! (get active stream) err-stream-inactive)
-    (map-set data-packets {stream-id: stream-id, block-height: stacks-block-height}
+    (map-set data-packets {stream-id: stream-id, stacks-block-height: stacks-block-height}
       {
         data-hash: data-hash,
         timestamp: stacks-block-height,
@@ -167,7 +167,7 @@
 )
 
 (define-read-only (get-data-packet (stream-id uint) (height uint))
-  (ok (map-get? data-packets {stream-id: stream-id, block-height: height}))
+  (ok (map-get? data-packets {stream-id: stream-id, stacks-block-height: height}))
 )
 
 (define-read-only (get-provider-streams (provider principal))

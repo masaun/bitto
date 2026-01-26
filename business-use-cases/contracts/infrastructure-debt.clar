@@ -30,7 +30,7 @@
   {debt-id: uint, payment-id: uint}
   {
     amount: uint,
-    block-height: uint,
+    stacks-block-height: uint,
     payment-type: (string-ascii 20)
   }
 )
@@ -89,7 +89,7 @@
     (map-set payments {debt-id: debt-id, payment-id: payment-id}
       {
         amount: amount,
-        block-height: stacks-block-height,
+        stacks-block-height: stacks-block-height,
         payment-type: "payment"
       }
     )
@@ -120,7 +120,7 @@
       (map-set payments {debt-id: debt-id, payment-id: payment-id}
         {
           amount: total-due,
-          block-height: stacks-block-height,
+          stacks-block-height: stacks-block-height,
           payment-type: "full-repayment"
         }
       )
