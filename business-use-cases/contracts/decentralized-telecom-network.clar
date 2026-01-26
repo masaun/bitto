@@ -62,7 +62,7 @@
       revenue-pool: u0,
       quality-score: quality,
       active: true,
-      created-block: stacks-block-height
+      created-block: stacks-stacks-block-height
     })
     (map-set node-counter provider-id u0)
     (map-set operator-providers tx-sender
@@ -107,7 +107,7 @@
       monthly-fee: fee,
       data-allowance: allowance,
       data-used: u0,
-      start-block: stacks-block-height,
+      start-block: stacks-stacks-block-height,
       active: true
     })
     (map-set telecom-providers provider-id (merge provider {

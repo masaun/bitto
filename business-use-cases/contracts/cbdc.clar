@@ -57,7 +57,7 @@
 (define-private (check-daily-limit (account principal) (amount uint))
   (let (
     (limit (get-daily-limit account))
-    (current-day (/ stacks-block-height u144))
+    (current-day (/ stacks-stacks-block-height u144))
     (spent-data (default-to {amount: u0, day: u0} (map-get? daily-spent account)))
   )
     (if (is-eq limit u0)

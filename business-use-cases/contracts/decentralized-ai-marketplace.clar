@@ -72,7 +72,7 @@
     (try! (stx-transfer? (get price listing) tx-sender (get seller listing)))
     (map-set purchases {buyer: tx-sender, listing-id: listing-id}
       {
-        purchase-block: stacks-block-height,
+        purchase-block: stacks-stacks-block-height,
         access-granted: true,
         rated: false
       }

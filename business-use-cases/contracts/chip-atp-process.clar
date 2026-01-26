@@ -42,7 +42,7 @@
         total-chips: total-chips,
         tested-chips: u0,
         passed-chips: u0,
-        started-at: stacks-block-height,
+        started-at: stacks-stacks-block-height,
         completed-at: u0,
         status: "testing",
         test-operator: tx-sender
@@ -74,7 +74,7 @@
         temperature-test: temp-pass,
         power-consumption-test: power-pass,
         overall-pass: overall-pass,
-        tested-at: stacks-block-height
+        tested-at: stacks-stacks-block-height
       }
     )
     (ok (map-set test-batches
@@ -92,7 +92,7 @@
     (asserts! (is-eq tx-sender (get test-operator batch)) ERR-NOT-AUTHORIZED)
     (ok (map-set test-batches
       { batch-id: batch-id }
-      (merge batch { status: "completed", completed-at: stacks-block-height })
+      (merge batch { status: "completed", completed-at: stacks-stacks-block-height })
     ))
   )
 )

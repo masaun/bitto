@@ -24,7 +24,7 @@
 (define-public (report-incident (content-hash (buff 32)) (category (string-ascii 50)) (priority uint))
   (let ((incident-id (+ (var-get incident-count) u1)))
     (asserts! (<= priority u5) ERR_INVALID_PARAMS)
-    (map-set incident-reports incident-id {hash: content-hash, category: category, priority: priority, timestamp: stacks-block-height, escalated: false, status: "reported"})
+    (map-set incident-reports incident-id {hash: content-hash, category: category, priority: priority, timestamp: stacks-stacks-block-height, escalated: false, status: "reported"})
     (var-set incident-count incident-id)
     (ok incident-id)))
 

@@ -67,7 +67,7 @@
         total-base-liquidity: u0,
         total-quote-liquidity: u0,
         active: true,
-        last-update: stacks-block-height
+        last-update: stacks-stacks-block-height
       }
     )
     (var-set pair-nonce pair-id)
@@ -128,7 +128,7 @@
         limit-price: limit-price,
         filled: false,
         cancelled: false,
-        created-at: stacks-block-height
+        created-at: stacks-stacks-block-height
       }
     )
     (map-set trader-orders tx-sender
@@ -152,7 +152,7 @@
       (begin
         (asserts! (>= (get total-base-liquidity pair) base-amount) err-insufficient-liquidity)
         (try! (stx-transfer? quote-amount tx-sender (as-contract tx-sender)))
-        (try! (as-contract (stx-transfer? base-amount tx-sender tx-sender)))
+        (try! (stx-transfer? base-amount tx-sender (as-contract tx-sender)))
         (map-set fx-pairs pair-id (merge pair {
           total-base-liquidity: (- (get total-base-liquidity pair) base-amount),
           total-quote-liquidity: (+ (get total-quote-liquidity pair) quote-amount)
@@ -161,7 +161,7 @@
       (begin
         (asserts! (>= (get total-quote-liquidity pair) quote-amount) err-insufficient-liquidity)
         (try! (stx-transfer? base-amount tx-sender (as-contract tx-sender)))
-        (try! (as-contract (stx-transfer? quote-amount tx-sender tx-sender)))
+        (try! (stx-transfer? quote-amount tx-sender (as-contract tx-sender)))
         (map-set fx-pairs pair-id (merge pair {
           total-base-liquidity: (+ (get total-base-liquidity pair) base-amount),
           total-quote-liquidity: (- (get total-quote-liquidity pair) quote-amount)
@@ -180,7 +180,7 @@
     (asserts! (is-eq tx-sender contract-owner) err-owner-only)
     (map-set fx-pairs pair-id (merge pair {
       exchange-rate: new-rate,
-      last-update: stacks-block-height
+      last-update: stacks-stacks-block-height
     }))
     (ok true)
   )

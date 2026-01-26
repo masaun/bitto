@@ -24,7 +24,7 @@
 (define-public (submit-anonymous-report (content-hash (buff 32)) (category (string-ascii 50)) (priority uint))
   (let ((report-id (+ (var-get report-count) u1)))
     (asserts! (<= priority u5) ERR_INVALID_PARAMS)
-    (map-set anonymous-reports report-id {hash: content-hash, category: category, priority: priority, timestamp: stacks-block-height, resolved: false})
+    (map-set anonymous-reports report-id {hash: content-hash, category: category, priority: priority, timestamp: stacks-stacks-block-height, resolved: false})
     (var-set report-count report-id)
     (ok report-id)))
 
@@ -39,7 +39,7 @@
   (let ((investigator-data (unwrap! (map-get? investigators tx-sender) ERR_UNAUTHORIZED)))
     (asserts! (is-some (map-get? anonymous-reports report-id)) ERR_NOT_FOUND)
     (asserts! (get active investigator-data) ERR_UNAUTHORIZED)
-    (ok (map-set investigation-notes {report-id: report-id, investigator: tx-sender} {note-hash: note-hash, added-at: stacks-block-height}))))
+    (ok (map-set investigation-notes {report-id: report-id, investigator: tx-sender} {note-hash: note-hash, added-at: stacks-stacks-block-height}))))
 
 (define-public (resolve-report (report-id uint))
   (let ((report (unwrap! (map-get? anonymous-reports report-id) ERR_NOT_FOUND)))

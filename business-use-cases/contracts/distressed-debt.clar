@@ -53,7 +53,7 @@
       distress-type: distress-type,
       acquired: false,
       resolved: false,
-      list-block: stacks-block-height
+      list-block: stacks-stacks-block-height
     })
     (map-set owner-assets tx-sender
       (unwrap-panic (as-max-len? (append (default-to (list) (map-get? owner-assets tx-sender)) asset-id) u50)))
@@ -71,7 +71,7 @@
     (asserts! (> amount u0) err-invalid-amount)
     (map-set bids {asset-id: asset-id, bidder: tx-sender} {
       bid-amount: amount,
-      bid-block: stacks-block-height,
+      bid-block: stacks-stacks-block-height,
       accepted: false
     })
     (map-set asset-bidders asset-id

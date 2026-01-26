@@ -67,7 +67,7 @@
     (let ((current-stake (default-to {amount: u0, start-height: u0, rewards: u0} (map-get? stakes tx-sender))))
       (ok (map-set stakes tx-sender {
         amount: (+ (get amount current-stake) amount),
-        start-height: stacks-block-height,
+        start-height: stacks-stacks-block-height,
         rewards: (get rewards current-stake)
       })))))
 
@@ -85,7 +85,7 @@
       description: description,
       yes-votes: u0,
       no-votes: u0,
-      end-height: (+ stacks-block-height u1440),
+      end-height: (+ stacks-stacks-block-height u1440),
       executed: false
     })
     (var-set proposal-nonce proposal-id)
@@ -97,7 +97,7 @@
     (stake-data (unwrap! (map-get? stakes tx-sender) err-not-authorized))
     (vote-weight (get amount stake-data))
   )
-    (asserts! (< stacks-block-height (get end-height proposal)) err-not-authorized)
+    (asserts! (< stacks-stacks-block-height (get end-height proposal)) err-not-authorized)
     (if vote-yes
       (ok (map-set proposals proposal-id 
         (merge proposal {yes-votes: (+ (get yes-votes proposal) vote-weight)})))

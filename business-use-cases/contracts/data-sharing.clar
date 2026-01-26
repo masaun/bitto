@@ -33,7 +33,7 @@
 (define-read-only (has-access (dataset-id uint) (requester principal))
   (let ((permission (map-get? access-permissions {dataset-id: dataset-id, requester: requester})))
     (match permission
-      perm (and (get granted perm) (> (get expiry perm) stacks-block-height))
+      perm (and (get granted perm) (> (get expiry perm) stacks-stacks-block-height))
       false)))
 
 (define-public (register-dataset (name (string-ascii 100)) (data-hash (buff 32)) (public bool) (category (string-ascii 50)))
@@ -64,7 +64,7 @@
     (asserts! (is-eq tx-sender (get owner dataset)) err-not-authorized)
     (ok (map-set access-permissions {dataset-id: dataset-id, requester: requester} {
       granted: true,
-      expiry: (+ stacks-block-height duration)
+      expiry: (+ stacks-stacks-block-height duration)
     }))))
 
 (define-public (revoke-access (dataset-id uint) (requester principal))

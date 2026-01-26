@@ -48,7 +48,7 @@
       project-description: project-description,
       compliance-checklist: compliance-checklist,
       status: "pending",
-      submitted-at: stacks-block-height
+      submitted-at: stacks-stacks-block-height
     }))))
 
 (define-public (review-application (code-id uint) (applicant principal) (status (string-ascii 20)))

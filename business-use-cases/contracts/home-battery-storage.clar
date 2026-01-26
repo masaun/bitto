@@ -43,8 +43,8 @@
         capacity-kwh: capacity,
         current-charge: u0,
         charge-cycles: u0,
-        installation-date: stacks-block-height,
-        warranty-expires: (+ stacks-block-height warranty-period),
+        installation-date: stacks-stacks-block-height,
+        warranty-expires: (+ stacks-stacks-block-height warranty-period),
         status: "active"
       }
     )
@@ -62,7 +62,7 @@
       {
         transaction-type: "charge",
         energy-amount: amount,
-        timestamp: stacks-block-height,
+        timestamp: stacks-stacks-block-height,
         grid-connection: true,
         price-per-kwh: u0
       }
@@ -83,7 +83,7 @@
       {
         transaction-type: "discharge",
         energy-amount: amount,
-        timestamp: stacks-block-height,
+        timestamp: stacks-stacks-block-height,
         grid-connection: true,
         price-per-kwh: u0
       }

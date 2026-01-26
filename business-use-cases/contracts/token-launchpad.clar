@@ -29,7 +29,7 @@
 (define-public (create-launch (project-name (string-utf8 100)) (token-contract principal) (total-supply uint) (price uint) (duration uint))
   (let ((launch-id (+ (var-get launch-count) u1)))
     (asserts! (and (> total-supply u0) (> price u0) (> duration u0)) ERR_INVALID_PARAMS)
-    (map-set token-launches launch-id {project-name: project-name, token-contract: token-contract, creator: tx-sender, total-supply: total-supply, price: price, raised: u0, start-block: stacks-block-height, end-block: (+ stacks-block-height duration), status: "active"})
+    (map-set token-launches launch-id {project-name: project-name, token-contract: token-contract, creator: tx-sender, total-supply: total-supply, price: price, raised: u0, start-block: stacks-stacks-block-height, end-block: (+ stacks-stacks-block-height duration), status: "active"})
     (var-set launch-count launch-id)
     (ok launch-id)))
 
@@ -46,7 +46,7 @@
                                              (map-get? participants {launch-id: launch-id, participant: tx-sender}))))
     (asserts! (get verified kyc) ERR_UNAUTHORIZED)
     (asserts! (is-eq (get status launch) "active") ERR_INVALID_PARAMS)
-    (asserts! (<= stacks-block-height (get end-block launch)) ERR_LAUNCH_ENDED)
+    (asserts! (<= stacks-stacks-block-height (get end-block launch)) ERR_LAUNCH_ENDED)
     (asserts! (> contribution u0) ERR_INVALID_PARAMS)
     (map-set participants {launch-id: launch-id, participant: tx-sender} 
       {contribution: (+ (get contribution existing-participation) contribution), 
@@ -57,7 +57,7 @@
 (define-public (finalize-launch (launch-id uint))
   (let ((launch (unwrap! (map-get? token-launches launch-id) ERR_NOT_FOUND)))
     (asserts! (is-eq tx-sender (get creator launch)) ERR_UNAUTHORIZED)
-    (asserts! (> stacks-block-height (get end-block launch)) ERR_INVALID_PARAMS)
+    (asserts! (> stacks-stacks-block-height (get end-block launch)) ERR_INVALID_PARAMS)
     (ok (map-set token-launches launch-id (merge launch {status: "finalized"})))))
 
 (define-public (create-vesting (launch-id uint) (beneficiary principal) (total-amount uint) (duration uint))
@@ -65,11 +65,11 @@
     (asserts! (is-eq tx-sender (get creator launch)) ERR_UNAUTHORIZED)
     (asserts! (and (> total-amount u0) (> duration u0)) ERR_INVALID_PARAMS)
     (ok (map-set vesting-schedules {launch-id: launch-id, beneficiary: beneficiary} 
-         {total-amount: total-amount, released: u0, start-block: stacks-block-height, duration: duration}))))
+         {total-amount: total-amount, released: u0, start-block: stacks-stacks-block-height, duration: duration}))))
 
 (define-public (release-vested-tokens (launch-id uint))
   (let ((schedule (unwrap! (map-get? vesting-schedules {launch-id: launch-id, beneficiary: tx-sender}) ERR_NOT_FOUND))
-        (elapsed (- stacks-block-height (get start-block schedule)))
+        (elapsed (- stacks-stacks-block-height (get start-block schedule)))
         (releasable (if (>= elapsed (get duration schedule))
                        (get total-amount schedule)
                        (/ (* (get total-amount schedule) elapsed) (get duration schedule))))

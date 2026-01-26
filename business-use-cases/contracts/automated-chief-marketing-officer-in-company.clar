@@ -37,7 +37,7 @@
   (let ((campaign-id (+ (var-get campaign-count) u1)))
     (asserts! (is-eq tx-sender (var-get cmo)) ERR_UNAUTHORIZED)
     (asserts! (> budget u0) ERR_INVALID_PARAMS)
-    (map-set marketing-campaigns campaign-id {name: name, channel: channel, budget: budget, start-block: stacks-block-height, end-block: (+ stacks-block-height duration), roi: u0, active: true})
+    (map-set marketing-campaigns campaign-id {name: name, channel: channel, budget: budget, start-block: stacks-stacks-block-height, end-block: (+ stacks-stacks-block-height duration), roi: u0, active: true})
     (var-set campaign-count campaign-id)
     (ok campaign-id)))
 

@@ -88,7 +88,7 @@
         campaign-id: campaign-id,
         publisher: tx-sender,
         viewer-hash: viewer-hash,
-        impression-block: stacks-block-height,
+        impression-block: stacks-stacks-block-height,
         payment-amount: payment,
         verified: false
       }

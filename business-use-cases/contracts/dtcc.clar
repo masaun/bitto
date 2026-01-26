@@ -42,7 +42,7 @@
         isin: isin,
         tokenized: false,
         custodian: tx-sender,
-        registered-at: stacks-block-height
+        registered-at: stacks-stacks-block-height
       }
     )
     (ok (map-set asset-balances { asset-id: asset-id, holder: owner } quantity))

@@ -45,7 +45,7 @@
       agencies: agencies,
       budget: budget,
       status: "active",
-      start-height: stacks-block-height
+      start-height: stacks-stacks-block-height
     })
     (var-set initiative-nonce initiative-id)
     (ok initiative-id)))

@@ -43,7 +43,7 @@
         transistor-count: transistor-count,
         design-stage: "specification",
         designer: tx-sender,
-        created-at: stacks-block-height
+        created-at: stacks-stacks-block-height
       }
     )
     (var-set design-nonce (+ design-id u1))
@@ -79,7 +79,7 @@
     (asserts! (is-eq tx-sender (get designer design)) ERR-NOT-AUTHORIZED)
     (ok (map-set design-milestones
       { design-id: design-id, milestone-id: milestone-id }
-      (merge milestone { completed: true, completed-at: stacks-block-height })
+      (merge milestone { completed: true, completed-at: stacks-stacks-block-height })
     ))
   )
 )

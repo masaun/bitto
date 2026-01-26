@@ -25,7 +25,7 @@
   (let ((report-id (+ (var-get fca-report-count) u1))
         (whistleblower-data (default-to {fca-registered: false, reports-filed: u0, protection-granted: false} (map-get? whistleblowers-registry tx-sender))))
     (asserts! (<= impact-assessment u10) ERR_INVALID_PARAMS)
-    (map-set fca-reports report-id {hash: content-hash, misconduct-type: misconduct-type, firm-reference: firm-reference, impact-assessment: impact-assessment, timestamp: stacks-block-height, protected: true, status: "filed"})
+    (map-set fca-reports report-id {hash: content-hash, misconduct-type: misconduct-type, firm-reference: firm-reference, impact-assessment: impact-assessment, timestamp: stacks-stacks-block-height, protected: true, status: "filed"})
     (map-set whistleblowers-registry tx-sender (merge whistleblower-data {fca-registered: true, reports-filed: (+ (get reports-filed whistleblower-data) u1), protection-granted: true}))
     (var-set fca-report-count report-id)
     (ok report-id)))

@@ -84,7 +84,7 @@
     (asserts! (is-none (map-get? robot-connections {robot-id-1: robot-id-1, robot-id-2: robot-id-2})) err-already-exists)
     (map-set robot-connections {robot-id-1: robot-id-1, robot-id-2: robot-id-2}
       {
-        established-block: stacks-block-height,
+        established-block: stacks-stacks-block-height,
         total-messages-exchanged: u0,
         trust-score: u50,
         active: true
@@ -111,7 +111,7 @@
         receiver-robot-id: receiver-robot-id,
         message-hash: message-hash,
         priority: priority,
-        timestamp: stacks-block-height,
+        timestamp: stacks-stacks-block-height,
         delivered: false,
         acknowledged: false
       }

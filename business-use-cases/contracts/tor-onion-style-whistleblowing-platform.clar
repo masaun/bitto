@@ -24,7 +24,7 @@
 (define-public (create-hidden-service (onion-address (string-ascii 100)) (content-hash (buff 32)) (layer-count uint))
   (let ((service-id (+ (var-get service-count) u1)))
     (asserts! (and (> layer-count u0) (<= layer-count u10)) ERR_INVALID_PARAMS)
-    (map-set hidden-services service-id {onion-address: onion-address, content-hash: content-hash, layer-count: layer-count, timestamp: stacks-block-height, accessible: true})
+    (map-set hidden-services service-id {onion-address: onion-address, content-hash: content-hash, layer-count: layer-count, timestamp: stacks-stacks-block-height, accessible: true})
     (var-set service-count service-id)
     (ok service-id)))
 

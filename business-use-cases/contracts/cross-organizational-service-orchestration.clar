@@ -33,8 +33,8 @@
       name: name,
       organizations: organizations,
       status: "pending",
-      start-height: stacks-block-height,
-      end-height: (+ stacks-block-height duration),
+      start-height: stacks-stacks-block-height,
+      end-height: (+ stacks-stacks-block-height duration),
       budget: budget
     })
     (var-set service-nonce service-id)

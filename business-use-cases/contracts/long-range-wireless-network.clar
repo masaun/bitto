@@ -60,7 +60,7 @@
       devices-served: u0,
       rewards-earned: u0,
       online: true,
-      registered-block: stacks-block-height
+      registered-block: stacks-stacks-block-height
     })
     (map-set device-counter gateway-id u0)
     (map-set packet-counter gateway-id u0)
@@ -82,7 +82,7 @@
       owner: tx-sender,
       device-type: device-type,
       data-transmitted: u0,
-      last-seen: stacks-block-height,
+      last-seen: stacks-stacks-block-height,
       active: true
     })
     (map-set device-counter gateway-id device-id)
@@ -106,13 +106,13 @@
       sender-device: device-id,
       receiver-gateway: gateway-id,
       payload-size: payload-size,
-      timestamp: stacks-block-height
+      timestamp: stacks-stacks-block-height
     })
     (map-set packet-counter gateway-id packet-id)
     (map-set iot-devices {gateway-id: gateway-id, device-id: device-id}
       (merge device {
         data-transmitted: (+ (get data-transmitted device) payload-size),
-        last-seen: stacks-block-height
+        last-seen: stacks-stacks-block-height
       }))
     (map-set lorawan-gateways gateway-id (merge gateway {
       packets-relayed: (+ (get packets-relayed gateway) u1)

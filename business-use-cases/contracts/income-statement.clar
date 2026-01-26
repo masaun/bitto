@@ -51,7 +51,7 @@
         interest-expense: interest,
         tax-expense: tax,
         net-income: net-income,
-        submitted-at: stacks-block-height,
+        submitted-at: stacks-stacks-block-height,
         submitted-by: tx-sender
       }
     ))

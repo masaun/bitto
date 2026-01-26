@@ -35,13 +35,13 @@
   (begin
     (asserts! (is-some (map-get? keybase-users tx-sender)) ERR_UNAUTHORIZED)
     (asserts! (is-some (map-get? keybase-users receiver)) ERR_NOT_FOUND)
-    (ok (map-set secure-channels {sender: tx-sender, receiver: receiver} {channel-id: channel-id, established-at: stacks-block-height, active: true}))))
+    (ok (map-set secure-channels {sender: tx-sender, receiver: receiver} {channel-id: channel-id, established-at: stacks-stacks-block-height, active: true}))))
 
 (define-public (send-encrypted-message (encrypted-hash (buff 32)) (recipient-key (buff 33)))
   (let ((message-id (+ (var-get message-count) u1))
         (sender-data (unwrap! (map-get? keybase-users tx-sender) ERR_UNAUTHORIZED)))
     (asserts! (get active sender-data) ERR_UNAUTHORIZED)
-    (map-set encrypted-messages message-id {encrypted-hash: encrypted-hash, recipient-key: recipient-key, timestamp: stacks-block-height, verified: false, read: false})
+    (map-set encrypted-messages message-id {encrypted-hash: encrypted-hash, recipient-key: recipient-key, timestamp: stacks-stacks-block-height, verified: false, read: false})
     (var-set message-count message-id)
     (ok message-id)))
 

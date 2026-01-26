@@ -36,7 +36,7 @@
 )
 
 (define-map data-packets
-  {stream-id: uint, stacks-block-height: uint}
+  {stream-id: uint, stacks-stacks-block-height: uint}
   {
     data-hash: (buff 32),
     timestamp: uint,
@@ -87,8 +87,8 @@
       {
         subscriber: tx-sender,
         stream-id: stream-id,
-        start-block: stacks-block-height,
-        end-block: (+ stacks-block-height duration-blocks),
+        start-block: stacks-stacks-block-height,
+        end-block: (+ stacks-stacks-block-height duration-blocks),
         total-paid: total-cost,
         active: true
       }
@@ -112,10 +112,10 @@
     )
     (asserts! (is-eq tx-sender (get provider stream)) err-unauthorized)
     (asserts! (get active stream) err-stream-inactive)
-    (map-set data-packets {stream-id: stream-id, stacks-block-height: stacks-block-height}
+    (map-set data-packets {stream-id: stream-id, stacks-stacks-block-height: stacks-stacks-block-height}
       {
         data-hash: data-hash,
-        timestamp: stacks-block-height,
+        timestamp: stacks-stacks-block-height,
         verified: true
       }
     )
@@ -167,7 +167,7 @@
 )
 
 (define-read-only (get-data-packet (stream-id uint) (height uint))
-  (ok (map-get? data-packets {stream-id: stream-id, stacks-block-height: height}))
+  (ok (map-get? data-packets {stream-id: stream-id, stacks-stacks-block-height: height}))
 )
 
 (define-read-only (get-provider-streams (provider principal))
@@ -187,6 +187,6 @@
     (
       (subscription (unwrap! (map-get? subscriptions subscription-id) err-not-found))
     )
-    (ok (and (get active subscription) (<= stacks-block-height (get end-block subscription))))
+    (ok (and (get active subscription) (<= stacks-stacks-block-height (get end-block subscription))))
   )
 )

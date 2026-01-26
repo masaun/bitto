@@ -48,7 +48,7 @@
         (portfolio (unwrap! (map-get? investment-portfolios tx-sender) ERR_UNAUTHORIZED)))
     (asserts! (get active portfolio) ERR_UNAUTHORIZED)
     (asserts! (and (> quantity u0) (> price u0)) ERR_INVALID_PARAMS)
-    (map-set trading-orders order-id {portfolio: tx-sender, asset-id: asset-id, order-type: order-type, quantity: quantity, price: price, executed: false, timestamp: stacks-block-height})
+    (map-set trading-orders order-id {portfolio: tx-sender, asset-id: asset-id, order-type: order-type, quantity: quantity, price: price, executed: false, timestamp: stacks-stacks-block-height})
     (var-set order-count order-id)
     (ok order-id)))
 

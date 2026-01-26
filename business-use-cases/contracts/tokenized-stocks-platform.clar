@@ -77,7 +77,7 @@
         price-per-share: price,
         total-amount: total,
         settled: false,
-        created-at: stacks-block-height
+        created-at: stacks-stacks-block-height
       }
     )
     (var-set order-nonce (+ order-id u1))

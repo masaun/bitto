@@ -47,7 +47,7 @@
       budget: budget,
       requirements: requirements,
       status: "open",
-      created-at: stacks-block-height,
+      created-at: stacks-stacks-block-height,
       awarded-at: none
     })
     (var-set contract-nonce contract-id)
@@ -59,7 +59,7 @@
     (ok (map-set bids {contract-id: contract-id, bidder: tx-sender} {
       amount: amount,
       proposal: proposal,
-      timestamp: stacks-block-height
+      timestamp: stacks-stacks-block-height
     }))))
 
 (define-public (award-contract (contract-id uint) (vendor principal))
@@ -74,7 +74,7 @@
       requirements: (get requirements contract),
       status: "awarded",
       created-at: (get created-at contract),
-      awarded-at: (some stacks-block-height)
+      awarded-at: (some stacks-stacks-block-height)
     }))))
 
 (define-public (complete-contract (contract-id uint))

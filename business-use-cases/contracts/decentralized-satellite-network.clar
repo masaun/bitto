@@ -64,7 +64,7 @@
       uptime-percentage: u100,
       rewards-earned: u0,
       operational: true,
-      launched-block: stacks-block-height
+      launched-block: stacks-stacks-block-height
     })
     (map-set station-counter satellite-id u0)
     (map-set transmission-counter satellite-id u0)
@@ -108,7 +108,7 @@
       data-volume: volume,
       frequency-band: frequency,
       cost: cost,
-      timestamp: stacks-block-height
+      timestamp: stacks-stacks-block-height
     })
     (map-set transmission-counter satellite-id transmission-id)
     (map-set satellites satellite-id (merge satellite {

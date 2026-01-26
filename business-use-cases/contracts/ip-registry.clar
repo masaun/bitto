@@ -55,7 +55,7 @@
         ip-category: ip-category,
         content-fingerprint: content-fingerprint,
         metadata-uri: metadata-uri,
-        registration-timestamp: stacks-block-height,
+        registration-timestamp: stacks-stacks-block-height,
         verified: false,
         transferable: transferable
       }
@@ -83,7 +83,7 @@
       {
         from: tx-sender,
         to: new-owner,
-        transfer-block: stacks-block-height,
+        transfer-block: stacks-stacks-block-height,
         price: price
       }
     )
@@ -106,8 +106,8 @@
     (map-set ip-usage-rights {ip-id: ip-id, licensee: licensee}
       {
         usage-scope: usage-scope,
-        granted-at: stacks-block-height,
-        expires-at: (+ stacks-block-height duration-blocks),
+        granted-at: stacks-stacks-block-height,
+        expires-at: (+ stacks-stacks-block-height duration-blocks),
         fee-paid: fee,
         active: true
       }

@@ -63,7 +63,7 @@
       location-hash: location,
       islanded: false,
       active: true,
-      created-block: stacks-block-height
+      created-block: stacks-stacks-block-height
     })
     (map-set tx-counter grid-id u0)
     (map-set operator-grids tx-sender
@@ -83,7 +83,7 @@
       contribution: u0,
       consumption: u0,
       battery-share: battery-share,
-      joined-block: stacks-block-height
+      joined-block: stacks-stacks-block-height
     })
     (ok true)
   )

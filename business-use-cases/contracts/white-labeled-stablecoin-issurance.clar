@@ -65,7 +65,7 @@
   (let ((reserve (default-to {amount: u0, last-updated: u0} (map-get? reserve-assets {issuer: tx-sender, asset-type: asset-type}))))
     (asserts! (is-some (map-get? stablecoin-issuers tx-sender)) ERR_UNAUTHORIZED)
     (asserts! (> amount u0) ERR_INVALID_PARAMS)
-    (ok (map-set reserve-assets {issuer: tx-sender, asset-type: asset-type} {amount: (+ (get amount reserve) amount), last-updated: stacks-block-height}))))
+    (ok (map-set reserve-assets {issuer: tx-sender, asset-type: asset-type} {amount: (+ (get amount reserve) amount), last-updated: stacks-stacks-block-height}))))
 
 (define-public (record-compliance (period uint) (audit-hash (buff 32)) (compliant bool))
   (begin

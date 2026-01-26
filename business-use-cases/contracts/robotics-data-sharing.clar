@@ -36,7 +36,7 @@
         robot-id: robot-id,
         process-type: process-type,
         parameters: parameters,
-        timestamp: stacks-block-height,
+        timestamp: stacks-stacks-block-height,
         efficiency-score: efficiency,
         provider: tx-sender,
         public-access: is-public

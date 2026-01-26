@@ -40,7 +40,7 @@
         (curator-data (unwrap! (map-get? curators tx-sender) ERR_UNAUTHORIZED)))
     (asserts! (get verified curator-data) ERR_UNAUTHORIZED)
     (asserts! (<= rating u100) ERR_INVALID_PARAMS)
-    (map-set curated-tokens token-id {token-contract: token-contract, symbol: symbol, curator: tx-sender, rating: rating, category: category, curated-at: stacks-block-height, active: true})
+    (map-set curated-tokens token-id {token-contract: token-contract, symbol: symbol, curator: tx-sender, rating: rating, category: category, curated-at: stacks-stacks-block-height, active: true})
     (map-set curators tx-sender (merge curator-data {tokens-curated: (+ (get tokens-curated curator-data) u1)}))
     (var-set token-count token-id)
     (ok token-id)))
@@ -52,7 +52,7 @@
     (asserts! (get active token) ERR_INVALID_PARAMS)
     (asserts! (is-none (map-get? curator-votes {token-id: token-id, curator: tx-sender})) ERR_ALREADY_EXISTS)
     (asserts! (<= weight u10) ERR_INVALID_PARAMS)
-    (ok (map-set curator-votes {token-id: token-id, curator: tx-sender} {vote: vote, weight: weight, voted-at: stacks-block-height}))))
+    (ok (map-set curator-votes {token-id: token-id, curator: tx-sender} {vote: vote, weight: weight, voted-at: stacks-stacks-block-height}))))
 
 (define-public (update-token-rating (token-id uint) (new-rating uint))
   (let ((token (unwrap! (map-get? curated-tokens token-id) ERR_NOT_FOUND)))

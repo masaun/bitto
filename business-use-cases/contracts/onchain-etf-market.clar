@@ -68,7 +68,7 @@
       {
         shares-owned: initial-shares,
         cost-basis: nav-per-share,
-        purchase-block: stacks-block-height
+        purchase-block: stacks-stacks-block-height
       }
     )
     (map-set manager-funds tx-sender
@@ -92,7 +92,7 @@
       {
         shares-owned: (+ (get shares-owned position) shares),
         cost-basis: (get nav-per-share fund),
-        purchase-block: stacks-block-height
+        purchase-block: stacks-stacks-block-height
       }
     )
     (map-set etf-funds fund-id (merge fund {
@@ -112,7 +112,7 @@
     )
     (asserts! (get active fund) err-fund-inactive)
     (asserts! (>= (get shares-owned position) shares) err-invalid-amount)
-    (try! (as-contract (stx-transfer? redemption-value tx-sender tx-sender)))
+    (try! (stx-transfer? redemption-value tx-sender (as-contract tx-sender)))
     (map-set shareholder-positions {fund-id: fund-id, shareholder: tx-sender}
       (merge position {shares-owned: (- (get shares-owned position) shares)}))
     (map-set etf-funds fund-id (merge fund {

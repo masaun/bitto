@@ -56,7 +56,7 @@
     (asserts! (get active user-data) ERR_UNAUTHORIZED)
     (asserts! (get verified merchant-data) ERR_NOT_FOUND)
     (asserts! (and (> amount u0) (> installments u0) (<= installments u24)) ERR_INVALID_PARAMS)
-    (map-set purchases purchase-id {buyer: tx-sender, merchant: merchant, amount: amount, installments: installments, paid-installments: u0, interest-rate: interest-rate, created-at: stacks-block-height, status: "active"})
+    (map-set purchases purchase-id {buyer: tx-sender, merchant: merchant, amount: amount, installments: installments, paid-installments: u0, interest-rate: interest-rate, created-at: stacks-stacks-block-height, status: "active"})
     (map-set users tx-sender (merge user-data {total-borrowed: (+ (get total-borrowed user-data) amount)}))
     (var-set purchase-count purchase-id)
     (ok purchase-id)))
@@ -70,7 +70,7 @@
     (let ((installment (default-to {amount: installment-amount, due-date: (+ (get created-at purchase) (* installment-number u144)), paid: false, paid-at: u0} 
                                     (map-get? installment-payments {purchase-id: purchase-id, installment-number: installment-number}))))
       (asserts! (not (get paid installment)) ERR_ALREADY_EXISTS)
-      (map-set installment-payments {purchase-id: purchase-id, installment-number: installment-number} (merge installment {paid: true, paid-at: stacks-block-height}))
+      (map-set installment-payments {purchase-id: purchase-id, installment-number: installment-number} (merge installment {paid: true, paid-at: stacks-stacks-block-height}))
       (map-set purchases purchase-id (merge purchase {paid-installments: (+ (get paid-installments purchase) u1)}))
       (ok (map-set users tx-sender (merge user-data {total-repaid: (+ (get total-repaid user-data) installment-amount)}))))))
 

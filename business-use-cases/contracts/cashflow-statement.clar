@@ -42,7 +42,7 @@
         net-cash-change: net-change,
         beginning-balance: beginning,
         ending-balance: ending,
-        submitted-at: stacks-block-height,
+        submitted-at: stacks-stacks-block-height,
         submitted-by: tx-sender
       }
     ))

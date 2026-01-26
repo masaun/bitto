@@ -45,7 +45,7 @@
         serial-number: serial-number,
         customer: customer,
         assembly-stage: "fuselage",
-        started-at: stacks-block-height,
+        started-at: stacks-stacks-block-height,
         estimated-completion: estimated-completion,
         actual-completion: u0,
         status: "in-assembly",
@@ -89,7 +89,7 @@
       { aircraft-id: aircraft-id, stage-id: stage-id }
       (merge stage {
         completed: true,
-        completed-at: stacks-block-height,
+        completed-at: stacks-stacks-block-height,
         quality-check: quality-passed
       })
     ))
@@ -113,7 +113,7 @@
       { aircraft-id: aircraft-id }
       (merge aircraft {
         status: "completed",
-        actual-completion: stacks-block-height
+        actual-completion: stacks-stacks-block-height
       })
     ))
   )

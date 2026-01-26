@@ -24,7 +24,7 @@
 (define-public (submit-sec-tip (content-hash (buff 32)) (violation-type (string-ascii 50)) (potential-recovery uint))
   (let ((tip-id (+ (var-get tip-count) u1))
         (whistleblower-data (default-to {verified: false, tip-count: u0, total-rewards: u0} (map-get? whistleblowers tx-sender))))
-    (map-set sec-tips tip-id {hash: content-hash, violation-type: violation-type, potential-recovery: potential-recovery, timestamp: stacks-block-height, reward-eligible: true, status: "submitted"})
+    (map-set sec-tips tip-id {hash: content-hash, violation-type: violation-type, potential-recovery: potential-recovery, timestamp: stacks-stacks-block-height, reward-eligible: true, status: "submitted"})
     (map-set whistleblowers tx-sender (merge whistleblower-data {tip-count: (+ (get tip-count whistleblower-data) u1)}))
     (var-set tip-count tip-id)
     (ok tip-id)))

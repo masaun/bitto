@@ -95,7 +95,7 @@
       order-value: value,
       delivery-fee: fee,
       status: "pending",
-      placed-block: stacks-block-height,
+      placed-block: stacks-stacks-block-height,
       delivered-block: u0
     })
     (map-set customer-orders tx-sender
@@ -131,7 +131,7 @@
     (try! (stx-transfer? (get delivery-fee order) (get customer order) tx-sender))
     (map-set delivery-orders order-id (merge order {
       status: "delivered",
-      delivered-block: stacks-block-height
+      delivered-block: stacks-stacks-block-height
     }))
     (map-set couriers tx-sender (merge courier-data {
       total-deliveries: (+ (get total-deliveries courier-data) u1),

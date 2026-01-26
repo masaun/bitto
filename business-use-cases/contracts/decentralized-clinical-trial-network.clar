@@ -119,7 +119,7 @@
       {
         site-id: site-id,
         participant-hash: participant-hash,
-        enrollment-block: stacks-block-height,
+        enrollment-block: stacks-stacks-block-height,
         completion-status: "enrolled",
         incentive-paid: false,
         data-submitted: false

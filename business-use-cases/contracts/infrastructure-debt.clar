@@ -30,7 +30,7 @@
   {debt-id: uint, payment-id: uint}
   {
     amount: uint,
-    stacks-block-height: uint,
+    stacks-stacks-block-height: uint,
     payment-type: (string-ascii 20)
   }
 )
@@ -45,7 +45,7 @@
     (
       (debt-id (+ (var-get debt-nonce) u1))
       (borrower tx-sender)
-      (current-height stacks-block-height)
+      (current-height stacks-stacks-block-height)
     )
     (asserts! (> principal-amount u0) err-invalid-amount)
     (asserts! (> maturity-block current-height) err-invalid-amount)
@@ -89,7 +89,7 @@
     (map-set payments {debt-id: debt-id, payment-id: payment-id}
       {
         amount: amount,
-        stacks-block-height: stacks-block-height,
+        stacks-stacks-block-height: stacks-stacks-block-height,
         payment-type: "payment"
       }
     )
@@ -120,7 +120,7 @@
       (map-set payments {debt-id: debt-id, payment-id: payment-id}
         {
           amount: total-due,
-          stacks-block-height: stacks-block-height,
+          stacks-stacks-block-height: stacks-stacks-block-height,
           payment-type: "full-repayment"
         }
       )
@@ -141,7 +141,7 @@
     )
     (asserts! (is-eq tx-sender (get lender debt)) err-unauthorized)
     (asserts! (not (get repaid debt)) err-already-repaid)
-    (asserts! (> stacks-block-height (get maturity-block debt)) err-maturity-not-reached)
+    (asserts! (> stacks-stacks-block-height (get maturity-block debt)) err-maturity-not-reached)
     (asserts! (> (get outstanding-balance debt) u0) err-invalid-amount)
     (map-set debts debt-id (merge debt {defaulted: true}))
     (ok true)
@@ -170,7 +170,7 @@
       (debt (unwrap-panic (map-get? debts debt-id)))
       (principal (get outstanding-balance debt))
       (interest-rate (get interest-rate debt))
-      (blocks-elapsed (- stacks-block-height (get issue-block debt)))
+      (blocks-elapsed (- stacks-stacks-block-height (get issue-block debt)))
     )
     (+ principal (/ (* principal (* interest-rate blocks-elapsed)) u10000000))
   )
@@ -184,7 +184,7 @@
     (ok {
       repaid: (get repaid debt),
       defaulted: (get defaulted debt),
-      overdue: (and (> stacks-block-height (get maturity-block debt)) (not (get repaid debt))),
+      overdue: (and (> stacks-stacks-block-height (get maturity-block debt)) (not (get repaid debt))),
       outstanding: (get outstanding-balance debt)
     })
   )

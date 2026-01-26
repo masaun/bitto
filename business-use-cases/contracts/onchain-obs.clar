@@ -40,7 +40,7 @@
     {
       entity-name: entity-name,
       entity-type: entity-type,
-      screening-date: stacks-block-height,
+      screening-date: stacks-stacks-block-height,
       risk-level: risk-level,
       match-found: has-match,
       screener: tx-sender,
@@ -64,7 +64,7 @@
         list-name: list-name,
         match-confidence: confidence,
         details: details,
-        reported-at: stacks-block-height,
+        reported-at: stacks-stacks-block-height,
         resolved: false
       }
     ))

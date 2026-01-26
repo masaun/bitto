@@ -79,7 +79,7 @@
     (map-set properties property-id (merge property {
       lender: lender,
       financed: true,
-      start-block: stacks-block-height
+      start-block: stacks-stacks-block-height
     }))
     (ok true)
   )
@@ -101,7 +101,7 @@
     (try! (stx-transfer? amount tx-sender (get lender property)))
     (map-set payments {property-id: property-id, payment-id: pid} {
       amount: amount,
-      block: stacks-block-height,
+      block: stacks-stacks-block-height,
       principal-portion: principal-portion,
       interest-portion: interest
     })
@@ -123,7 +123,7 @@
       lender: new-lender,
       interest-rate: new-rate,
       outstanding: payoff,
-      start-block: stacks-block-height
+      start-block: stacks-stacks-block-height
     }))
     (ok true)
   )

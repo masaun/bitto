@@ -78,11 +78,11 @@
     (asserts! (is-eq tx-sender (get technician task)) ERR-NOT-AUTHORIZED)
     (map-set maintenance-tasks
       { robot-id: robot-id, task-id: task-id }
-      (merge task { status: "completed", completed-at: stacks-block-height })
+      (merge task { status: "completed", completed-at: stacks-stacks-block-height })
     )
     (ok (map-set robot-registry
       { robot-id: robot-id }
-      (merge robot { last-maintenance: stacks-block-height })
+      (merge robot { last-maintenance: stacks-stacks-block-height })
     ))
   )
 )

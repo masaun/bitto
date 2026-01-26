@@ -97,7 +97,7 @@
         compute-units-required: compute-units-required,
         total-payment: total-cost,
         job-hash: job-hash,
-        start-block: stacks-block-height,
+        start-block: stacks-stacks-block-height,
         completed: false,
         verified: false
       }
@@ -123,7 +123,7 @@
     (map-set job-results job-id
       {
         result-hash: result-hash,
-        completion-block: stacks-block-height,
+        completion-block: stacks-stacks-block-height,
         quality-score: u0
       }
     )

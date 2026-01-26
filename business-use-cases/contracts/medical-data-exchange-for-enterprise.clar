@@ -65,7 +65,7 @@
         encryption-key-hash: encryption-key-hash,
         consent-given: false,
         active: true,
-        created-at: stacks-block-height
+        created-at: stacks-stacks-block-height
       }
     )
     (map-set provider-records tx-sender
@@ -102,8 +102,8 @@
         purpose: purpose,
         approval-status: "pending",
         approved-by: none,
-        request-block: stacks-block-height,
-        expiry-block: (+ stacks-block-height duration-blocks),
+        request-block: stacks-stacks-block-height,
+        expiry-block: (+ stacks-stacks-block-height duration-blocks),
         payment-amount: payment-amount
       }
     )

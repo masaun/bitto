@@ -43,7 +43,7 @@
         target-cells: target-cells,
         produced-cells: u0,
         capacity-mah: capacity-mah,
-        started-at: stacks-block-height,
+        started-at: stacks-stacks-block-height,
         completed-at: u0,
         status: "production",
         manufacturer: tx-sender
@@ -105,7 +105,7 @@
     (asserts! (is-eq tx-sender (get manufacturer batch)) ERR-NOT-AUTHORIZED)
     (ok (map-set battery-batches
       { batch-id: batch-id }
-      (merge batch { status: "completed", completed-at: stacks-block-height })
+      (merge batch { status: "completed", completed-at: stacks-stacks-block-height })
     ))
   )
 )

@@ -24,7 +24,7 @@
 (define-public (report-fraud (content-hash (buff 32)) (fraud-category (string-ascii 50)) (program-affected (string-ascii 100)) (estimated-loss uint))
   (let ((report-id (+ (var-get fraud-report-count) u1)))
     (asserts! (> estimated-loss u0) ERR_INVALID_PARAMS)
-    (map-set fraud-reports report-id {hash: content-hash, fraud-category: fraud-category, program-affected: program-affected, estimated-loss: estimated-loss, timestamp: stacks-block-height, status: "reported"})
+    (map-set fraud-reports report-id {hash: content-hash, fraud-category: fraud-category, program-affected: program-affected, estimated-loss: estimated-loss, timestamp: stacks-stacks-block-height, status: "reported"})
     (var-set fraud-report-count report-id)
     (ok report-id)))
 

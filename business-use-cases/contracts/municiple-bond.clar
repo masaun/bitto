@@ -30,7 +30,7 @@
       municipality: tx-sender,
       amount: amount,
       interest-rate: interest-rate,
-      maturity: (+ stacks-block-height maturity),
+      maturity: (+ stacks-stacks-block-height maturity),
       purpose: purpose,
       total-issued: u0,
       total-redeemed: u0
@@ -50,7 +50,7 @@
     (bond (unwrap! (map-get? bonds bond-id) err-bond-not-found))
     (holdings (unwrap! (map-get? bondholders {bond-id: bond-id, holder: tx-sender}) err-not-authorized))
   )
-    (asserts! (>= stacks-block-height (get maturity bond)) err-not-authorized)
+    (asserts! (>= stacks-stacks-block-height (get maturity bond)) err-not-authorized)
     (asserts! (>= holdings amount) err-not-authorized)
     (map-set bondholders {bond-id: bond-id, holder: tx-sender} (- holdings amount))
     (let ((payout (+ amount (/ (* amount (get interest-rate bond)) u10000))))

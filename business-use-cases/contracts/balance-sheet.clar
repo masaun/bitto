@@ -47,7 +47,7 @@
         non-current-liabilities: non-current-liabilities,
         total-liabilities: total-liabilities,
         shareholders-equity: equity,
-        submitted-at: stacks-block-height,
+        submitted-at: stacks-stacks-block-height,
         submitted-by: tx-sender
       }
     ))

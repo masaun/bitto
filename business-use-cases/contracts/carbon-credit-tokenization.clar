@@ -70,11 +70,11 @@
       verification-standard: standard,
       location-hash: location,
       retired: false,
-      issued-block: stacks-block-height
+      issued-block: stacks-stacks-block-height
     })
     (map-set credit-ownership {credit-id: credit-id, owner: tx-sender} {
       amount: tonnes,
-      acquired-block: stacks-block-height
+      acquired-block: stacks-stacks-block-height
     })
     (map-set retirement-counter credit-id u0)
     (map-set trade-counter credit-id u0)
@@ -92,7 +92,7 @@
     (
       (credit (unwrap! (map-get? carbon-credits credit-id) err-not-found))
       (seller-ownership (unwrap! (map-get? credit-ownership {credit-id: credit-id, owner: tx-sender}) err-not-found))
-      (buyer-ownership (default-to {amount: u0, acquired-block: stacks-block-height}
+      (buyer-ownership (default-to {amount: u0, acquired-block: stacks-stacks-block-height}
                         (map-get? credit-ownership {credit-id: credit-id, owner: buyer})))
       (trade-id (+ (default-to u0 (map-get? trade-counter credit-id)) u1))
     )
@@ -104,7 +104,7 @@
       buyer: buyer,
       amount: amount,
       price: price,
-      block: stacks-block-height
+      block: stacks-stacks-block-height
     })
     (map-set trade-counter credit-id trade-id)
     (map-set credit-ownership {credit-id: credit-id, owner: tx-sender}
@@ -130,7 +130,7 @@
       retiree: tx-sender,
       amount: amount,
       beneficiary: beneficiary,
-      retirement-block: stacks-block-height
+      retirement-block: stacks-stacks-block-height
     })
     (map-set retirement-counter credit-id retirement-id)
     (map-set credit-ownership {credit-id: credit-id, owner: tx-sender}

@@ -96,7 +96,7 @@
         hours-estimated: hours-estimated,
         hours-billed: u0,
         status: "open",
-        opened-at: stacks-block-height,
+        opened-at: stacks-stacks-block-height,
         closed-at: none
       }
     )
@@ -120,7 +120,7 @@
       {
         document-hash: document-hash,
         uploaded-by: tx-sender,
-        timestamp: stacks-block-height,
+        timestamp: stacks-stacks-block-height,
         document-type: document-type
       }
     )
@@ -163,7 +163,7 @@
     )
     (map-set legal-cases case-id (merge case {
       status: "closed",
-      closed-at: (some stacks-block-height),
+      closed-at: (some stacks-stacks-block-height),
       escrow-amount: u0
     }))
     (map-set legal-counsels (get counsel-id case) (merge counsel {

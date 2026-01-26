@@ -45,7 +45,7 @@
         (profile (unwrap! (map-get? esim-profiles profile-id) ERR_NOT_FOUND)))
     (asserts! (get esim-capable device) ERR_UNAUTHORIZED)
     (asserts! (not (get activated profile)) ERR_ALREADY_EXISTS)
-    (map-set activation-requests request-id {device: tx-sender, profile-id: profile-id, requested-at: stacks-block-height, approved: false, completed: false})
+    (map-set activation-requests request-id {device: tx-sender, profile-id: profile-id, requested-at: stacks-stacks-block-height, approved: false, completed: false})
     (var-set request-count request-id)
     (ok request-id)))
 
@@ -62,7 +62,7 @@
     (asserts! (get approved request) ERR_UNAUTHORIZED)
     (asserts! (not (get completed request)) ERR_ALREADY_EXISTS)
     (map-set activation-requests request-id (merge request {completed: true}))
-    (ok (map-set esim-profiles (get profile-id request) (merge profile {activated: true, activation-date: stacks-block-height})))))
+    (ok (map-set esim-profiles (get profile-id request) (merge profile {activated: true, activation-date: stacks-stacks-block-height})))))
 
 (define-public (add-carrier-partner (carrier-id (string-ascii 50)) (partner-name (string-ascii 100)) (supported-regions uint))
   (begin

@@ -114,7 +114,7 @@
     (asserts! (>= (get compute-power node) (get min-gpu-compute job)) err-insufficient-stake)
     (map-set job-assignments {job-id: job-id, node-id: node-id}
       {
-        assigned-block: stacks-block-height,
+        assigned-block: stacks-stacks-block-height,
         contribution-weight: contribution-weight,
         payment-amount: u0,
         work-verified: false

@@ -24,7 +24,7 @@
 (define-public (file-misconduct-report (content-hash (buff 32)) (report-type (string-ascii 50)) (severity uint) (anonymous bool))
   (let ((report-id (+ (var-get misconduct-report-count) u1)))
     (asserts! (<= severity u5) ERR_INVALID_PARAMS)
-    (map-set misconduct-reports report-id {hash: content-hash, report-type: report-type, severity: severity, timestamp: stacks-block-height, anonymous: anonymous, investigated: false, status: "filed"})
+    (map-set misconduct-reports report-id {hash: content-hash, report-type: report-type, severity: severity, timestamp: stacks-stacks-block-height, anonymous: anonymous, investigated: false, status: "filed"})
     (var-set misconduct-report-count report-id)
     (ok report-id)))
 

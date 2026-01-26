@@ -31,13 +31,13 @@
   (begin
     (asserts! (is-eq tx-sender (var-get contract-owner)) ERR_UNAUTHORIZED)
     (var-set ceo new-ceo)
-    (var-set ceo-appointed-at stacks-block-height)
+    (var-set ceo-appointed-at stacks-stacks-block-height)
     (ok true)))
 
 (define-public (create-strategic-decision (title (string-utf8 300)) (decision-type (string-ascii 30)))
   (let ((decision-id (+ (var-get decision-count) u1)))
     (asserts! (is-eq tx-sender (var-get ceo)) ERR_UNAUTHORIZED)
-    (map-set strategic-decisions decision-id {title: title, decision-type: decision-type, approved-by-ceo: true, created-at: stacks-block-height, executed: false})
+    (map-set strategic-decisions decision-id {title: title, decision-type: decision-type, approved-by-ceo: true, created-at: stacks-stacks-block-height, executed: false})
     (var-set decision-count decision-id)
     (ok decision-id)))
 
@@ -52,7 +52,7 @@
   (begin
     (asserts! (is-eq tx-sender (var-get ceo)) ERR_UNAUTHORIZED)
     (asserts! (is-none (map-get? department-heads head)) ERR_ALREADY_EXISTS)
-    (ok (map-set department-heads head {department: department, approved-by-ceo: true, appointed-at: stacks-block-height}))))
+    (ok (map-set department-heads head {department: department, approved-by-ceo: true, appointed-at: stacks-stacks-block-height}))))
 
 (define-public (remove-department-head (head principal))
   (begin

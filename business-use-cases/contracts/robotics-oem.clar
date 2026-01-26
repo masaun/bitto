@@ -68,7 +68,7 @@
         quantity: quantity,
         total-price: total,
         order-status: "pending",
-        ordered-at: stacks-block-height,
+        ordered-at: stacks-stacks-block-height,
         delivered-at: u0
       }
     )
@@ -81,7 +81,7 @@
   (let ((order (unwrap! (map-get? component-orders { order-id: order-id }) ERR-ORDER-NOT-FOUND)))
     (ok (map-set component-orders
       { order-id: order-id }
-      (merge order { order-status: "fulfilled", delivered-at: stacks-block-height })
+      (merge order { order-status: "fulfilled", delivered-at: stacks-stacks-block-height })
     ))
   )
 )

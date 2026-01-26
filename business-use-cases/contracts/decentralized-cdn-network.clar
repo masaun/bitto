@@ -85,7 +85,7 @@
         content-hash: content-hash,
         content-size: content-size,
         origin-url-hash: origin-url-hash,
-        cached-at: stacks-block-height,
+        cached-at: stacks-stacks-block-height,
         access-count: u0,
         payment-per-access: payment-per-access
       }

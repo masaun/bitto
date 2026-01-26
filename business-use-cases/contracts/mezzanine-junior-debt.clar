@@ -48,9 +48,9 @@
       raised-amount: u0,
       interest-rate: rate,
       subordination-level: subordination,
-      maturity-block: (+ stacks-block-height term),
+      maturity-block: (+ stacks-stacks-block-height term),
       active: true,
-      issue-block: stacks-block-height
+      issue-block: stacks-stacks-block-height
     })
     (var-set tranche-nonce tranche-id)
     (ok tranche-id)
@@ -62,7 +62,7 @@
     (
       (tranche (unwrap! (map-get? tranches tranche-id) err-not-found))
       (new-raised (+ (get raised-amount tranche) amount))
-      (existing (default-to {amount: u0, entry-block: stacks-block-height, claimed: u0} 
+      (existing (default-to {amount: u0, entry-block: stacks-stacks-block-height, claimed: u0} 
                  (map-get? investments {tranche-id: tranche-id, investor: tx-sender})))
     )
     (asserts! (get active tranche) err-invalid-tranche)
@@ -90,7 +90,7 @@
       (returns (calculate-returns tranche-id tx-sender))
       (claimable (- returns (get claimed investment)))
     )
-    (asserts! (>= stacks-block-height (get maturity-block tranche)) err-unauthorized)
+    (asserts! (>= stacks-stacks-block-height (get maturity-block tranche)) err-unauthorized)
     (try! (stx-transfer? claimable (get issuer tranche) tx-sender))
     (map-set investments {tranche-id: tranche-id, investor: tx-sender}
       (merge investment {claimed: returns}))
@@ -128,7 +128,7 @@
       (investment (unwrap-panic (map-get? investments {tranche-id: tranche-id, investor: investor})))
       (amount (get amount investment))
       (rate (get interest-rate tranche))
-      (elapsed (- stacks-block-height (get entry-block investment)))
+      (elapsed (- stacks-stacks-block-height (get entry-block investment)))
     )
     (+ amount (/ (* amount (* rate elapsed)) u10000000))
   )

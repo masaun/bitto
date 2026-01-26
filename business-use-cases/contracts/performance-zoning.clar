@@ -33,7 +33,7 @@
       performance-standards: performance-standards,
       current-metrics: "",
       meets-standards: false,
-      last-evaluation: stacks-block-height
+      last-evaluation: stacks-stacks-block-height
     })
     (var-set zone-nonce zone-id)
     (ok zone-id)))
@@ -42,7 +42,7 @@
   (let ((zone (unwrap! (map-get? zones zone-id) err-zone-not-found)))
     (asserts! (is-eq tx-sender contract-owner) err-owner-only)
     (ok (map-set zones zone-id 
-      (merge zone {current-metrics: metrics, last-evaluation: stacks-block-height})))))
+      (merge zone {current-metrics: metrics, last-evaluation: stacks-stacks-block-height})))))
 
 (define-public (evaluate-compliance (zone-id uint) (meets-standards bool))
   (let ((zone (unwrap! (map-get? zones zone-id) err-zone-not-found)))
