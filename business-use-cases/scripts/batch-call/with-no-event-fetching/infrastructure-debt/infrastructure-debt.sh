@@ -1,0 +1,5 @@
+echo "Loading environment variables from ../../../../.env ..."
+source ../../../../.env
+
+echo "Running the script of the infrastructure-debt.clar ..."
+npx tsx infrastructure-debt_batch-call_with-no-event-fetching.ts 
