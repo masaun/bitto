@@ -36,8 +36,8 @@
       department: department,
       budget: budget,
       allocated: u0,
-      start-date: stacks-block-height,
-      end-date: (+ stacks-block-height duration),
+      start-date: stacks-stacks-block-height,
+      end-date: (+ stacks-stacks-block-height duration),
       status: "active"
     })
     (var-set program-nonce program-id)
@@ -51,7 +51,7 @@
       description: description,
       amount: amount,
       vendor: vendor,
-      timestamp: stacks-block-height
+      timestamp: stacks-stacks-block-height
     })
     (ok (map-set programs program-id 
       (merge program {allocated: (+ (get allocated program) amount)})))))

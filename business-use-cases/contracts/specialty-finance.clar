@@ -52,7 +52,7 @@
       specific-parameters: parameters,
       outstanding: amount,
       active: true,
-      issue-block: stacks-block-height,
+      issue-block: stacks-stacks-block-height,
       maturity-block: maturity
     })
     (map-set payment-counter product-id u0)
@@ -92,7 +92,7 @@
     (try! (stx-transfer? amount tx-sender (get provider product)))
     (map-set product-payments {product-id: product-id, payment-id: pid} {
       amount: amount,
-      block: stacks-block-height,
+      block: stacks-stacks-block-height,
       fee-portion: fees
     })
     (map-set payment-counter product-id pid)
@@ -150,7 +150,7 @@
       (product (unwrap-panic (map-get? finance-products product-id)))
       (outstanding (get outstanding product))
       (rate (get term-rate product))
-      (elapsed (- stacks-block-height (get issue-block product)))
+      (elapsed (- stacks-stacks-block-height (get issue-block product)))
     )
     (/ (* outstanding (* rate elapsed)) u10000000)
   )
@@ -175,7 +175,7 @@
     (ok {
       active: (get active product),
       outstanding: (get outstanding product),
-      overdue: (> stacks-block-height (get maturity-block product)),
+      overdue: (> stacks-stacks-block-height (get maturity-block product)),
       product-type: (get product-type product)
     })
   )

@@ -89,8 +89,8 @@
         collateral-amount: collateral-amount,
         collateral-ratio: collateral-ratio,
         outstanding-balance: amount,
-        loan-start: stacks-block-height,
-        loan-end: (+ stacks-block-height duration-blocks),
+        loan-start: stacks-stacks-block-height,
+        loan-end: (+ stacks-stacks-block-height duration-blocks),
         repaid: false,
         defaulted: false
       }
@@ -132,7 +132,7 @@
     (map-set loan-repayments {loan-id: loan-id, payment-id: payment-id}
       {
         amount: amount,
-        payment-block: stacks-block-height
+        payment-block: stacks-stacks-block-height
       }
     )
     (map-set payment-count loan-id payment-id)
@@ -164,7 +164,7 @@
       (credit (unwrap! (map-get? credit-scores (get borrower loan)) err-not-found))
     )
     (asserts! (is-eq tx-sender (get lender loan)) err-unauthorized)
-    (asserts! (> stacks-block-height (get loan-end loan)) err-not-found)
+    (asserts! (> stacks-stacks-block-height (get loan-end loan)) err-not-found)
     (asserts! (> (get outstanding-balance loan) u0) err-invalid-amount)
     (try! (as-contract (stx-transfer? (get collateral-amount loan) tx-sender (get lender loan))))
     (map-set undercollateralized-loans loan-id (merge loan {defaulted: true}))

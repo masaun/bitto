@@ -78,7 +78,7 @@
         shares-amount: shares,
         price-per-share: price,
         active: true,
-        created-at: stacks-block-height
+        created-at: stacks-stacks-block-height
       }
     )
     (var-set listing-nonce (+ listing-id u1))

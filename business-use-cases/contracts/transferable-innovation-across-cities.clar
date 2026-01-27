@@ -45,7 +45,7 @@
     (asserts! (get verified innovation) err-not-authorized)
     (map-set city-adoptions {city: tx-sender, innovation-id: innovation-id} {
       adopted: true,
-      implementation-date: stacks-block-height,
+      implementation-date: stacks-stacks-block-height,
       success-rate: u0
     })
     (ok (map-set innovations innovation-id (merge innovation {transfer-count: (+ (get transfer-count innovation) u1)})))))

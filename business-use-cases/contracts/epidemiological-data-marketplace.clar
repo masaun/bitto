@@ -89,7 +89,7 @@
     (try! (stx-transfer? (get price dataset) tx-sender (get provider dataset)))
     (map-set dataset-purchases {buyer: tx-sender, dataset-id: dataset-id}
       {
-        purchase-block: stacks-block-height,
+        purchase-block: stacks-stacks-block-height,
         access-key-hash: access-key-hash,
         amount-paid: (get price dataset),
         usage-type: usage-type

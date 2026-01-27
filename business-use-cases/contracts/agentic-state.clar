@@ -60,7 +60,7 @@
       requester: tx-sender,
       request-data: request-data,
       response-hash: none,
-      timestamp: stacks-block-height,
+      timestamp: stacks-stacks-block-height,
       status: "pending"
     })
     (var-set request-nonce request-id)

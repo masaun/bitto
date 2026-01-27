@@ -62,8 +62,8 @@
       safety-status: "nominal",
       location-hash: location,
       operational: true,
-      last-maintenance: stacks-block-height,
-      created-block: stacks-block-height
+      last-maintenance: stacks-stacks-block-height,
+      created-block: stacks-stacks-block-height
     })
     (map-set contract-counter reactor-id u0)
     (map-set log-counter reactor-id u0)
@@ -90,7 +90,7 @@
       allocated-mw: mw,
       price-per-mw: price,
       duration-blocks: duration,
-      start-block: stacks-block-height,
+      start-block: stacks-stacks-block-height,
       active: true
     })
     (map-set contract-counter reactor-id contract-id)
@@ -123,12 +123,12 @@
       technician: tx-sender,
       maintenance-type: maintenance-type,
       fuel-added: fuel-added,
-      block: stacks-block-height
+      block: stacks-stacks-block-height
     })
     (map-set log-counter reactor-id log-id)
     (map-set smr-reactors reactor-id (merge reactor {
       fuel-level: new-fuel,
-      last-maintenance: stacks-block-height
+      last-maintenance: stacks-stacks-block-height
     }))
     (ok log-id)
   )

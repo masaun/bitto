@@ -70,7 +70,7 @@
       {
         balance: total-supply,
         kyc-verified: true,
-        purchase-block: stacks-block-height
+        purchase-block: stacks-stacks-block-height
       }
     )
     (map-set transfer-count token-id u0)
@@ -99,7 +99,7 @@
     (map-set equity-balances {token-id: token-id, holder: tx-sender}
       (merge buyer-balance {
         balance: (+ (get balance buyer-balance) amount),
-        purchase-block: stacks-block-height
+        purchase-block: stacks-stacks-block-height
       }))
     (map-set tokenized-equity token-id (merge equity {
       tokens-sold: (+ (get tokens-sold equity) amount)
@@ -128,7 +128,7 @@
         from: tx-sender,
         to: recipient,
         amount: amount,
-        transfer-block: stacks-block-height,
+        transfer-block: stacks-stacks-block-height,
         approved: true
       }
     )

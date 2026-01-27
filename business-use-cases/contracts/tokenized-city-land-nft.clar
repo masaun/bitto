@@ -70,6 +70,6 @@
     (asserts! (is-eq tx-sender contract-owner) err-owner-only)
     (ok (map-set land-history {nft-id: nft-id, event-id: event-id} {
       event-type: event-type,
-      timestamp: stacks-block-height,
+      timestamp: stacks-stacks-block-height,
       details: details
     }))))

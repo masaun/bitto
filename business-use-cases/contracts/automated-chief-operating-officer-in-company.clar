@@ -73,12 +73,12 @@
   (begin
     (asserts! (is-eq tx-sender (var-get coo)) ERR_UNAUTHORIZED)
     (asserts! (> unit-cost u0) ERR_INVALID_PARAMS)
-    (ok (map-set inventory-items item-id {quantity: quantity, reorder-level: reorder-level, unit-cost: unit-cost, last-updated: stacks-block-height}))))
+    (ok (map-set inventory-items item-id {quantity: quantity, reorder-level: reorder-level, unit-cost: unit-cost, last-updated: stacks-stacks-block-height}))))
 
 (define-public (update-inventory-quantity (item-id (string-ascii 50)) (new-quantity uint))
   (let ((item (unwrap! (map-get? inventory-items item-id) ERR_NOT_FOUND)))
     (asserts! (is-eq tx-sender (var-get coo)) ERR_UNAUTHORIZED)
-    (ok (map-set inventory-items item-id (merge item {quantity: new-quantity, last-updated: stacks-block-height})))))
+    (ok (map-set inventory-items item-id (merge item {quantity: new-quantity, last-updated: stacks-stacks-block-height})))))
 
 (define-public (set-kpi (department (string-ascii 50)) (metric (string-ascii 30)) (period uint) (value uint))
   (begin

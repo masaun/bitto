@@ -55,7 +55,7 @@
         ip-type: ip-type,
         description: description,
         owner: tx-sender,
-        registered-at: stacks-block-height,
+        registered-at: stacks-stacks-block-height,
         active: true
       }
     )
@@ -83,8 +83,8 @@
         licensee: licensee,
         license-type: license-type,
         royalty-rate: royalty-rate,
-        start-date: stacks-block-height,
-        end-date: (+ stacks-block-height duration),
+        start-date: stacks-stacks-block-height,
+        end-date: (+ stacks-stacks-block-height duration),
         active: true
       }
     )
@@ -101,7 +101,7 @@
       {
         licensee: licensee,
         amount: amount,
-        payment-date: stacks-block-height
+        payment-date: stacks-stacks-block-height
       }
     ))
   )

@@ -52,7 +52,7 @@
       equity-value: u0,
       debt-value: debt,
       cash-value: cash,
-      created-block: stacks-block-height
+      created-block: stacks-stacks-block-height
     })
     (map-set analyst-valuations tx-sender
       (unwrap-panic (as-max-len? (append (default-to (list) (map-get? analyst-valuations tx-sender)) valuation-id) u50)))

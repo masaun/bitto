@@ -76,7 +76,7 @@
       fare: fare,
       distance: distance,
       status: "requested",
-      requested-block: stacks-block-height,
+      requested-block: stacks-stacks-block-height,
       completed-block: u0
     })
     (let
@@ -133,7 +133,7 @@
     (try! (stx-transfer? (get fare ride) (get rider ride) tx-sender))
     (map-set rides ride-id (merge ride {
       status: "completed",
-      completed-block: stacks-block-height
+      completed-block: stacks-stacks-block-height
     }))
     (map-set drivers tx-sender (merge driver-data {
       total-rides: (+ (get total-rides driver-data) u1),

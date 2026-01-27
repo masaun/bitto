@@ -24,7 +24,7 @@
 (define-public (submit-ethics-report (content-hash (buff 32)) (violation-type (string-ascii 50)) (severity uint) (confidential bool))
   (let ((report-id (+ (var-get ethics-report-count) u1)))
     (asserts! (<= severity u5) ERR_INVALID_PARAMS)
-    (map-set ethics-reports report-id {hash: content-hash, violation-type: violation-type, severity: severity, timestamp: stacks-block-height, confidential: confidential, status: "open"})
+    (map-set ethics-reports report-id {hash: content-hash, violation-type: violation-type, severity: severity, timestamp: stacks-stacks-block-height, confidential: confidential, status: "open"})
     (var-set ethics-report-count report-id)
     (ok report-id)))
 
@@ -44,7 +44,7 @@
   (let ((plan (unwrap! (map-get? remediation-plans {report-id: report-id, officer: tx-sender}) ERR_NOT_FOUND)))
     (asserts! (is-some (map-get? compliance-officers tx-sender)) ERR_UNAUTHORIZED)
     (asserts! (not (get implemented plan)) ERR_ALREADY_EXISTS)
-    (ok (map-set remediation-plans {report-id: report-id, officer: tx-sender} (merge plan {implemented: true, completion-date: stacks-block-height})))))
+    (ok (map-set remediation-plans {report-id: report-id, officer: tx-sender} (merge plan {implemented: true, completion-date: stacks-stacks-block-height})))))
 
 (define-public (update-report-status (report-id uint) (new-status (string-ascii 20)))
   (let ((report (unwrap! (map-get? ethics-reports report-id) ERR_NOT_FOUND)))

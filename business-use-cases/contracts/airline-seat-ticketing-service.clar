@@ -66,7 +66,7 @@
       {
         passenger: tx-sender,
         passenger-name: passenger-name,
-        booking-time: stacks-block-height,
+        booking-time: stacks-stacks-block-height,
         checked-in: false,
         booking-id: booking-id
       }

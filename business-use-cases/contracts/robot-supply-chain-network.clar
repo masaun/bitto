@@ -70,7 +70,7 @@
         quantity: quantity,
         order-value: total-value,
         order-status: "pending",
-        ordered-at: stacks-block-height,
+        ordered-at: stacks-stacks-block-height,
         delivered-at: u0
       }
     )
@@ -84,7 +84,7 @@
     (asserts! (is-eq tx-sender (get supplier order)) ERR-NOT-AUTHORIZED)
     (ok (map-set supply-orders
       { order-id: order-id }
-      (merge order { order-status: "delivered", delivered-at: stacks-block-height })
+      (merge order { order-status: "delivered", delivered-at: stacks-stacks-block-height })
     ))
   )
 )

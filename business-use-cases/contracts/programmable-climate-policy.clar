@@ -50,13 +50,13 @@
     (ok (map-set emissions-data tx-sender {
       baseline: baseline,
       current: baseline,
-      last-updated: stacks-block-height
+      last-updated: stacks-stacks-block-height
     }))))
 
 (define-public (update-emissions (current uint))
   (let ((data (unwrap! (map-get? emissions-data tx-sender) err-not-authorized)))
     (ok (map-set emissions-data tx-sender 
-      (merge data {current: current, last-updated: stacks-block-height})))))
+      (merge data {current: current, last-updated: stacks-stacks-block-height})))))
 
 (define-public (claim-incentive (policy-id uint))
   (let (

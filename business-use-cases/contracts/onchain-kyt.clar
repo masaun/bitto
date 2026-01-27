@@ -42,7 +42,7 @@
       sender: sender,
       recipient: recipient,
       amount: amount,
-      timestamp: stacks-block-height,
+      timestamp: stacks-stacks-block-height,
       risk-score: risk-score,
       flagged: false,
       analyst: tx-sender,
@@ -76,7 +76,7 @@
         alert-type: alert-type,
         severity: severity,
         description: description,
-        created-at: stacks-block-height,
+        created-at: stacks-stacks-block-height,
         resolved: false
       }
     ))

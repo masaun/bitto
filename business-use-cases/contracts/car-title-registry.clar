@@ -86,6 +86,6 @@
       event-type: event-type,
       from: none,
       to: none,
-      timestamp: stacks-block-height,
+      timestamp: stacks-stacks-block-height,
       notes: notes
     }))))

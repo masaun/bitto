@@ -56,7 +56,7 @@
       advance-rate: advance,
       interest-rate: rate,
       active: true,
-      setup-block: stacks-block-height
+      setup-block: stacks-stacks-block-height
     })
     (map-set draw-counter facility-id u0)
     (map-set borrower-facilities tx-sender
@@ -81,7 +81,7 @@
     (try! (stx-transfer? amount (get lender facility) tx-sender))
     (map-set drawdowns {facility-id: facility-id, draw-id: draw-id} {
       amount: amount,
-      block: stacks-block-height,
+      block: stacks-stacks-block-height,
       repaid: false
     })
     (map-set draw-counter facility-id draw-id)
@@ -148,7 +148,7 @@
       (facility (unwrap-panic (map-get? facilities facility-id)))
       (drawn (get drawn-amount facility))
       (rate (get interest-rate facility))
-      (elapsed (- stacks-block-height (get setup-block facility)))
+      (elapsed (- stacks-stacks-block-height (get setup-block facility)))
     )
     (/ (* drawn (* rate elapsed)) u10000000)
   )

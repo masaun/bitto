@@ -62,7 +62,7 @@
       coverage-area: coverage,
       data-transferred: u0,
       token-rewards-pool: reward-pool,
-      created-block: stacks-block-height
+      created-block: stacks-stacks-block-height
     })
     (map-set node-counter network-id u0)
     (map-set session-counter network-id u0)
@@ -86,7 +86,7 @@
       data-relayed: u0,
       rewards-earned: u0,
       online: true,
-      registered-block: stacks-block-height
+      registered-block: stacks-stacks-block-height
     })
     (map-set node-counter network-id node-id)
     (map-set cellular-networks network-id (merge network {
@@ -108,7 +108,7 @@
       user: tx-sender,
       data-used: data-amount,
       cost: payment,
-      start-block: stacks-block-height,
+      start-block: stacks-stacks-block-height,
       end-block: u0
     })
     (map-set session-counter network-id session-id)

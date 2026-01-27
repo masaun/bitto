@@ -29,7 +29,7 @@
     (asserts! (is-eq tx-sender (var-get contract-owner)) ERR_UNAUTHORIZED)
     (asserts! (is-none (map-get? board-members member)) ERR_ALREADY_EXISTS)
     (asserts! (> voting-power u0) ERR_INVALID_PARAMS)
-    (ok (map-set board-members member {position: position, voting-power: voting-power, appointed-at: stacks-block-height, active: true}))))
+    (ok (map-set board-members member {position: position, voting-power: voting-power, appointed-at: stacks-stacks-block-height, active: true}))))
 
 (define-public (remove-board-member (member principal))
   (begin
@@ -47,7 +47,7 @@
   (let ((member-data (unwrap! (map-get? board-members tx-sender) ERR_UNAUTHORIZED))
         (new-id (+ (var-get proposal-counter) u1)))
     (asserts! (get active member-data) ERR_UNAUTHORIZED)
-    (map-set board-proposals new-id {title: title, proposer: tx-sender, votes: u0, total-power: u0, quorum: (var-get quorum-threshold), status: "active", created-at: stacks-block-height})
+    (map-set board-proposals new-id {title: title, proposer: tx-sender, votes: u0, total-power: u0, quorum: (var-get quorum-threshold), status: "active", created-at: stacks-stacks-block-height})
     (var-set proposal-counter new-id)
     (ok new-id)))
 

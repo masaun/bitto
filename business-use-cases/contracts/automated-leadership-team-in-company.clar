@@ -25,7 +25,7 @@
   (begin
     (asserts! (is-eq tx-sender (var-get contract-owner)) ERR_UNAUTHORIZED)
     (asserts! (is-none (map-get? leadership-members member)) ERR_ALREADY_EXISTS)
-    (ok (map-set leadership-members member {role: role, appointed-at: stacks-block-height, status: true}))))
+    (ok (map-set leadership-members member {role: role, appointed-at: stacks-stacks-block-height, status: true}))))
 
 (define-public (remove-member (member principal))
   (begin
@@ -37,7 +37,7 @@
   (let ((member-data (unwrap! (map-get? leadership-members tx-sender) ERR_UNAUTHORIZED))
         (proposal-id (+ (var-get proposal-count) u1)))
     (asserts! (get status member-data) ERR_UNAUTHORIZED)
-    (map-set proposals proposal-id {proposer: tx-sender, description: description, votes-for: u0, votes-against: u0, executed: false, created-at: stacks-block-height})
+    (map-set proposals proposal-id {proposer: tx-sender, description: description, votes-for: u0, votes-against: u0, executed: false, created-at: stacks-stacks-block-height})
     (var-set proposal-count proposal-id)
     (ok proposal-id)))
 

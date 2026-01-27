@@ -82,7 +82,7 @@
     (asserts! (is-eq tx-sender (get planner plan)) ERR-NOT-AUTHORIZED)
     (ok (map-set robot-deployments
       { plan-id: plan-id, deployment-id: deployment-id }
-      (merge deployment { deployed: true, installation-date: stacks-block-height })
+      (merge deployment { deployed: true, installation-date: stacks-stacks-block-height })
     ))
   )
 )

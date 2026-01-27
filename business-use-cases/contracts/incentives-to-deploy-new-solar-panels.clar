@@ -65,7 +65,7 @@
       max-reward-per-install: max-reward,
       location-requirement: location,
       active: true,
-      created-block: stacks-block-height
+      created-block: stacks-stacks-block-height
     })
     (map-set install-counter program-id u0)
     (map-set sponsor-programs tx-sender
@@ -95,7 +95,7 @@
       reward-amount: calculated-reward,
       verified: false,
       claimed: false,
-      install-block: stacks-block-height
+      install-block: stacks-stacks-block-height
     })
     (map-set install-counter program-id install-id)
     (ok install-id)
@@ -113,7 +113,7 @@
     (map-set verifications {program-id: program-id, install-id: install-id} {
       verifier: tx-sender,
       verified-capacity: verified-capacity,
-      verification-block: stacks-block-height,
+      verification-block: stacks-stacks-block-height,
       notes: notes
     })
     (map-set solar-installations {program-id: program-id, install-id: install-id}

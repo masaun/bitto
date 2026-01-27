@@ -24,7 +24,7 @@
 (define-public (file-cftc-report (content-hash (buff 32)) (fraud-type (string-ascii 50)) (market (string-ascii 30)) (potential-fine uint))
   (let ((report-id (+ (var-get cftc-report-count) u1))
         (tipster-data (default-to {verified: false, reports-filed: u0, rewards-earned: u0} (map-get? tipsters tx-sender))))
-    (map-set cftc-reports report-id {hash: content-hash, fraud-type: fraud-type, market: market, potential-fine: potential-fine, timestamp: stacks-block-height, status: "filed"})
+    (map-set cftc-reports report-id {hash: content-hash, fraud-type: fraud-type, market: market, potential-fine: potential-fine, timestamp: stacks-stacks-block-height, status: "filed"})
     (map-set tipsters tx-sender (merge tipster-data {reports-filed: (+ (get reports-filed tipster-data) u1)}))
     (var-set cftc-report-count report-id)
     (ok report-id)))

@@ -111,8 +111,8 @@
         collateral-value: (get market-value cluster),
         ltv-ratio: ltv,
         outstanding-balance: loan-amount,
-        loan-start: stacks-block-height,
-        loan-maturity: (+ stacks-block-height duration-blocks),
+        loan-start: stacks-stacks-block-height,
+        loan-maturity: (+ stacks-stacks-block-height duration-blocks),
         repaid: false,
         defaulted: false
       }
@@ -152,7 +152,7 @@
         revenue-generated: revenue-generated,
         lender-share: lender-share,
         borrower-share: borrower-share,
-        distribution-block: stacks-block-height,
+        distribution-block: stacks-stacks-block-height,
         distributed: true
       }
     )
@@ -186,7 +186,7 @@
       (cluster (unwrap! (map-get? gpu-cluster-assets (get cluster-id loan)) err-not-found))
     )
     (asserts! (is-eq tx-sender (get lender loan)) err-unauthorized)
-    (asserts! (> stacks-block-height (get loan-maturity loan)) err-not-found)
+    (asserts! (> stacks-stacks-block-height (get loan-maturity loan)) err-not-found)
     (asserts! (> (get outstanding-balance loan) u0) err-invalid-amount)
     (map-set private-credit-loans loan-id (merge loan {defaulted: true}))
     (map-set gpu-cluster-assets (get cluster-id loan) (merge cluster {

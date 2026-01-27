@@ -77,7 +77,7 @@
         seat: seat,
         holder: tx-sender,
         price: price,
-        purchased-at: stacks-block-height,
+        purchased-at: stacks-stacks-block-height,
         used: false
       }
     )

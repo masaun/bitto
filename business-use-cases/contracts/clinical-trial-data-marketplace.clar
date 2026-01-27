@@ -89,7 +89,7 @@
         researcher: tx-sender,
         data-hash: data-hash,
         participant-count: participant-count,
-        submission-block: stacks-block-height,
+        submission-block: stacks-stacks-block-height,
         payment-amount: u0,
         verified: false
       }
@@ -116,7 +116,7 @@
     (try! (stx-transfer? price tx-sender (get researcher submission)))
     (map-set data-purchases {buyer: tx-sender, submission-id: submission-id}
       {
-        purchase-block: stacks-block-height,
+        purchase-block: stacks-stacks-block-height,
         access-key-hash: access-key-hash,
         amount-paid: price
       }

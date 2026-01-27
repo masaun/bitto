@@ -38,7 +38,7 @@
   (let ((project-id (+ (var-get project-count) u1)))
     (asserts! (is-eq tx-sender (var-get cto)) ERR_UNAUTHORIZED)
     (asserts! (> budget u0) ERR_INVALID_PARAMS)
-    (map-set tech-projects project-id {name: name, status: "planning", budget: budget, start-block: stacks-block-height, end-block: (+ stacks-block-height duration)})
+    (map-set tech-projects project-id {name: name, status: "planning", budget: budget, start-block: stacks-stacks-block-height, end-block: (+ stacks-stacks-block-height duration)})
     (var-set project-count project-id)
     (ok project-id)))
 

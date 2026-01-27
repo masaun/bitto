@@ -39,7 +39,7 @@
         chip-type: chip-type,
         node-size: node-size,
         wafer-count: wafer-count,
-        started-at: stacks-block-height,
+        started-at: stacks-stacks-block-height,
         completed-at: u0,
         status: "in-progress",
         operator: tx-sender
@@ -88,7 +88,7 @@
     (asserts! (is-eq tx-sender (get operator process)) ERR-NOT-AUTHORIZED)
     (ok (map-set manufacturing-processes
       { process-id: process-id }
-      (merge process { status: "completed", completed-at: stacks-block-height })
+      (merge process { status: "completed", completed-at: stacks-stacks-block-height })
     ))
   )
 )

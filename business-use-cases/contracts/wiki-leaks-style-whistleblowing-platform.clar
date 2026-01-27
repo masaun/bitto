@@ -23,7 +23,7 @@
 
 (define-public (submit-leak (content-hash (buff 32)) (source-type (string-ascii 30)) (classification (string-ascii 30)))
   (let ((leak-id (+ (var-get leak-count) u1)))
-    (map-set leaks leak-id {hash: content-hash, source-type: source-type, classification: classification, published: false, timestamp: stacks-block-height, impact-score: u0})
+    (map-set leaks leak-id {hash: content-hash, source-type: source-type, classification: classification, published: false, timestamp: stacks-stacks-block-height, impact-score: u0})
     (var-set leak-count leak-id)
     (ok leak-id)))
 
@@ -39,7 +39,7 @@
     (asserts! (get active publisher-data) ERR_UNAUTHORIZED)
     (asserts! (not (get published leak)) ERR_ALREADY_EXISTS)
     (map-set leaks leak-id (merge leak {published: true}))
-    (ok (map-set publication-metadata {leak-id: leak-id, publisher: tx-sender} {published-at: stacks-block-height, redacted: redacted}))))
+    (ok (map-set publication-metadata {leak-id: leak-id, publisher: tx-sender} {published-at: stacks-stacks-block-height, redacted: redacted}))))
 
 (define-public (update-impact-score (leak-id uint) (score uint))
   (let ((leak (unwrap! (map-get? leaks leak-id) ERR_NOT_FOUND)))

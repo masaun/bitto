@@ -100,7 +100,7 @@
         receiver: receiver,
         amount: amount,
         service-type: service-type,
-        payment-block: stacks-block-height,
+        payment-block: stacks-stacks-block-height,
         status: "completed",
         escrow-release-block: none
       }
@@ -187,7 +187,7 @@
     )
     (asserts! (> amount u0) err-invalid-amount)
     (asserts! (>= (get balance wallet) amount) err-insufficient-balance)
-    (try! (as-contract (stx-transfer? amount tx-sender tx-sender)))
+    (try! (stx-transfer? amount tx-sender (as-contract tx-sender)))
     (map-set robot-wallets tx-sender (merge wallet {
       balance: (- (get balance wallet) amount)
     }))

@@ -43,7 +43,7 @@
       priority: priority,
       status: "pending",
       assigned-to: none,
-      created-at: stacks-block-height,
+      created-at: stacks-stacks-block-height,
       completed-at: none
     })
     (var-set request-nonce request-id)
@@ -59,7 +59,7 @@
   (let ((request (unwrap! (map-get? service-requests request-id) err-service-not-found)))
     (asserts! (is-eq (some tx-sender) (get assigned-to request)) err-not-authorized)
     (ok (map-set service-requests request-id 
-      (merge request {status: "completed", completed-at: (some stacks-block-height)})))))
+      (merge request {status: "completed", completed-at: (some stacks-stacks-block-height)})))))
 
 (define-public (rate-provider (provider principal) (rating uint))
   (let ((provider-data (unwrap! (map-get? service-providers provider) err-not-authorized)))

@@ -25,7 +25,7 @@
   (let ((complaint-id (+ (var-get safety-complaint-count) u1))
         (employee-data (default-to {employee-id: "", protection-status: false, complaint-count: u0} (map-get? protected-employees tx-sender))))
     (asserts! (<= severity u5) ERR_INVALID_PARAMS)
-    (map-set safety-complaints complaint-id {hash: content-hash, hazard-type: hazard-type, industry: industry, severity: severity, timestamp: stacks-block-height, retaliation-claimed: false, status: "filed"})
+    (map-set safety-complaints complaint-id {hash: content-hash, hazard-type: hazard-type, industry: industry, severity: severity, timestamp: stacks-stacks-block-height, retaliation-claimed: false, status: "filed"})
     (map-set protected-employees tx-sender (merge employee-data {protection-status: true, complaint-count: (+ (get complaint-count employee-data) u1)}))
     (var-set safety-complaint-count complaint-id)
     (ok complaint-id)))

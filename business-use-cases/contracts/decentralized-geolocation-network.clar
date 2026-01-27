@@ -57,7 +57,7 @@
       data-points-served: u0,
       rewards-earned: u0,
       active: true,
-      deployed-block: stacks-block-height
+      deployed-block: stacks-stacks-block-height
     })
     (map-set beacon-coverage beacon-id {
       coverage-radius: u1000,
@@ -85,7 +85,7 @@
       requester: tx-sender,
       location-data: 0x00,
       payment: payment,
-      timestamp: stacks-block-height
+      timestamp: stacks-stacks-block-height
     })
     (map-set query-counter beacon-id query-id)
     (map-set geo-beacons beacon-id (merge beacon {

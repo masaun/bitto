@@ -23,7 +23,7 @@
 
 (define-public (submit-leak (content-hash (buff 32)) (encrypted bool))
   (let ((submission-id (+ (var-get submission-count) u1)))
-    (map-set submissions submission-id {hash: content-hash, timestamp: stacks-block-height, encrypted: encrypted, status: "pending", risk-level: u0})
+    (map-set submissions submission-id {hash: content-hash, timestamp: stacks-stacks-block-height, encrypted: encrypted, status: "pending", risk-level: u0})
     (var-set submission-count submission-id)
     (ok submission-id)))
 

@@ -59,7 +59,7 @@
       outstanding: amount,
       disbursed: false,
       active: false,
-      issue-block: stacks-block-height,
+      issue-block: stacks-stacks-block-height,
       maturity-block: maturity
     })
     (map-set warrant-counter debt-id u0)
@@ -97,7 +97,7 @@
       strike-price: strike,
       shares: shares,
       exercised: false,
-      issue-block: stacks-block-height
+      issue-block: stacks-stacks-block-height
     })
     (map-set warrant-counter debt-id warrant-id)
     (ok warrant-id)
@@ -155,7 +155,7 @@
       (debt (unwrap-panic (map-get? venture-debts debt-id)))
       (outstanding (get outstanding debt))
       (rate (get interest-rate debt))
-      (elapsed (- stacks-block-height (get issue-block debt)))
+      (elapsed (- stacks-stacks-block-height (get issue-block debt)))
     )
     (+ outstanding (/ (* outstanding (* rate elapsed)) u10000000))
   )

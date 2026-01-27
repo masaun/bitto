@@ -65,8 +65,8 @@
         ip-id-hash: ip-id-hash,
         coverage-amount: coverage-amount,
         premium-amount: premium-amount,
-        policy-start: stacks-block-height,
-        policy-end: (+ stacks-block-height duration-blocks),
+        policy-start: stacks-stacks-block-height,
+        policy-end: (+ stacks-stacks-block-height duration-blocks),
         active: true,
         claims-filed: u0
       }
@@ -86,7 +86,7 @@
     )
     (asserts! (is-eq tx-sender (get insured policy)) err-unauthorized)
     (asserts! (get active policy) err-policy-expired)
-    (asserts! (<= stacks-block-height (get policy-end policy)) err-policy-expired)
+    (asserts! (<= stacks-stacks-block-height (get policy-end policy)) err-policy-expired)
     (asserts! (<= claimed-amount (get coverage-amount policy)) err-invalid-amount)
     (map-set breach-claims claim-id
       {
@@ -94,7 +94,7 @@
         claimant: tx-sender,
         breach-evidence-hash: breach-evidence-hash,
         claimed-amount: claimed-amount,
-        filing-block: stacks-block-height,
+        filing-block: stacks-stacks-block-height,
         status: "pending",
         payout-amount: u0,
         processed: false
@@ -122,7 +122,7 @@
         assessor: tx-sender,
         verdict: verdict,
         assessment-hash: assessment-hash,
-        assessed-at: stacks-block-height
+        assessed-at: stacks-stacks-block-height
       }
     )
     (ok true)

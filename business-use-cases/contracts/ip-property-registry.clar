@@ -57,7 +57,7 @@
         ip-type: ip-type,
         content-hash: content-hash,
         metadata-hash: metadata-hash,
-        registration-block: stacks-block-height,
+        registration-block: stacks-stacks-block-height,
         verified: false,
         license-type: license-type,
         royalty-rate: royalty-rate
@@ -82,8 +82,8 @@
     (try! (stx-transfer? license-fee tx-sender (get creator ip)))
     (map-set ip-licenses {ip-id: ip-id, licensee: tx-sender}
       {
-        license-start: stacks-block-height,
-        license-end: (+ stacks-block-height duration-blocks),
+        license-start: stacks-stacks-block-height,
+        license-end: (+ stacks-stacks-block-height duration-blocks),
         license-fee: license-fee,
         active: true
       }

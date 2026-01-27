@@ -62,7 +62,7 @@
       coverage-radius: radius,
       rewards-earned: u0,
       active: true,
-      deployed-block: stacks-block-height
+      deployed-block: stacks-stacks-block-height
     })
     (map-set traffic-counter ap-id u0)
     (map-set operator-aps tx-sender
@@ -84,7 +84,7 @@
       monthly-fee: fee,
       data-consumed: u0,
       connection-quality: u100,
-      connected-block: stacks-block-height,
+      connected-block: stacks-stacks-block-height,
       active: true
     })
     (map-set fwa-access-points ap-id (merge ap {
@@ -106,7 +106,7 @@
       user: tx-sender,
       data-amount: data-amount,
       peak-speed: speed,
-      timestamp: stacks-block-height
+      timestamp: stacks-stacks-block-height
     })
     (map-set traffic-counter ap-id traffic-id)
     (map-set user-connections {ap-id: ap-id, user: tx-sender}

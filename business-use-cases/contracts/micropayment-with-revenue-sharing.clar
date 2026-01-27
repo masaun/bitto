@@ -90,7 +90,7 @@
         provider: provider,
         amount: amount,
         service-hash: service-hash,
-        payment-block: stacks-block-height,
+        payment-block: stacks-stacks-block-height,
         revenue-distributed: false
       }
     )
@@ -139,7 +139,7 @@
       (balance (default-to u0 (map-get? user-balances tx-sender)))
     )
     (asserts! (>= balance amount) err-insufficient-balance)
-    (try! (as-contract (stx-transfer? amount tx-sender tx-sender)))
+    (try! (stx-transfer? amount tx-sender (as-contract tx-sender)))
     (map-set user-balances tx-sender (- balance amount))
     (ok true)
   )

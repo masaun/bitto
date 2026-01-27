@@ -59,12 +59,12 @@
     (asserts! (is-eq tx-sender (var-get verifier-role)) ERR-NOT-AUTHORIZED)
     (map-set address-verifications
       { address-id: address-id }
-      (merge address { verified: true, verification-date: stacks-block-height })
+      (merge address { verified: true, verification-date: stacks-stacks-block-height })
     )
     (ok (map-set verification-attempts
       { address-id: address-id, attempt-id: attempt-id }
       {
-        attempt-date: stacks-block-height,
+        attempt-date: stacks-stacks-block-height,
         method: "document-review",
         result: "approved",
         notes: ""
@@ -79,7 +79,7 @@
     (ok (map-set verification-attempts
       { address-id: address-id, attempt-id: attempt-id }
       {
-        attempt-date: stacks-block-height,
+        attempt-date: stacks-stacks-block-height,
         method: "document-review",
         result: "rejected",
         notes: reason

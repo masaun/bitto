@@ -22,13 +22,13 @@
 (define-public (generate-otp-request (phone-number (string-ascii 20)) (otp-hash (buff 32)))
   (let (
     (request-id (var-get request-nonce))
-    (expiry (+ stacks-block-height OTP-VALIDITY-PERIOD))
+    (expiry (+ stacks-stacks-block-height OTP-VALIDITY-PERIOD))
   )
     (map-set otps
       { phone-number: phone-number, request-id: request-id }
       {
         otp-hash: otp-hash,
-        created-at: stacks-block-height,
+        created-at: stacks-stacks-block-height,
         expires-at: expiry,
         verified: false,
         requester: tx-sender
@@ -44,7 +44,7 @@
     (otp-record (unwrap! (map-get? otps { phone-number: phone-number, request-id: request-id }) ERR-OTP-NOT-FOUND))
   )
     (asserts! (not (get verified otp-record)) ERR-ALREADY-VERIFIED)
-    (asserts! (<= stacks-block-height (get expires-at otp-record)) ERR-OTP-EXPIRED)
+    (asserts! (<= stacks-stacks-block-height (get expires-at otp-record)) ERR-OTP-EXPIRED)
     (asserts! (is-eq otp-hash (get otp-hash otp-record)) ERR-OTP-INVALID)
     (map-set otps
       { phone-number: phone-number, request-id: request-id }

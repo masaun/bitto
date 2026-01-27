@@ -24,7 +24,7 @@
 (define-public (file-report (content-hash (buff 32)) (category (string-ascii 50)) (severity uint) (anonymous bool))
   (let ((report-id (+ (var-get report-count) u1)))
     (asserts! (<= severity u5) ERR_INVALID_PARAMS)
-    (map-set reports report-id {hash: content-hash, category: category, severity: severity, timestamp: stacks-block-height, anonymous: anonymous, status: "submitted"})
+    (map-set reports report-id {hash: content-hash, category: category, severity: severity, timestamp: stacks-stacks-block-height, anonymous: anonymous, status: "submitted"})
     (var-set report-count report-id)
     (ok report-id)))
 
@@ -39,7 +39,7 @@
     (asserts! (is-eq tx-sender (var-get contract-owner)) ERR_UNAUTHORIZED)
     (asserts! (is-some (map-get? reports report-id)) ERR_NOT_FOUND)
     (asserts! (is-some (map-get? receivers receiver)) ERR_NOT_FOUND)
-    (ok (map-set case-assignments {report-id: report-id, receiver: receiver} {assigned-at: stacks-block-height, reviewed: false}))))
+    (ok (map-set case-assignments {report-id: report-id, receiver: receiver} {assigned-at: stacks-stacks-block-height, reviewed: false}))))
 
 (define-public (mark-reviewed (report-id uint))
   (let ((receiver-data (unwrap! (map-get? receivers tx-sender) ERR_UNAUTHORIZED))

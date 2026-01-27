@@ -61,7 +61,7 @@
       location-hash: location,
       active: true,
       uptime-percentage: u100,
-      created-block: stacks-block-height
+      created-block: stacks-stacks-block-height
     })
     (map-set device-counter plant-id u0)
     (map-set trade-counter plant-id u0)
@@ -110,7 +110,7 @@
       buyer: tx-sender,
       amount: amount,
       price: (get energy-price plant),
-      block: stacks-block-height
+      block: stacks-stacks-block-height
     })
     (map-set trade-counter plant-id trade-id)
     (map-set virtual-plants plant-id (merge plant {

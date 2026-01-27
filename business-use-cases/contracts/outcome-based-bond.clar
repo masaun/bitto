@@ -31,7 +31,7 @@
       amount: amount,
       target-outcome: target-outcome,
       actual-outcome: u0,
-      maturity: (+ stacks-block-height maturity),
+      maturity: (+ stacks-stacks-block-height maturity),
       interest-rate: interest-rate,
       redeemed: false
     })
@@ -54,7 +54,7 @@
     (bond (unwrap! (map-get? bonds bond-id) err-bond-not-found))
     (investment (unwrap! (map-get? investors {bond-id: bond-id, investor: tx-sender}) err-not-authorized))
   )
-    (asserts! (>= stacks-block-height (get maturity bond)) err-not-authorized)
+    (asserts! (>= stacks-stacks-block-height (get maturity bond)) err-not-authorized)
     (asserts! (not (get redeemed bond)) err-already-redeemed)
     (asserts! (>= (get actual-outcome bond) (get target-outcome bond)) err-outcome-not-met)
     (let ((payout (+ investment (/ (* investment (get interest-rate bond)) u10000))))

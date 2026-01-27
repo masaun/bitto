@@ -42,7 +42,7 @@
     (
       (market-id (+ (var-get market-nonce) u1))
     )
-    (asserts! (> resolution-deadline stacks-block-height) err-invalid-amount)
+    (asserts! (> resolution-deadline stacks-stacks-block-height) err-invalid-amount)
     (map-set prediction-markets market-id
       {
         creator: tx-sender,
@@ -71,7 +71,7 @@
       (position (default-to {yes-stake: u0, no-stake: u0, claimed: false} (map-get? user-positions {market-id: market-id, user: tx-sender})))
     )
     (asserts! (not (get resolved market)) err-market-closed)
-    (asserts! (< stacks-block-height (get resolution-deadline market)) err-market-closed)
+    (asserts! (< stacks-stacks-block-height (get resolution-deadline market)) err-market-closed)
     (asserts! (> amount u0) err-invalid-amount)
     (try! (stx-transfer? amount tx-sender (as-contract tx-sender)))
     (map-set user-positions {market-id: market-id, user: tx-sender}
@@ -90,7 +90,7 @@
       (position (default-to {yes-stake: u0, no-stake: u0, claimed: false} (map-get? user-positions {market-id: market-id, user: tx-sender})))
     )
     (asserts! (not (get resolved market)) err-market-closed)
-    (asserts! (< stacks-block-height (get resolution-deadline market)) err-market-closed)
+    (asserts! (< stacks-stacks-block-height (get resolution-deadline market)) err-market-closed)
     (asserts! (> amount u0) err-invalid-amount)
     (try! (stx-transfer? amount tx-sender (as-contract tx-sender)))
     (map-set user-positions {market-id: market-id, user: tx-sender}
@@ -109,11 +109,11 @@
     )
     (asserts! (is-eq tx-sender (get creator market)) err-unauthorized)
     (asserts! (not (get resolved market)) err-already-exists)
-    (asserts! (>= stacks-block-height (get resolution-deadline market)) err-market-closed)
+    (asserts! (>= stacks-stacks-block-height (get resolution-deadline market)) err-market-closed)
     (map-set prediction-markets market-id (merge market {
       resolved: true,
       outcome: (some outcome),
-      resolved-at: (some stacks-block-height)
+      resolved-at: (some stacks-stacks-block-height)
     }))
     (ok true)
   )
@@ -136,7 +136,7 @@
         (payout (if (> total-winning-stakes u0) (/ (* winning-stake total-pool) total-winning-stakes) u0))
       )
       (asserts! (> payout u0) err-invalid-amount)
-      (try! (as-contract (stx-transfer? payout tx-sender tx-sender)))
+      (try! (stx-transfer? payout tx-sender (as-contract tx-sender)))
       (map-set user-positions {market-id: market-id, user: tx-sender} (merge position {claimed: true}))
       (ok payout)
     )

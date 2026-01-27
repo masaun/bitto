@@ -24,7 +24,7 @@
 (define-public (submit-finra-tip (content-hash (buff 32)) (violation-type (string-ascii 50)) (firm-involved (string-ascii 100)) (monetary-harm uint))
   (let ((tip-id (+ (var-get finra-tip-count) u1))
         (informant-data (default-to {registration-number: "", verified: false, tips-submitted: u0} (map-get? certified-informants tx-sender))))
-    (map-set finra-tips tip-id {hash: content-hash, violation-type: violation-type, firm-involved: firm-involved, monetary-harm: monetary-harm, timestamp: stacks-block-height, status: "submitted"})
+    (map-set finra-tips tip-id {hash: content-hash, violation-type: violation-type, firm-involved: firm-involved, monetary-harm: monetary-harm, timestamp: stacks-stacks-block-height, status: "submitted"})
     (map-set certified-informants tx-sender (merge informant-data {tips-submitted: (+ (get tips-submitted informant-data) u1)}))
     (var-set finra-tip-count tip-id)
     (ok tip-id)))

@@ -103,7 +103,7 @@
         project-id: project-id,
         contributor: tx-sender,
         amount: amount,
-        contribution-block: stacks-block-height,
+        contribution-block: stacks-stacks-block-height,
         reward-claimed: false
       }
     )
@@ -167,7 +167,7 @@
     (map-set research-results project-id
       {
         result-hash: result-hash,
-        publication-block: stacks-block-height,
+        publication-block: stacks-stacks-block-height,
         open-access: open-access,
         citation-count: u0
       }

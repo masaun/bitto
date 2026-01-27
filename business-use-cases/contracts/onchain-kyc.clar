@@ -92,8 +92,8 @@
         verification-level: verification-level,
         verified-by: tx-sender,
         verification-hash: verification-hash,
-        verification-date: stacks-block-height,
-        expiry-date: (+ stacks-block-height duration-blocks),
+        verification-date: stacks-stacks-block-height,
+        expiry-date: (+ stacks-stacks-block-height duration-blocks),
         status: "verified",
         jurisdiction: jurisdiction
       }
@@ -123,7 +123,7 @@
         previous-status: (get status kyc),
         new-status: new-status,
         updated-by: tx-sender,
-        update-date: stacks-block-height,
+        update-date: stacks-stacks-block-height,
         reason-hash: reason-hash
       }
     )
@@ -142,8 +142,8 @@
     (asserts! (get active provider) err-unauthorized)
     (asserts! (is-eq (get verified-by kyc) tx-sender) err-unauthorized)
     (map-set kyc-records user (merge kyc {
-      expiry-date: (+ stacks-block-height duration-blocks),
-      verification-date: stacks-block-height
+      expiry-date: (+ stacks-stacks-block-height duration-blocks),
+      verification-date: stacks-stacks-block-height
     }))
     (ok true)
   )
@@ -163,7 +163,7 @@
         previous-status: (get status kyc),
         new-status: "revoked",
         updated-by: tx-sender,
-        update-date: stacks-block-height,
+        update-date: stacks-stacks-block-height,
         reason-hash: reason-hash
       }
     )
@@ -196,7 +196,7 @@
     )
     (ok (and
       (is-eq (get status kyc) "verified")
-      (<= stacks-block-height (get expiry-date kyc))
+      (<= stacks-stacks-block-height (get expiry-date kyc))
     ))
   )
 )

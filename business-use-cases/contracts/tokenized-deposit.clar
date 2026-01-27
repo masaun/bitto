@@ -56,7 +56,7 @@
 (define-private (check-unlock-status (account principal))
   (let ((deposit-info (map-get? deposits account)))
     (match deposit-info
-      info (if (> (get locked-until info) stacks-block-height)
+      info (if (> (get locked-until info) stacks-stacks-block-height)
              err-deposit-locked
              (ok true))
       (ok true))))
@@ -67,13 +67,13 @@
     (try! (ft-mint? tokenized-deposit amount tx-sender))
     (ok (map-set deposits tx-sender {
       amount: amount,
-      locked-until: (+ stacks-block-height lock-period),
+      locked-until: (+ stacks-stacks-block-height lock-period),
       interest-accrued: u0
     }))))
 
 (define-public (withdraw-deposit)
   (let ((deposit-info (unwrap! (map-get? deposits tx-sender) err-not-authorized)))
-    (asserts! (<= (get locked-until deposit-info) stacks-block-height) err-deposit-locked)
+    (asserts! (<= (get locked-until deposit-info) stacks-stacks-block-height) err-deposit-locked)
     (try! (ft-burn? tokenized-deposit (get amount deposit-info) tx-sender))
     (ok (map-delete deposits tx-sender))))
 

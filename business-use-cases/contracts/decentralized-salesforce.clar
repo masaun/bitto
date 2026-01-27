@@ -63,7 +63,7 @@
         monthly-fee: monthly-fee,
         seats: seats,
         active: true,
-        subscription-end: (+ stacks-block-height duration-blocks)
+        subscription-end: (+ stacks-stacks-block-height duration-blocks)
       }
     )
     (map-set org-accounts tx-sender
@@ -81,13 +81,13 @@
     )
     (asserts! (is-eq tx-sender (get organization account)) err-unauthorized)
     (asserts! (get active account) err-subscription-expired)
-    (asserts! (< stacks-block-height (get subscription-end account)) err-subscription-expired)
+    (asserts! (< stacks-stacks-block-height (get subscription-end account)) err-subscription-expired)
     (map-set sales-leads lead-id
       {
         account-id: account-id,
         lead-data-hash: lead-data-hash,
         status: "new",
-        created-at: stacks-block-height,
+        created-at: stacks-stacks-block-height,
         assigned-to: none,
         conversion-value: u0,
         converted: false

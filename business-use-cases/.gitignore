@@ -22,6 +22,7 @@ costs-reports.json
 
 # Secrets
 .env
+.env.contracts
 
 # Node modules
 node_modules
@@ -47,6 +48,7 @@ BATCH_SCRIPTS_AND_FRONTENDS.md
 # Deloyment scripts
 deploy-batch.sh
 deploy-single.sh
+deploy-all-62-contracts.sh
 check-pending-transactions.sh
 deploy-with-delays.sh
 deploy-remaining-one-by-one.sh

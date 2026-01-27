@@ -24,7 +24,7 @@
 (define-public (file-complaint (content-hash (buff 32)) (complaint-type (string-ascii 50)) (severity uint))
   (let ((complaint-id (+ (var-get complaint-count) u1)))
     (asserts! (<= severity u5) ERR_INVALID_PARAMS)
-    (map-set complaints complaint-id {hash: content-hash, complaint-type: complaint-type, severity: severity, timestamp: stacks-block-height, status: "filed"})
+    (map-set complaints complaint-id {hash: content-hash, complaint-type: complaint-type, severity: severity, timestamp: stacks-stacks-block-height, status: "filed"})
     (var-set complaint-count complaint-id)
     (ok complaint-id)))
 
@@ -38,7 +38,7 @@
   (let ((officer-data (unwrap! (map-get? legal-officers tx-sender) ERR_UNAUTHORIZED)))
     (asserts! (is-some (map-get? complaints complaint-id)) ERR_NOT_FOUND)
     (asserts! (get active officer-data) ERR_UNAUTHORIZED)
-    (ok (map-set case-reviews {complaint-id: complaint-id, officer: tx-sender} {reviewed-at: stacks-block-height, action-taken: action-taken}))))
+    (ok (map-set case-reviews {complaint-id: complaint-id, officer: tx-sender} {reviewed-at: stacks-stacks-block-height, action-taken: action-taken}))))
 
 (define-public (update-complaint-status (complaint-id uint) (new-status (string-ascii 20)))
   (let ((complaint (unwrap! (map-get? complaints complaint-id) ERR_NOT_FOUND)))

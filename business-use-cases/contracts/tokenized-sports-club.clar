@@ -54,7 +54,7 @@
         tokens-issued: u0,
         token-price: token-price,
         founder: tx-sender,
-        established-at: stacks-block-height
+        established-at: stacks-stacks-block-height
       }
     )
     (var-set club-nonce (+ club-id u1))
@@ -106,7 +106,7 @@
         votes-for: u0,
         votes-against: u0,
         status: "active",
-        created-at: stacks-block-height
+        created-at: stacks-stacks-block-height
       }
     ))
   )

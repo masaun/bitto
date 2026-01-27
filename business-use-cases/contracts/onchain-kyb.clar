@@ -56,13 +56,13 @@
     (asserts! (is-eq tx-sender (var-get verifier-role)) ERR-NOT-AUTHORIZED)
     (map-set business-verifications
       { business-id: business-id }
-      (merge business { verified: true, verification-date: stacks-block-height })
+      (merge business { verified: true, verification-date: stacks-stacks-block-height })
     )
     (ok (map-set verification-history
       { business-id: business-id, record-id: record-id }
       {
         action: "approved",
-        timestamp: stacks-block-height,
+        timestamp: stacks-stacks-block-height,
         performer: tx-sender,
         notes: ""
       }
@@ -81,7 +81,7 @@
       { business-id: business-id, record-id: record-id }
       {
         action: "revoked",
-        timestamp: stacks-block-height,
+        timestamp: stacks-stacks-block-height,
         performer: tx-sender,
         notes: reason
       }

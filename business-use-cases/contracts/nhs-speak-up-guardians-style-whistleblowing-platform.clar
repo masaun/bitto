@@ -24,7 +24,7 @@
 (define-public (raise-concern (content-hash (buff 32)) (concern-type (string-ascii 50)) (department (string-ascii 100)) (severity uint) (anonymous bool))
   (let ((concern-id (+ (var-get concern-count) u1)))
     (asserts! (<= severity u5) ERR_INVALID_PARAMS)
-    (map-set concerns concern-id {hash: content-hash, concern-type: concern-type, department: department, severity: severity, timestamp: stacks-block-height, anonymous: anonymous, status: "raised"})
+    (map-set concerns concern-id {hash: content-hash, concern-type: concern-type, department: department, severity: severity, timestamp: stacks-stacks-block-height, anonymous: anonymous, status: "raised"})
     (var-set concern-count concern-id)
     (ok concern-id)))
 

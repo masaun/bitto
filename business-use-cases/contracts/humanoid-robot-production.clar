@@ -41,7 +41,7 @@
         robot-model: robot-model,
         target-quantity: target-quantity,
         produced-quantity: u0,
-        started-at: stacks-block-height,
+        started-at: stacks-stacks-block-height,
         completed-at: u0,
         status: "in-progress",
         manufacturer: tx-sender
@@ -116,7 +116,7 @@
     (asserts! (is-eq tx-sender (get manufacturer batch)) ERR-NOT-AUTHORIZED)
     (ok (map-set production-batches
       { batch-id: batch-id }
-      (merge batch { status: "completed", completed-at: stacks-block-height })
+      (merge batch { status: "completed", completed-at: stacks-stacks-block-height })
     ))
   )
 )

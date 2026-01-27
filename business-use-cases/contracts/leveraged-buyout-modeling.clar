@@ -63,7 +63,7 @@
       debt-interest-rate: rate,
       exit-multiple: exit-mult,
       hold-period-blocks: hold-period,
-      created-block: stacks-block-height,
+      created-block: stacks-stacks-block-height,
       exited: false
     })
     (map-set sponsor-lbos tx-sender
