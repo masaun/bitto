@@ -1,3 +1,6 @@
+# Deployment files
+Clarinet.toml
+
 # Settings
 **/settings/Mainnet.toml
 **/settings/Testnet.toml
@@ -58,8 +61,8 @@ deploy-with-delays.sh
 deploy-remaining-one-by-one.sh
 check-deployed-contracts.sh
 DEPLOYMENT_GUIDE.md
-
 deployments/*.yaml
+
 
 # MD.file
 *.md
