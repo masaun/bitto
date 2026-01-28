@@ -1,0 +1,19 @@
+{
+  "name": "business-use-cases",
+  "version": "1.0.0",
+  "description": "A comprehensive implementation of 62 Clarity smart contracts across 5 business domains, with TypeScript frontend applications for each contract.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@stacks/transactions": "^7.3.1",
+    "@stacks/wallet-sdk": "^7.2.0",
+    "dotenv": "^17.2.3",
+    "tsx": "^4.21.0"
+  }
+}

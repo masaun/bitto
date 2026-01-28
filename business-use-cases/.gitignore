@@ -38,9 +38,13 @@ tsconfig.node.json
 
 # Scripts
 generate_batch_scripts.py
+create_scripts.py
 
 # Frontend
 generate_frontends.py
+create-frontends.ts
+generate-all-frontends.sh
+
 
 # README
 BATCH_SCRIPTS_AND_FRONTENDS.md

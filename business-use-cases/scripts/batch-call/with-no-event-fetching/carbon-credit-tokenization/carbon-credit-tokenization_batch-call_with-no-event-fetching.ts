@@ -105,27 +105,30 @@ function getWriteFunctions(senderAddress: string): FunctionCall[] {
     {
       name: 'issue-credits',
       args: (index: number, sender: string) => [
-        principalCV(sender),
-        uintCV(1000000),
-        stringAsciiCV("test-value"),
-        bufferCV(Buffer.from("000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f", "hex")),
+        stringAsciiCV(`PROJECT-${index + 1}`),  // project-id
+        uintCV(1000 + (index * 100)),  // tonnes
+        uintCV(2024 + index),  // vintage-year
+        stringAsciiCV('VCS'),  // verification-standard
+        bufferCV(Buffer.from("000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f", "hex")),  // location
       ],
       description: 'Issue carbon credits',
     },
     {
       name: 'trade-credits',
       args: (index: number, sender: string) => [
-        uintCV(1000000),
-        principalCV(sender),
-        uintCV(1000000),
+        uintCV(index + 1),  // credit-id
+        principalCV('ST2CY5V39NHDPWSXMW9QDT3HC3GD6Q6XX4CFRK9AG'),  // buyer
+        uintCV(100 + (index * 10)),  // amount
+        uintCV(5000 + (index * 100)),  // price
       ],
       description: 'Trade carbon credits',
     },
     {
       name: 'retire-credits',
       args: (index: number, sender: string) => [
-        uintCV(1000000),
-        uintCV(1000000),
+        uintCV(index + 1),  // credit-id
+        uintCV(50 + (index * 5)),  // amount
+        stringAsciiCV(`Company-${index + 1}`),  // beneficiary
       ],
       description: 'Retire carbon credits',
     },
@@ -209,10 +212,17 @@ async function executeContractCall(
     const broadcastResponse = await broadcastTransaction({ transaction, network });
 
     if ('error' in broadcastResponse) {
+      // Get detailed error information
+      const errorDetails = typeof broadcastResponse.error === 'string' 
+        ? broadcastResponse.error 
+        : JSON.stringify(broadcastResponse.error);
+      const reason = (broadcastResponse as any).reason || '';
+      const detailedError = reason ? `${errorDetails} - ${reason}` : errorDetails;
+      
       return {
         txId: '',
         success: false,
-        error: broadcastResponse.error || 'Unknown broadcast error',
+        error: detailedError || 'Unknown broadcast error',
       };
     }
 
@@ -224,7 +234,7 @@ async function executeContractCall(
     return {
       txId: '',
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: error instanceof Error ? error.message : String(error),
     };
   }
 }

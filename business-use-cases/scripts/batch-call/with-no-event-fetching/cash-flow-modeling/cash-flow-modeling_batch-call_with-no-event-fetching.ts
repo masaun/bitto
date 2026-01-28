@@ -219,10 +219,17 @@ async function executeContractCall(
     const broadcastResponse = await broadcastTransaction({ transaction, network });
 
     if ('error' in broadcastResponse) {
+      // Get detailed error information
+      const errorDetails = typeof broadcastResponse.error === 'string' 
+        ? broadcastResponse.error 
+        : JSON.stringify(broadcastResponse.error);
+      const reason = (broadcastResponse as any).reason || '';
+      const detailedError = reason ? `${errorDetails} - ${reason}` : errorDetails;
+      
       return {
         txId: '',
         success: false,
-        error: broadcastResponse.error || 'Unknown broadcast error',
+        error: detailedError || 'Unknown broadcast error',
       };
     }
 
@@ -234,7 +241,7 @@ async function executeContractCall(
     return {
       txId: '',
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: error instanceof Error ? error.message : String(error),
     };
   }
 }

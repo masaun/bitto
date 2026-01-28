@@ -99,11 +99,14 @@ interface FunctionCall {
 }
 
 function getWriteFunctions(senderAddress: string): FunctionCall[] {
+  // Use a different address for lender (not the same as borrower/sender)
+  const lenderAddress = process.env.USER_1;;
+  
   return [
     {
       name: 'setup-facility',
       args: (index: number, sender: string) => [
-        principalCV(sender),
+        principalCV(lenderAddress), // lender (different from borrower)
         uintCV(2000000 + (index * 100000)),
         stringAsciiCV('inventory'),
         uintCV(3000000 + (index * 150000)),
@@ -217,10 +220,17 @@ async function executeContractCall(
     const broadcastResponse = await broadcastTransaction({ transaction, network });
 
     if ('error' in broadcastResponse) {
+      // Get detailed error information
+      const errorDetails = typeof broadcastResponse.error === 'string' 
+        ? broadcastResponse.error 
+        : JSON.stringify(broadcastResponse.error);
+      const reason = (broadcastResponse as any).reason || '';
+      const detailedError = reason ? `${errorDetails} - ${reason}` : errorDetails;
+      
       return {
         txId: '',
         success: false,
-        error: broadcastResponse.error || 'Unknown broadcast error',
+        error: detailedError || 'Unknown broadcast error',
       };
     }
 
@@ -232,7 +242,7 @@ async function executeContractCall(
     return {
       txId: '',
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: error instanceof Error ? error.message : String(error),
     };
   }
 }

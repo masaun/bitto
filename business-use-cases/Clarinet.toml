@@ -1063,3 +1063,316 @@ requirements = []
 # path = "contracts/export-control-compliance-for-rare-earths.clar"
 # clarity_version = 3
 # epoch = "latest"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ======================================================= #
+#                      Now                                #
+# ======================================================= #
+
+# [contracts.uniswap-v4-like-hook]
+# path = "contracts/uniswap-v4-like-hook.clar"
+# clarity_version = 4
+# epoch = "latest"
+
+# [contracts.confidential-computing-system]
+# path = "contracts/confidential-computing-system.clar"
+# clarity_version = 4
+# epoch = "latest"
+
+# [contracts.collecting-small-farmer-output]
+# path = "contracts/collecting-small-farmer-output.clar"
+# clarity_version = 4
+# epoch = "latest"
+
+# [contracts.warehouses-management]
+# path = "contracts/warehouses-management.clar"
+# clarity_version = 4
+# epoch = "latest"
+
+# [contracts.inventory-management]
+# path = "contracts/inventory-management.clar"
+# clarity_version = 4
+# epoch = "latest"
+
+# [contracts.nft-marketplace-for-rice]
+# path = "contracts/nft-marketplace-for-rice.clar"
+# clarity_version = 4
+# epoch = "latest"
+
+# [contracts.agricultural-aggregator]
+# path = "contracts/agricultural-aggregator.clar"
+# clarity_version = 4
+# epoch = "latest"
+
+# [contracts.agricultural-cooperative]
+# path = "contracts/agricultural-cooperative.clar"
+# clarity_version = 4
+# epoch = "latest"
+
+# [contracts.otc-marketplace-for-rice]
+# path = "contracts/otc-marketplace-for-rice.clar"
+# clarity_version = 4
+# epoch = "latest"
+
+# [contracts.dex-style-marketplace-for-rice]
+# path = "contracts/dex-style-marketplace-for-rice.clar"
+# clarity_version = 4
+# epoch = "latest"
+
+# [contracts.regional-spot-price-oracle-for-rice]
+# path = "contracts/regional-spot-price-oracle-for-rice.clar"
+# clarity_version = 4
+# epoch = "latest"
+
+# [contracts.inventory-registry]
+# path = "contracts/inventory-registry.clar"
+# clarity_version = 4
+# epoch = "latest"
+
+# [contracts.agricultural-insurance-for-small-farmer]
+# path = "contracts/agricultural-insurance-for-small-farmer.clar"
+# clarity_version = 4
+# epoch = "latest"
+
+# [contracts.agricultural-storage-sharing-system]
+# path = "contracts/agricultural-storage-sharing-system.clar"
+# clarity_version = 4
+# epoch = "latest"
+
+# [contracts.agricultural-aggregation-router]
+# path = "contracts/agricultural-aggregation-router.clar"
+# clarity_version = 4
+# epoch = "latest"
+
+# [contracts.agricultural-governance]
+# path = "contracts/agricultural-governance.clar"
+# clarity_version = 4
+# epoch = "latest"
+
+# [contracts.agricultural-warehouse-sharing-router]
+# path = "contracts/agricultural-warehouse-sharing-router.clar"
+# clarity_version = 4
+# epoch = "latest"
+
+# [contracts.dtcc-for-agricultural-market]
+# path = "contracts/dtcc-for-agricultural-market.clar"
+# clarity_version = 4
+# epoch = "latest"
+
+[contracts.agricultural-government-buffer-management]
+path = "contracts/agricultural-government-buffer-management.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.lng-inventory-management]
+path = "contracts/lng-inventory-management.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.orbital-infrastructure]
+path = "contracts/orbital-infrastructure.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.satellite-routing-protocol]
+path = "contracts/satellite-routing-protocol.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.fractional-ownership-nfr-for-satellite]
+path = "contracts/fractional-ownership-nfr-for-satellite.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.multiple-satellite-ownership-dao]
+path = "contracts/multiple-satellite-ownership-dao.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.decentralized-bandwidth-access-market]
+path = "contracts/decentralized-bandwidth-access-market.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.decentralized-identity-for-aid]
+path = "contracts/decentralized-identity-for-aid.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.decentralized-identity-for-donor]
+path = "contracts/decentralized-identity-for-donor.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.aid-distribution-management]
+path = "contracts/aid-distribution-management.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.aid-analysis-platform]
+path = "contracts/aid-analysis-platform.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.aid-tracking-system]
+path = "contracts/aid-tracking-system.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.decentralized-geo-mapping]
+path = "contracts/decentralized-geo-mapping.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.auto-data-aggregation-and-reporting-platform]
+path = "contracts/auto-data-aggregation-and-reporting-platform.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.donors-fund-outcomes-verifier]
+path = "contracts/donors-fund-outcomes-verifier.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.aid-allocator]
+path = "contracts/aid-allocator.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.biometric-id-systems-for-refugees]
+path = "contracts/biometric-id-systems-for-refugees.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.voucher-management]
+path = "contracts/voucher-management.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.automated-vaccines-testing-platform]
+path = "contracts/automated-vaccines-testing-platform.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.vaccines-research-scholarship]
+path = "contracts/vaccines-research-scholarship.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.decentraized-aid-funding]
+path = "contracts/decentraized-aid-funding.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.entertainment-ip-management]
+path = "contracts/entertainment-ip-management.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.revenue-sharing-manager-among-clubs]
+path = "contracts/revenue-sharing-manager-among-clubs.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.media-rights-management]
+path = "contracts/media-rights-management.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.decentralized-stadium-operation]
+path = "contracts/decentralized-stadium-operation.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.salary-cap-management]
+path = "contracts/salary-cap-management.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.automated-players-draft-system]
+path = "contracts/automated-players-draft-system.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.automated-players-transfer-market]
+path = "contracts/automated-players-transfer-market.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.players-scouting-marketplace]
+path = "contracts/players-scouting-marketplace.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.players-analytics-model-marketpace]
+path = "contracts/players-analytics-model-marketpace.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.business-model-analytics-model-marketpace]
+path = "contracts/business-model-analytics-model-marketpace.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.independent-league-management]
+path = "contracts/independent-league-management.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.independent-league-sponcorship]
+path = "contracts/independent-league-sponcorship.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.scoring-system-for-players]
+path = "contracts/scoring-system-for-players.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.club-game-match-planning-system]
+path = "contracts/club-game-match-planning-system.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.salary-negotiation-system]
+path = "contracts/salary-negotiation-system.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.profit-sharing-between-player-and-club]
+path = "contracts/profit-sharing-between-player-and-club.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.tokenized-stadium]
+path = "contracts/tokenized-stadium.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.tokenized-arena-marketplace]
+path = "contracts/tokenized-arena-marketplace.clar"
+clarity_version = 4
+epoch = "latest"
+
+[contracts.dao-based-club]
+path = "contracts/dao-based-club.clar"
+clarity_version = 4
+epoch = "latest"
