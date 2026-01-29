@@ -1,7 +1,7 @@
 import { makeContractCall, broadcastTransaction, AnchorMode } from '@stacks/transactions';
-import { StacksTestnet, StacksMainnet } from '@stacks/network';
+import { STACKS_MAINNET, STACKS_TESTNET } from '@stacks/network';
 
-const NETWORK = process.env.STACKS_NETWORK === 'mainnet' ? new StacksMainnet() : new StacksTestnet();
+const NETWORK = process.env.STACKS_NETWORK === 'mainnet' ? STACKS_MAINNET : STACKS_TESTNET;
 const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS!;
 const CONTRACT_NAME = 'onchain-intellectual-property-registry';
 const SENDER_KEY = process.env.SENDER_KEY!;

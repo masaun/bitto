@@ -52,9 +52,9 @@
       investing-cash-flow: investing,
       financing-cash-flow: financing,
       net-cash-flow: net-flow,
-      period-start: stacks-stacks-block-height,
+      period-start: block-height,
       period-end: period-end,
-      created-block: stacks-stacks-block-height
+      created-block: block-height
     })
     (map-set entry-counter model-id u0)
     (map-set entity-models tx-sender
@@ -76,7 +76,7 @@
       entry-type: entry-type,
       amount: amount,
       category: category,
-      block: stacks-stacks-block-height
+      block: block-height
     })
     (map-set entry-counter model-id entry-id)
     (ok entry-id)
