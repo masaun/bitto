@@ -1,160 +1,67 @@
 import { AppConfig, UserSession, showConnect } from '@stacks/connect';
-import {
-  uintCV,
-  stringAsciiCV,
-  stringUtf8CV,
-  principalCV,
-  boolCV,
-  bufferCVFromString,
-  AnchorMode,
-  PostConditionMode,
-} from '@stacks/transactions';
+import { makeContractCall, uintCV, bufferCVFromString, PostConditionMode, AnchorMode, callReadOnlyFunction } from '@stacks/transactions';
 import { StacksMainnet } from '@stacks/network';
-import { openContractCall } from '@stacks/connect';
-
-const appConfig = new AppConfig(['store_write', 'publish_data']);
-const userSession = new UserSession({ appConfig });
-const network = new StacksMainnet();
 
 const CONTRACT_ADDRESS = process.env.AGGREGATED_AGRI_DATA_PLATFORM_CONTRACT_ADDRESS || '';
 const CONTRACT_NAME = 'aggregated-agri-data-platform';
+const NETWORK = new StacksMainnet();
 
-export async function connectWallet() {
+const appConfig = new AppConfig(['store_write', 'publish_data']);
+const userSession = new UserSession({ appConfig });
+
+let userData: any = null;
+
+document.getElementById('connectBtn')?.addEventListener('click', () => {
   showConnect({
-    appDetails: {
-      name: 'Aggregated Agri Data Platform',
-      icon: window.location.origin + '/logo.png',
-    },
+    appDetails: { name: 'AggregatedAgriDataPlatform', icon: window.location.origin + '/logo.png' },
     redirectTo: '/',
-    onFinish: () => {
-      window.location.reload();
-    },
+    onFinish: () => { userData = userSession.loadUserData(); updateUserInfo(); },
     userSession,
   });
+});
+
+function updateUserInfo() {
+  const userInfo = document.getElementById('userInfo');
+  if (userData && userInfo) userInfo.innerHTML = '<p>Connected: ' + userData.profile.stxAddress.mainnet + '</p>';
 }
 
-export function getUserData() {
-  return userSession.loadUserData();
-}
+document.getElementById('registerBtn')?.addEventListener('click', async () => {
+  const dataHashInput = document.getElementById('dataHash') as HTMLInputElement;
+  const resultDiv = document.getElementById('registerResult');
+  if (!userData || !resultDiv) return;
+  try {
+    const dataHash = dataHashInput.value.startsWith('0x') ? dataHashInput.value.slice(2) : dataHashInput.value;
+    const txOptions = {
+      contractAddress: CONTRACT_ADDRESS.split('.')[0],
+      contractName: CONTRACT_ADDRESS.split('.')[1] || CONTRACT_NAME,
+      functionName: 'register-entry',
+      functionArgs: [bufferCVFromString(dataHash)],
+      network: NETWORK,
+      anchorMode: AnchorMode.Any,
+      postConditionMode: PostConditionMode.Allow,
+      onFinish: (data: any) => { resultDiv.innerHTML = '<p>Transaction: ' + data.txId + '</p>'; },
+    };
+    await makeContractCall(txOptions);
+  } catch (error) {
+    resultDiv.innerHTML = '<p>Error: ' + error + '</p>';
+  }
+});
 
-export function isUserSignedIn() {
-  return userSession.isUserSignedIn();
-}
-
-export function disconnect() {
-  userSession.signUserOut('/');
-}
-
-export async function register_data_source() {
-  const functionArgs = [
-    
-  ];
-
-  const options = {
-    network,
-    anchorMode: AnchorMode.Any,
-    contractAddress: CONTRACT_ADDRESS.split('.')[0],
-    contractName: CONTRACT_NAME,
-    functionName: 'register-data-source',
-    functionArgs,
-    postConditionMode: PostConditionMode.Deny,
-    postConditions: [],
-    onFinish: (data: any) => {
-      console.log('Transaction ID:', data.txId);
-      alert(`Transaction broadcasted: ${data.txId}`);
-    },
-    onCancel: () => {
-      console.log('Transaction canceled');
-    },
-  };
-
-  await openContractCall(options);
-}
-
-export async function submit_aggregated_data() {
-  const functionArgs = [
-    
-  ];
-
-  const options = {
-    network,
-    anchorMode: AnchorMode.Any,
-    contractAddress: CONTRACT_ADDRESS.split('.')[0],
-    contractName: CONTRACT_NAME,
-    functionName: 'submit-aggregated-data',
-    functionArgs,
-    postConditionMode: PostConditionMode.Deny,
-    postConditions: [],
-    onFinish: (data: any) => {
-      console.log('Transaction ID:', data.txId);
-      alert(`Transaction broadcasted: ${data.txId}`);
-    },
-    onCancel: () => {
-      console.log('Transaction canceled');
-    },
-  };
-
-  await openContractCall(options);
-}
-
-export async function update_source_status() {
-  const functionArgs = [
-    
-  ];
-
-  const options = {
-    network,
-    anchorMode: AnchorMode.Any,
-    contractAddress: CONTRACT_ADDRESS.split('.')[0],
-    contractName: CONTRACT_NAME,
-    functionName: 'update-source-status',
-    functionArgs,
-    postConditionMode: PostConditionMode.Deny,
-    postConditions: [],
-    onFinish: (data: any) => {
-      console.log('Transaction ID:', data.txId);
-      alert(`Transaction broadcasted: ${data.txId}`);
-    },
-    onCancel: () => {
-      console.log('Transaction canceled');
-    },
-  };
-
-  await openContractCall(options);
-}
-
-export async function get_data_source() {
-  const response = await fetch(
-    `https://api.mainnet.hiro.so/v2/contracts/call-read/${CONTRACT_ADDRESS.split('.')[0]}/${CONTRACT_NAME}/get-data-source`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        sender: CONTRACT_ADDRESS.split('.')[0],
-        arguments: [],
-      }),
-    }
-  );
-  
-  return await response.json();
-}
-
-export async function get_aggregated_data() {
-  const response = await fetch(
-    `https://api.mainnet.hiro.so/v2/contracts/call-read/${CONTRACT_ADDRESS.split('.')[0]}/${CONTRACT_NAME}/get-aggregated-data`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        sender: CONTRACT_ADDRESS.split('.')[0],
-        arguments: [],
-      }),
-    }
-  );
-  
-  return await response.json();
-}
+document.getElementById('getEntryBtn')?.addEventListener('click', async () => {
+  const entryIdInput = document.getElementById('entryId') as HTMLInputElement;
+  const resultDiv = document.getElementById('getEntryResult');
+  if (!resultDiv) return;
+  try {
+    const result = await callReadOnlyFunction({
+      contractAddress: CONTRACT_ADDRESS.split('.')[0],
+      contractName: CONTRACT_ADDRESS.split('.')[1] || CONTRACT_NAME,
+      functionName: 'get-entry',
+      functionArgs: [uintCV(parseInt(entryIdInput.value))],
+      network: NETWORK,
+      senderAddress: userData?.profile.stxAddress.mainnet || CONTRACT_ADDRESS.split('.')[0],
+    });
+    resultDiv.innerHTML = '<pre>' + JSON.stringify(result, null, 2) + '</pre>';
+  } catch (error) {
+    resultDiv.innerHTML = '<p>Error: ' + error + '</p>';
+  }
+});

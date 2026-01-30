@@ -88,8 +88,8 @@ const CONFIG = {
   contractAddress: contractDetails.address,
   contractName: contractDetails.name,
   
-  batchSize: 10,
-  delayBetweenCalls: 1000,
+  batchSize: 5,  // Reduced to avoid too many pending transactions
+  delayBetweenCalls: 2000,  // Increased delay between calls
   
   senderKey: '',
 };
@@ -135,8 +135,8 @@ function getWriteFunctions(senderAddress: string): FunctionCall[] {
       name: 'reward-node',
       args: (index: number, sender: string) => [
         uintCV(index + 1),  // provider-id
-        uintCV(1),  // node-id
-        uintCV(1000 + (index * 100)),  // reward
+        uintCV(1),  // node-id (always node 1 of each provider)
+        uintCV(100 + (index * 10)),  // reward (smaller amount to avoid balance issues)
       ],
       description: 'Reward node',
     },
@@ -298,9 +298,8 @@ async function executeBatchCalls(): Promise<void> {
         
         currentNonce++;
         
-        if (i < CONFIG.batchSize - 1) {
-          await new Promise(resolve => setTimeout(resolve, CONFIG.delayBetweenCalls));
-        }
+        // Wait longer between calls to allow transactions to confirm
+        await new Promise(resolve => setTimeout(resolve, CONFIG.delayBetweenCalls));
         
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
@@ -318,7 +317,9 @@ async function executeBatchCalls(): Promise<void> {
       }
     }
     
-    console.log('');
+    // Wait between function batches to allow previous transactions to confirm
+    console.log(`Waiting for previous transactions to confirm before next function...\n`);
+    await new Promise(resolve => setTimeout(resolve, 5000));
   }
   
   console.log('=== Summary ===');

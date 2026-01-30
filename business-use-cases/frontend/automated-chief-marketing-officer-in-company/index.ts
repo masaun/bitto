@@ -1,414 +1,67 @@
 import { AppConfig, UserSession, showConnect } from '@stacks/connect';
-import {
-  uintCV,
-  stringAsciiCV,
-  stringUtf8CV,
-  principalCV,
-  boolCV,
-  bufferCVFromString,
-  AnchorMode,
-  PostConditionMode,
-} from '@stacks/transactions';
+import { makeContractCall, uintCV, bufferCVFromString, PostConditionMode, AnchorMode, callReadOnlyFunction } from '@stacks/transactions';
 import { StacksMainnet } from '@stacks/network';
-import { openContractCall } from '@stacks/connect';
-
-const appConfig = new AppConfig(['store_write', 'publish_data']);
-const userSession = new UserSession({ appConfig });
-const network = new StacksMainnet();
 
 const CONTRACT_ADDRESS = process.env.AUTOMATED_CHIEF_MARKETING_OFFICER_IN_COMPANY_CONTRACT_ADDRESS || '';
 const CONTRACT_NAME = 'automated-chief-marketing-officer-in-company';
+const NETWORK = new StacksMainnet();
 
-export async function connectWallet() {
+const appConfig = new AppConfig(['store_write', 'publish_data']);
+const userSession = new UserSession({ appConfig });
+
+let userData: any = null;
+
+document.getElementById('connectBtn')?.addEventListener('click', () => {
   showConnect({
-    appDetails: {
-      name: 'Automated Chief Marketing Officer In Company',
-      icon: window.location.origin + '/logo.png',
-    },
+    appDetails: { name: 'AutomatedChiefMarketingOfficerInCompany', icon: window.location.origin + '/logo.png' },
     redirectTo: '/',
-    onFinish: () => {
-      window.location.reload();
-    },
+    onFinish: () => { userData = userSession.loadUserData(); updateUserInfo(); },
     userSession,
   });
+});
+
+function updateUserInfo() {
+  const userInfo = document.getElementById('userInfo');
+  if (userData && userInfo) userInfo.innerHTML = '<p>Connected: ' + userData.profile.stxAddress.mainnet + '</p>';
 }
 
-export function getUserData() {
-  return userSession.loadUserData();
-}
+document.getElementById('registerBtn')?.addEventListener('click', async () => {
+  const dataHashInput = document.getElementById('dataHash') as HTMLInputElement;
+  const resultDiv = document.getElementById('registerResult');
+  if (!userData || !resultDiv) return;
+  try {
+    const dataHash = dataHashInput.value.startsWith('0x') ? dataHashInput.value.slice(2) : dataHashInput.value;
+    const txOptions = {
+      contractAddress: CONTRACT_ADDRESS.split('.')[0],
+      contractName: CONTRACT_ADDRESS.split('.')[1] || CONTRACT_NAME,
+      functionName: 'register-entry',
+      functionArgs: [bufferCVFromString(dataHash)],
+      network: NETWORK,
+      anchorMode: AnchorMode.Any,
+      postConditionMode: PostConditionMode.Allow,
+      onFinish: (data: any) => { resultDiv.innerHTML = '<p>Transaction: ' + data.txId + '</p>'; },
+    };
+    await makeContractCall(txOptions);
+  } catch (error) {
+    resultDiv.innerHTML = '<p>Error: ' + error + '</p>';
+  }
+});
 
-export function isUserSignedIn() {
-  return userSession.isUserSignedIn();
-}
-
-export function disconnect() {
-  userSession.signUserOut('/');
-}
-
-export async function set_cmo() {
-  const functionArgs = [
-    
-  ];
-
-  const options = {
-    network,
-    anchorMode: AnchorMode.Any,
-    contractAddress: CONTRACT_ADDRESS.split('.')[0],
-    contractName: CONTRACT_NAME,
-    functionName: 'set-cmo',
-    functionArgs,
-    postConditionMode: PostConditionMode.Deny,
-    postConditions: [],
-    onFinish: (data: any) => {
-      console.log('Transaction ID:', data.txId);
-      alert(`Transaction broadcasted: ${data.txId}`);
-    },
-    onCancel: () => {
-      console.log('Transaction canceled');
-    },
-  };
-
-  await openContractCall(options);
-}
-
-export async function launch_campaign() {
-  const functionArgs = [
-    
-  ];
-
-  const options = {
-    network,
-    anchorMode: AnchorMode.Any,
-    contractAddress: CONTRACT_ADDRESS.split('.')[0],
-    contractName: CONTRACT_NAME,
-    functionName: 'launch-campaign',
-    functionArgs,
-    postConditionMode: PostConditionMode.Deny,
-    postConditions: [],
-    onFinish: (data: any) => {
-      console.log('Transaction ID:', data.txId);
-      alert(`Transaction broadcasted: ${data.txId}`);
-    },
-    onCancel: () => {
-      console.log('Transaction canceled');
-    },
-  };
-
-  await openContractCall(options);
-}
-
-export async function update_campaign_roi() {
-  const functionArgs = [
-    
-  ];
-
-  const options = {
-    network,
-    anchorMode: AnchorMode.Any,
-    contractAddress: CONTRACT_ADDRESS.split('.')[0],
-    contractName: CONTRACT_NAME,
-    functionName: 'update-campaign-roi',
-    functionArgs,
-    postConditionMode: PostConditionMode.Deny,
-    postConditions: [],
-    onFinish: (data: any) => {
-      console.log('Transaction ID:', data.txId);
-      alert(`Transaction broadcasted: ${data.txId}`);
-    },
-    onCancel: () => {
-      console.log('Transaction canceled');
-    },
-  };
-
-  await openContractCall(options);
-}
-
-export async function pause_campaign() {
-  const functionArgs = [
-    
-  ];
-
-  const options = {
-    network,
-    anchorMode: AnchorMode.Any,
-    contractAddress: CONTRACT_ADDRESS.split('.')[0],
-    contractName: CONTRACT_NAME,
-    functionName: 'pause-campaign',
-    functionArgs,
-    postConditionMode: PostConditionMode.Deny,
-    postConditions: [],
-    onFinish: (data: any) => {
-      console.log('Transaction ID:', data.txId);
-      alert(`Transaction broadcasted: ${data.txId}`);
-    },
-    onCancel: () => {
-      console.log('Transaction canceled');
-    },
-  };
-
-  await openContractCall(options);
-}
-
-export async function register_brand_asset() {
-  const functionArgs = [
-    
-  ];
-
-  const options = {
-    network,
-    anchorMode: AnchorMode.Any,
-    contractAddress: CONTRACT_ADDRESS.split('.')[0],
-    contractName: CONTRACT_NAME,
-    functionName: 'register-brand-asset',
-    functionArgs,
-    postConditionMode: PostConditionMode.Deny,
-    postConditions: [],
-    onFinish: (data: any) => {
-      console.log('Transaction ID:', data.txId);
-      alert(`Transaction broadcasted: ${data.txId}`);
-    },
-    onCancel: () => {
-      console.log('Transaction canceled');
-    },
-  };
-
-  await openContractCall(options);
-}
-
-export async function update_asset_value() {
-  const functionArgs = [
-    
-  ];
-
-  const options = {
-    network,
-    anchorMode: AnchorMode.Any,
-    contractAddress: CONTRACT_ADDRESS.split('.')[0],
-    contractName: CONTRACT_NAME,
-    functionName: 'update-asset-value',
-    functionArgs,
-    postConditionMode: PostConditionMode.Deny,
-    postConditions: [],
-    onFinish: (data: any) => {
-      console.log('Transaction ID:', data.txId);
-      alert(`Transaction broadcasted: ${data.txId}`);
-    },
-    onCancel: () => {
-      console.log('Transaction canceled');
-    },
-  };
-
-  await openContractCall(options);
-}
-
-export async function define_customer_segment() {
-  const functionArgs = [
-    
-  ];
-
-  const options = {
-    network,
-    anchorMode: AnchorMode.Any,
-    contractAddress: CONTRACT_ADDRESS.split('.')[0],
-    contractName: CONTRACT_NAME,
-    functionName: 'define-customer-segment',
-    functionArgs,
-    postConditionMode: PostConditionMode.Deny,
-    postConditions: [],
-    onFinish: (data: any) => {
-      console.log('Transaction ID:', data.txId);
-      alert(`Transaction broadcasted: ${data.txId}`);
-    },
-    onCancel: () => {
-      console.log('Transaction canceled');
-    },
-  };
-
-  await openContractCall(options);
-}
-
-export async function update_segment_metrics() {
-  const functionArgs = [
-    
-  ];
-
-  const options = {
-    network,
-    anchorMode: AnchorMode.Any,
-    contractAddress: CONTRACT_ADDRESS.split('.')[0],
-    contractName: CONTRACT_NAME,
-    functionName: 'update-segment-metrics',
-    functionArgs,
-    postConditionMode: PostConditionMode.Deny,
-    postConditions: [],
-    onFinish: (data: any) => {
-      console.log('Transaction ID:', data.txId);
-      alert(`Transaction broadcasted: ${data.txId}`);
-    },
-    onCancel: () => {
-      console.log('Transaction canceled');
-    },
-  };
-
-  await openContractCall(options);
-}
-
-export async function record_metric() {
-  const functionArgs = [
-    
-  ];
-
-  const options = {
-    network,
-    anchorMode: AnchorMode.Any,
-    contractAddress: CONTRACT_ADDRESS.split('.')[0],
-    contractName: CONTRACT_NAME,
-    functionName: 'record-metric',
-    functionArgs,
-    postConditionMode: PostConditionMode.Deny,
-    postConditions: [],
-    onFinish: (data: any) => {
-      console.log('Transaction ID:', data.txId);
-      alert(`Transaction broadcasted: ${data.txId}`);
-    },
-    onCancel: () => {
-      console.log('Transaction canceled');
-    },
-  };
-
-  await openContractCall(options);
-}
-
-export async function transfer_ownership() {
-  const functionArgs = [
-    
-  ];
-
-  const options = {
-    network,
-    anchorMode: AnchorMode.Any,
-    contractAddress: CONTRACT_ADDRESS.split('.')[0],
-    contractName: CONTRACT_NAME,
-    functionName: 'transfer-ownership',
-    functionArgs,
-    postConditionMode: PostConditionMode.Deny,
-    postConditions: [],
-    onFinish: (data: any) => {
-      console.log('Transaction ID:', data.txId);
-      alert(`Transaction broadcasted: ${data.txId}`);
-    },
-    onCancel: () => {
-      console.log('Transaction canceled');
-    },
-  };
-
-  await openContractCall(options);
-}
-
-export async function get_owner)() {
-  const response = await fetch(
-    `https://api.mainnet.hiro.so/v2/contracts/call-read/${CONTRACT_ADDRESS.split('.')[0]}/${CONTRACT_NAME}/get-owner)`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        sender: CONTRACT_ADDRESS.split('.')[0],
-        arguments: [],
-      }),
-    }
-  );
-  
-  return await response.json();
-}
-
-export async function get_cmo)() {
-  const response = await fetch(
-    `https://api.mainnet.hiro.so/v2/contracts/call-read/${CONTRACT_ADDRESS.split('.')[0]}/${CONTRACT_NAME}/get-cmo)`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        sender: CONTRACT_ADDRESS.split('.')[0],
-        arguments: [],
-      }),
-    }
-  );
-  
-  return await response.json();
-}
-
-export async function get_campaign() {
-  const response = await fetch(
-    `https://api.mainnet.hiro.so/v2/contracts/call-read/${CONTRACT_ADDRESS.split('.')[0]}/${CONTRACT_NAME}/get-campaign`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        sender: CONTRACT_ADDRESS.split('.')[0],
-        arguments: [],
-      }),
-    }
-  );
-  
-  return await response.json();
-}
-
-export async function get_brand_asset() {
-  const response = await fetch(
-    `https://api.mainnet.hiro.so/v2/contracts/call-read/${CONTRACT_ADDRESS.split('.')[0]}/${CONTRACT_NAME}/get-brand-asset`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        sender: CONTRACT_ADDRESS.split('.')[0],
-        arguments: [],
-      }),
-    }
-  );
-  
-  return await response.json();
-}
-
-export async function get_customer_segment() {
-  const response = await fetch(
-    `https://api.mainnet.hiro.so/v2/contracts/call-read/${CONTRACT_ADDRESS.split('.')[0]}/${CONTRACT_NAME}/get-customer-segment`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        sender: CONTRACT_ADDRESS.split('.')[0],
-        arguments: [],
-      }),
-    }
-  );
-  
-  return await response.json();
-}
-
-export async function get_metric() {
-  const response = await fetch(
-    `https://api.mainnet.hiro.so/v2/contracts/call-read/${CONTRACT_ADDRESS.split('.')[0]}/${CONTRACT_NAME}/get-metric`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        sender: CONTRACT_ADDRESS.split('.')[0],
-        arguments: [],
-      }),
-    }
-  );
-  
-  return await response.json();
-}
+document.getElementById('getEntryBtn')?.addEventListener('click', async () => {
+  const entryIdInput = document.getElementById('entryId') as HTMLInputElement;
+  const resultDiv = document.getElementById('getEntryResult');
+  if (!resultDiv) return;
+  try {
+    const result = await callReadOnlyFunction({
+      contractAddress: CONTRACT_ADDRESS.split('.')[0],
+      contractName: CONTRACT_ADDRESS.split('.')[1] || CONTRACT_NAME,
+      functionName: 'get-entry',
+      functionArgs: [uintCV(parseInt(entryIdInput.value))],
+      network: NETWORK,
+      senderAddress: userData?.profile.stxAddress.mainnet || CONTRACT_ADDRESS.split('.')[0],
+    });
+    resultDiv.innerHTML = '<pre>' + JSON.stringify(result, null, 2) + '</pre>';
+  } catch (error) {
+    resultDiv.innerHTML = '<p>Error: ' + error + '</p>';
+  }
+});

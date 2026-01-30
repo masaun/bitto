@@ -87,7 +87,8 @@ const CONFIG = {
   contractName: contractDetails.name,
   
   batchSize: 10,
-  delayBetweenCalls: 1000,
+  delayBetweenCalls: 2100,     // 2.1 seconds - to avoid mempool congestion
+  delayBetweenBatches: 60000,  // 60 seconds - wait for previous batch to be mined before starting next
   
   senderKey: '',
 };

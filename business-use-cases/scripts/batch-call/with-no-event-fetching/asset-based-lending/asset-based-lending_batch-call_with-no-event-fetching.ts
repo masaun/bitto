@@ -88,6 +88,7 @@ const CONFIG = {
   
   batchSize: 10,
   delayBetweenCalls: 1000,
+  delayBetweenBatches: 60000,  // 60 seconds - wait for previous batch to be mined before starting next
   
   senderKey: '',
 };
@@ -293,6 +294,7 @@ async function executeAllBatchCalls(dryRun: boolean = false, specificFunction?: 
   console.log(`Network: ${CONFIG.network}`);
   console.log(`Contract: ${CONFIG.contractAddress}.${CONFIG.contractName}`);
   console.log(`Batch Size: ${CONFIG.batchSize} calls per function`);
+  console.log(`Delay Between Batches: ${CONFIG.delayBetweenBatches / 1000} seconds`);
   if (dryRun) {
     console.log('Mode: DRY RUN (no transactions will be broadcast)');
   }
@@ -324,10 +326,17 @@ async function executeAllBatchCalls(dryRun: boolean = false, specificFunction?: 
 
   const allResults: BatchCallResult[] = [];
 
-  for (const func of functionsToCall) {
+  for (let i = 0; i < functionsToCall.length; i++) {
+    const func = functionsToCall[i];
     const { results, endNonce } = await executeBatchCallsForFunction(func, nonce, dryRun, senderAddress);
     allResults.push(...results);
     nonce = endNonce;
+    
+    // Wait between function batches to allow previous transactions to be mined
+    if (i < functionsToCall.length - 1 && !dryRun) {
+      console.log(`\n⏳ Waiting ${CONFIG.delayBetweenBatches / 1000} seconds for transactions to be mined before next batch...`);
+      await new Promise(resolve => setTimeout(resolve, CONFIG.delayBetweenBatches));
+    }
   }
 
   return allResults;

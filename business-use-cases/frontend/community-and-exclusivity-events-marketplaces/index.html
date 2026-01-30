@@ -1,12 +1,40 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>community and exclusivity events marketplaces</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CommunityAndExclusivityEventsMarketplaces</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+    button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+    input { padding: 8px; margin: 5px; width: 300px; }
+    .section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+    .result { margin-top: 10px; padding: 10px; background: #f0f0f0; }
+  </style>
+</head>
+<body>
+  <h1>CommunityAndExclusivityEventsMarketplaces</h1>
+  
+  <div class="section">
+    <h2>Connect Wallet</h2>
+    <button id="connectBtn">Connect Wallet</button>
+    <div id="userInfo"></div>
+  </div>
+  
+  <div class="section">
+    <h2>Register Entry</h2>
+    <input type="text" id="dataHash" placeholder="Data Hash (hex)" />
+    <button id="registerBtn">Register Entry</button>
+    <div id="registerResult" class="result"></div>
+  </div>
+  
+  <div class="section">
+    <h2>Get Entry</h2>
+    <input type="number" id="entryId" placeholder="Entry ID" />
+    <button id="getEntryBtn">Get Entry</button>
+    <div id="getEntryResult" class="result"></div>
+  </div>
+
+  <script type="module" src="./index.ts"></script>
+</body>
 </html>

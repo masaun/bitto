@@ -89,23 +89,28 @@ const CONFIG = {
   contractName: contractDetails.name,
   
   batchSize: 10,
-  delayBetweenCalls: 1000,
+  delayBetweenCalls: 3000,     // 3 seconds - to avoid mempool congestion
+  delayBetweenBatches: 6000,   // 6 seconds - wait for previous batch to be mined before starting next
   
-  senderKey: '',
+  // Starting offset for trial/submission IDs (useful when running script multiple times)
+  // Set via TRIAL_ID_OFFSET env var, or increment manually after each run
+  startingOffset: parseInt(process.env.TRIAL_ID_OFFSET || '0', 10),
+    senderKey: '',
 };
 
 interface FunctionCall {
   name: string;
-  args: (index: number, senderAddress: string) => any[];
+  args: (index: number, senderAddress: string, offset?: number) => any[];
   description: string;
 }
 
 function getWriteFunctions(senderAddress: string): FunctionCall[] {
+  const baseOffset = CONFIG.startingOffset;
   return [
     {
       name: 'create-clinical-trial',
-      args: (index: number, sender: string) => [
-        stringAsciiCV(`Trial-${index + 1}`),  // trial-name
+      args: (index: number, sender: string, offset: number = 0) => [
+        stringAsciiCV(`Trial-${baseOffset + offset + index + 1}`),  // trial-name
         bufferCV(Buffer.from("000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f", "hex")),  // protocol-hash
         uintCV(10000 + (index * 500)),  // data-price
         uintCV(100 + (index * 10)),  // max-participants
@@ -114,27 +119,27 @@ function getWriteFunctions(senderAddress: string): FunctionCall[] {
     },
     {
       name: 'submit-trial-data',
-      args: (index: number, sender: string) => [
-        uintCV(index + 1),  // trial-id
+      args: (index: number, sender: string, offset: number = 0) => [
+        uintCV(baseOffset + offset + index + 1),  // trial-id - uses ID from just-created trial
         bufferCV(Buffer.from("101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f", "hex")),  // data-hash
         uintCV(10 + index),  // participant-count
       ],
       description: 'Submit trial data',
     },
     {
+      name: 'verify-trial-data',
+      args: (index: number, sender: string, offset: number = 0) => [
+        uintCV(baseOffset + offset + index + 1),  // submission-id - uses ID from just-created submission
+      ],
+      description: 'Verify trial data',
+    },
+    {
       name: 'purchase-trial-data',
-      args: (index: number, sender: string) => [
-        uintCV(index + 1),  // submission-id
+      args: (index: number, sender: string, offset: number = 0) => [
+        uintCV(baseOffset + offset + index + 1),  // submission-id - uses ID from verified submission
         bufferCV(Buffer.from("303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f", "hex")),  // access-key-hash
       ],
       description: 'Purchase trial data',
-    },
-    {
-      name: 'verify-trial-data',
-      args: (index: number, sender: string) => [
-        uintCV(index + 1),  // submission-id
-      ],
-      description: 'Verify trial data',
     },
   ];
 }
@@ -247,7 +252,8 @@ async function executeBatchCallsForFunction(
   func: FunctionCall,
   startNonce: bigint,
   dryRun: boolean = false,
-  senderAddress: string
+  senderAddress: string,
+  trialIdOffset: number = 0
 ): Promise<{ results: BatchCallResult[]; endNonce: bigint }> {
   console.log(`\n--- ${func.name} ---`);
   console.log(`Description: ${func.description}`);
@@ -256,7 +262,7 @@ async function executeBatchCallsForFunction(
   let nonce = startNonce;
 
   for (let i = 0; i < CONFIG.batchSize; i++) {
-    const args = func.args(i, senderAddress);
+    const args = func.args(i, senderAddress, trialIdOffset);
     console.log(`  [${i + 1}/${CONFIG.batchSize}] Calling ${func.name}...`);
 
     const result = await executeContractCall(func.name, args, nonce, dryRun);
@@ -284,11 +290,68 @@ async function executeBatchCallsForFunction(
   return { results, endNonce: nonce };
 }
 
+async function executeSequentialWorkflow(
+  startNonce: bigint,
+  dryRun: boolean = false,
+  senderAddress: string
+): Promise<{ results: BatchCallResult[]; endNonce: bigint }> {
+  console.log('\n=== Executing Sequential Workflow ===');
+  console.log('Each iteration: create trial → submit data → verify data → purchase data');
+  console.log(`Starting ID offset: ${CONFIG.startingOffset}`);
+  
+  const results: BatchCallResult[] = [];
+  let nonce = startNonce;
+
+  const allFunctions = getWriteFunctions(senderAddress);
+
+  for (let i = 0; i < CONFIG.batchSize; i++) {
+    const currentId = CONFIG.startingOffset + i + 1;
+    console.log(`\n--- Workflow Iteration ${i + 1}/${CONFIG.batchSize} (Trial/Submission ID: ${currentId}) ---`);
+    
+    // Execute all functions for this iteration sequentially
+    for (const func of allFunctions) {
+      const args = func.args(i, senderAddress, i);
+      console.log(`  Calling ${func.name}...`);
+
+      const result = await executeContractCall(func.name, args, nonce, dryRun);
+
+      results.push({
+        functionName: func.name,
+        index: i,
+        txId: result.txId || null,
+        success: result.success,
+        error: result.error,
+      });
+
+      if (result.success) {
+        console.log(`    ✓ Success${result.txId && result.txId !== 'dry-run-no-tx' ? ` - TxID: ${result.txId}` : ''}`);
+        nonce++;
+      } else {
+        console.log(`    ✗ Failed - Error: ${result.error}`);
+        console.log(`    💡 Tip: If err-already-exists or err-not-found, try setting TRIAL_ID_OFFSET env var`);
+        // Continue even if one function fails
+      }
+
+      // Small delay between function calls within the same workflow
+      await new Promise(resolve => setTimeout(resolve, CONFIG.delayBetweenCalls));
+    }
+
+    // Longer delay between workflow iterations
+    if (i < CONFIG.batchSize - 1) {
+      console.log(`\n⏳ Waiting ${CONFIG.delayBetweenBatches / 1000} seconds for transactions to be mined...`);
+      await new Promise(resolve => setTimeout(resolve, CONFIG.delayBetweenBatches));
+    }
+  }
+
+  return { results, endNonce: nonce };
+}
+
 async function executeAllBatchCalls(dryRun: boolean = false, specificFunction?: string): Promise<BatchCallResult[]> {
   console.log('\n=== Starting Batch Calls for Clinical Trial Data Marketplace Contract ===');
   console.log(`Network: ${CONFIG.network}`);
   console.log(`Contract: ${CONFIG.contractAddress}.${CONFIG.contractName}`);
-  console.log(`Batch Size: ${CONFIG.batchSize} calls per function`);
+  console.log(`Batch Size: ${CONFIG.batchSize} workflow iterations`);
+  console.log(`Delay Between Iterations: ${CONFIG.delayBetweenBatches / 1000} seconds`);
   if (dryRun) {
     console.log('Mode: DRY RUN (no transactions will be broadcast)');
   }
@@ -300,33 +363,37 @@ async function executeAllBatchCalls(dryRun: boolean = false, specificFunction?: 
 
   const allFunctions = getWriteFunctions(senderAddress);
   
-  const functionsToCall = specificFunction 
-    ? allFunctions.filter(f => f.name === specificFunction)
-    : allFunctions;
+  if (specificFunction) {
+    const functionsToCall = allFunctions.filter(f => f.name === specificFunction);
+    
+    if (functionsToCall.length === 0) {
+      console.error(`\n✗ Function '${specificFunction}' not found in contract.`);
+      console.log('\nAvailable functions:');
+      allFunctions.forEach(f => console.log(`  - ${f.name}`));
+      process.exit(1);
+    }
 
-  if (functionsToCall.length === 0) {
-    console.error(`\n✗ Function '${specificFunction}' not found in contract.`);
-    console.log('\nAvailable functions:');
-    allFunctions.forEach(f => console.log(`  - ${f.name}`));
-    process.exit(1);
+    console.log(`\nCalling specific function: ${specificFunction}`);
+    console.log(`Total transactions: ${CONFIG.batchSize}`);
+
+    console.log(`\nFetching nonce for ${senderAddress}...`);
+    let nonce = await fetchAccountNonce(senderAddress);
+    console.log(`Starting nonce: ${nonce}`);
+
+    const { results } = await executeBatchCallsForFunction(functionsToCall[0], nonce, dryRun, senderAddress);
+    return results;
   }
 
-  console.log(`\nFunctions to call: ${functionsToCall.map(f => f.name).join(', ')}`);
-  console.log(`Total transactions: ${functionsToCall.length * CONFIG.batchSize}`);
+  console.log(`\nWorkflow: ${allFunctions.map(f => f.name).join(' → ')}`);
+  console.log(`Total transactions: ${allFunctions.length * CONFIG.batchSize}`);
 
   console.log(`\nFetching nonce for ${senderAddress}...`);
   let nonce = await fetchAccountNonce(senderAddress);
   console.log(`Starting nonce: ${nonce}`);
 
-  const allResults: BatchCallResult[] = [];
-
-  for (const func of functionsToCall) {
-    const { results, endNonce } = await executeBatchCallsForFunction(func, nonce, dryRun, senderAddress);
-    allResults.push(...results);
-    nonce = endNonce;
-  }
-
-  return allResults;
+  // Use sequential workflow for complete trial lifecycle
+  const { results } = await executeSequentialWorkflow(nonce, dryRun, senderAddress);
+  return results;
 }
 
 function printBatchSummary(results: BatchCallResult[]): void {
@@ -434,12 +501,19 @@ async function main(): Promise<void> {
   console.log(`Network: ${CONFIG.network}`);
   console.log(`Contract Address: ${CONFIG.contractAddress}`);
   console.log(`Contract Name: ${CONFIG.contractName}`);
-  console.log(`Batch Size: ${CONFIG.batchSize} calls per function`);
-  console.log('Environment Variable: CLINICAL_TRIAL_DATA_MARKETPLACE_CONTRACT_ADDRESS');
+  console.log(`Batch Size: ${CONFIG.batchSize} workflow iterations`);
+  console.log(`Starting ID Offset: ${CONFIG.startingOffset}`);
+  console.log('Environment Variables:');
+  console.log('  - CLINICAL_TRIAL_DATA_MARKETPLACE_CONTRACT_ADDRESS');
+  console.log('  - TRIAL_ID_OFFSET (optional, for multiple runs)');
 
   if (!process.env.CLINICAL_TRIAL_DATA_MARKETPLACE_CONTRACT_ADDRESS) {
     console.warn('\n⚠ Warning: CLINICAL_TRIAL_DATA_MARKETPLACE_CONTRACT_ADDRESS not set in environment.');
     console.warn(`  Using default: ${CONFIG.contractAddress}.${CONFIG.contractName}`);
+  }
+
+  if (CONFIG.startingOffset > 0) {
+    console.log(`\n📍 Note: Using ID offset ${CONFIG.startingOffset}. IDs will range from ${CONFIG.startingOffset + 1} to ${CONFIG.startingOffset + CONFIG.batchSize}`);
   }
 
   console.log('\n=== Initializing Sender Key ===');
