@@ -62,9 +62,11 @@ check-pending-transactions.sh
 deploy-with-delays.sh
 deploy-remaining-one-by-one.sh
 check-deployed-contracts.sh
+deploy-accelerator-contracts.sh
+deploy-all-350-contracts.sh
 DEPLOYMENT_GUIDE.md
 deployments/*.yaml
-
+Clarinet.toml.backup.20260131121217
 
 
 # MD.file
