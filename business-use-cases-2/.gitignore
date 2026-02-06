@@ -1,0 +1,63 @@
+# Deployment files
+Clarinet.toml
+Clarinet.toml.backup
+
+# Settings
+**/settings/Mainnet.toml
+**/settings/Testnet.toml
+**/settings/Devnet.toml
+
+.cache/**
+history.txt
+
+logs
+*.log
+npm-debug.log*
+coverage
+*.info
+costs-reports.json
+
+.cache
+
+# Deployment plans
+**/deployments/default.mainnet-plan.yaml
+**/deployments/default.testnet-plan.yaml    
+**/deployments/default.simnet-plan.yaml
+
+# Secrets
+.env
+.env.contracts
+
+# Node modules
+node_modules
+package-lock.json
+
+# Typescript
+tsconfig.node.json
+
+# Others
+.vscode
+.cursor
+.DS_Store
+
+# Scripts
+generate_batch_scripts.py
+create_scripts.py
+
+# Frontend
+generate_frontends.py
+create-frontends.ts
+generate-all-frontends.sh
+
+# README
+BATCH_SCRIPTS_AND_FRONTENDS.md
+
+# Deloyment scripts
+deploy-all-100-contracts.sh
+DEPLOYMENT_GUIDE.md
+deployments/*.yaml
+Clarinet.toml.backup.*
+
+
+# MD.file
+*.md
