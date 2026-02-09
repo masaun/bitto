@@ -47,13 +47,16 @@ create_scripts.py
 # Frontend
 generate_frontends.py
 create-frontends.ts
-generate-all-frontends.sh
+generate-**-frontends.sh
+
+# SC
+generate-**-contracts.**
 
 # README
 BATCH_SCRIPTS_AND_FRONTENDS.md
 
 # Deloyment scripts
-deploy-all-100-contracts.sh
+deploy-all-**-contracts.sh
 DEPLOYMENT_GUIDE.md
 deployments/*.yaml
 Clarinet.toml.backup.*
