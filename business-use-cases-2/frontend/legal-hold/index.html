@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LegalHold</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+    h1 { color: #5546ff; }
+    button { background: #5546ff; color: white; border: none; padding: 10px 20px; margin: 5px; cursor: pointer; border-radius: 5px; }
+    button:hover { background: #4435ee; }
+    input { padding: 8px; margin: 5px; width: 300px; }
+    .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <h1>LegalHold</h1>
+  <div class="section">
+    <h2>Wallet</h2>
+    <button id="connect-wallet">Connect Wallet</button>
+    <p>Address: <span id="user-address">Not connected</span></p>
+  </div>
+  <div class="section">
+    <h2>Create Record</h2>
+    <input type="text" id="data-input" placeholder="Enter data" />
+    <button id="create-record">Create Record</button>
+  </div>
+  <div class="section">
+    <h2>Update Record</h2>
+    <input type="number" id="id-input" placeholder="Record ID" />
+    <input type="text" id="update-data-input" placeholder="New data" />
+    <button id="update-record">Update Record</button>
+  </div>
+  <script src="./index.ts" type="module"></script>
+</body>
+</html>
