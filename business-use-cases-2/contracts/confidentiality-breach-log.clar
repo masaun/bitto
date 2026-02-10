@@ -1,0 +1,8 @@
+(define-map breaches uint {breach-type: (string-ascii 64), reported-by: principal, timestamp: uint})
+(define-data-var breach-nonce uint u0)
+(define-read-only (get-breach (id uint)) (map-get? breaches id))
+(define-public (log-breach (breach-type (string-ascii 64)))
+  (let ((id (+ (var-get breach-nonce) u1)))
+    (map-set breaches id {breach-type: breach-type, reported-by: tx-sender, timestamp: stacks-block-height})
+    (var-set breach-nonce id)
+    (ok id)))

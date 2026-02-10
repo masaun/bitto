@@ -1,0 +1,8 @@
+(define-map pricing-audits uint {item-id: uint, price: uint, auditor: principal, timestamp: uint})
+(define-data-var pricing-audit-nonce uint u0)
+(define-read-only (get-pricing-audit (id uint)) (map-get? pricing-audits id))
+(define-public (audit-price (item uint) (price uint))
+  (let ((id (+ (var-get pricing-audit-nonce) u1)))
+    (map-set pricing-audits id {item-id: item, price: price, auditor: tx-sender, timestamp: stacks-block-height})
+    (var-set pricing-audit-nonce id)
+    (ok id)))

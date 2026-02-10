@@ -1,0 +1,8 @@
+(define-map pricing-rules uint {base-price: uint, multiplier: uint, active: bool})
+(define-data-var price-nonce uint u0)
+(define-read-only (get-price-rule (id uint)) (map-get? pricing-rules id))
+(define-public (set-price-rule (base uint) (mult uint))
+  (let ((id (+ (var-get price-nonce) u1)))
+    (map-set pricing-rules id {base-price: base, multiplier: mult, active: true})
+    (var-set price-nonce id)
+    (ok id)))

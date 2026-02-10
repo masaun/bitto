@@ -1,0 +1,8 @@
+(define-map vaults uint {data-hash: (buff 32), owner: principal, encrypted: bool})
+(define-data-var vault-nonce uint u0)
+(define-read-only (get-vault (id uint)) (map-get? vaults id))
+(define-public (store-data (hash (buff 32)))
+  (let ((id (+ (var-get vault-nonce) u1)))
+    (map-set vaults id {data-hash: hash, owner: tx-sender, encrypted: true})
+    (var-set vault-nonce id)
+    (ok id)))

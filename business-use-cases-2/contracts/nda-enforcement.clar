@@ -1,0 +1,8 @@
+(define-map ndas uint {parties: (list 5 principal), terms-hash: (buff 32), active: bool})
+(define-data-var nda-nonce uint u0)
+(define-read-only (get-nda (id uint)) (map-get? ndas id))
+(define-public (create-nda (parties (list 5 principal)) (terms (buff 32)))
+  (let ((id (+ (var-get nda-nonce) u1)))
+    (map-set ndas id {parties: parties, terms-hash: terms, active: true})
+    (var-set nda-nonce id)
+    (ok id)))

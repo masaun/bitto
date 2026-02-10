@@ -1,0 +1,8 @@
+(define-map price-locks uint {price: uint, locked-until: uint, parties: (list 5 principal)})
+(define-data-var lock-price-nonce uint u0)
+(define-read-only (get-price-lock (id uint)) (map-get? price-locks id))
+(define-public (lock-price (price uint) (duration uint) (parties (list 5 principal)))
+  (let ((id (+ (var-get lock-price-nonce) u1)))
+    (map-set price-locks id {price: price, locked-until: (+ stacks-block-height duration), parties: parties})
+    (var-set lock-price-nonce id)
+    (ok id)))

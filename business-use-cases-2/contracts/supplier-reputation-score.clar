@@ -1,0 +1,6 @@
+(define-map reputation principal {score: uint, reviews: uint, updated-at: uint})
+(define-read-only (get-reputation (supplier principal)) (map-get? reputation supplier))
+(define-public (update-reputation (supplier principal) (score uint))
+  (let ((rep (default-to {score: u0, reviews: u0, updated-at: u0} (map-get? reputation supplier))))
+    (map-set reputation supplier {score: score, reviews: (+ (get reviews rep) u1), updated-at: stacks-block-height})
+    (ok true)))

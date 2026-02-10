@@ -1,0 +1,8 @@
+(define-map zk-proofs uint {proof-hash: (buff 32), verified: bool, created-at: uint})
+(define-data-var zk-nonce uint u0)
+(define-read-only (get-zk-proof (id uint)) (map-get? zk-proofs id))
+(define-public (submit-proof (proof (buff 32)))
+  (let ((id (+ (var-get zk-nonce) u1)))
+    (map-set zk-proofs id {proof-hash: proof, verified: false, created-at: stacks-block-height})
+    (var-set zk-nonce id)
+    (ok id)))

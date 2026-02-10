@@ -1,0 +1,8 @@
+(define-map conf-audits uint {audit-type: (string-ascii 64), auditor: principal, findings: (string-ascii 256)})
+(define-data-var conf-audit-nonce uint u0)
+(define-read-only (get-conf-audit (id uint)) (map-get? conf-audits id))
+(define-public (conduct-audit (audit-type (string-ascii 64)) (findings (string-ascii 256)))
+  (let ((id (+ (var-get conf-audit-nonce) u1)))
+    (map-set conf-audits id {audit-type: audit-type, auditor: tx-sender, findings: findings})
+    (var-set conf-audit-nonce id)
+    (ok id)))

@@ -1,0 +1,8 @@
+(define-map remediations uint {breach-id: uint, action: (string-ascii 256), completed: bool})
+(define-data-var remed-nonce uint u0)
+(define-read-only (get-remediation (id uint)) (map-get? remediations id))
+(define-public (remediate (breach-id uint) (action (string-ascii 256)))
+  (let ((id (+ (var-get remed-nonce) u1)))
+    (map-set remediations id {breach-id: breach-id, action: action, completed: false})
+    (var-set remed-nonce id)
+    (ok id)))
