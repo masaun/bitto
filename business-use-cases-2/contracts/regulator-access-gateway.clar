@@ -1,29 +1,61 @@
-(define-map regulator-access principal {
-  regulator-id: (string-ascii 50),
-  access-level: (string-ascii 20),
-  granted-date: uint,
-  expiry-date: uint,
-  status: (string-ascii 20)
-})
+(define-constant contract-owner tx-sender)
+(define-constant err-owner-only (err u100))
+(define-constant err-not-found (err u101))
 
-(define-data-var access-admin principal tx-sender)
+(define-map registry
+  { entry-id: uint }
+  {
+    data: (buff 1024),
+    status: (string-ascii 20),
+    owner: principal,
+    timestamp: uint
+  }
+)
 
-(define-read-only (get-regulator-access (regulator principal))
-  (map-get? regulator-access regulator))
+(define-data-var entry-counter uint u0)
 
-(define-public (grant-regulator-access (regulator principal) (regulator-id (string-ascii 50)) (access-level (string-ascii 20)) (duration uint))
-  (begin
-    (asserts! (is-eq tx-sender (var-get access-admin)) (err u1))
-    (ok (map-set regulator-access regulator {
-      regulator-id: regulator-id,
-      access-level: access-level,
-      granted-date: stacks-block-height,
-      expiry-date: (+ stacks-block-height duration),
-      status: "active"
-    }))))
+(define-read-only (get-entry (entry-id uint))
+  (map-get? registry { entry-id: entry-id })
+)
 
-(define-public (revoke-regulator-access (regulator principal))
-  (begin
-    (asserts! (is-eq tx-sender (var-get access-admin)) (err u1))
-    (asserts! (is-some (map-get? regulator-access regulator)) (err u2))
-    (ok (map-set regulator-access regulator (merge (unwrap-panic (map-get? regulator-access regulator)) { status: "revoked" })))))
+(define-read-only (get-count)
+  (ok (var-get entry-counter))
+)
+
+(define-public (create-entry (data (buff 1024)))
+  (let ((entry-id (var-get entry-counter)))
+    (map-set registry
+      { entry-id: entry-id }
+      {
+        data: data,
+        status: "active",
+        owner: tx-sender,
+        timestamp: stacks-block-height
+      }
+    )
+    (var-set entry-counter (+ entry-id u1))
+    (ok entry-id)
+  )
+)
+
+(define-public (update-entry (entry-id uint) (new-data (buff 1024)))
+  (let ((entry-data (unwrap! (map-get? registry { entry-id: entry-id }) err-not-found)))
+    (asserts! (is-eq (get owner entry-data) tx-sender) err-owner-only)
+    (map-set registry
+      { entry-id: entry-id }
+      (merge entry-data { data: new-data })
+    )
+    (ok true)
+  )
+)
+
+(define-public (update-status (entry-id uint) (new-status (string-ascii 20)))
+  (let ((entry-data (unwrap! (map-get? registry { entry-id: entry-id }) err-not-found)))
+    (asserts! (is-eq (get owner entry-data) tx-sender) err-owner-only)
+    (map-set registry
+      { entry-id: entry-id }
+      (merge entry-data { status: new-status })
+    )
+    (ok true)
+  )
+)
