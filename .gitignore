@@ -5,3 +5,12 @@
 
 
 deployments/*.yaml
+Clarinet.toml.**
+
+# JS
+fix-**.js
+generate-all-**.js
+generate-clarinet-**.js
+rebuild-clarinet-**.js
+update-**.js
+verify-**.js
