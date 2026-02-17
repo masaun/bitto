@@ -9,10 +9,11 @@ import {
   stringAsciiCV,
 } from '@stacks/transactions';
 import * as dotenv from 'dotenv';
+import * as path from 'path';
 
 type NetworkType = 'mainnet' | 'testnet' | 'devnet';
 
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '../../../../.env') });
 
 function parseContractIdentifier(envValue: string | undefined, defaultContractName: string): { address: string; name: string } {
   const value = envValue || 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM';
@@ -97,14 +98,29 @@ interface FunctionCall {
   name: string;
   args: (index: number, senderAddress: string) => any[];
   description: string;
+  batchSize?: number; // Allow override per function
 }
 
+/**
+ * Function Call Order and Requirements:
+ * 
+ * 1. register-participant (1x) - Must be called first, once per address
+ * 2. create-quest (10x) - Requires sender to be contract OWNER
+ * 3. complete-quest (10x) - Requires: participant registered, quest exists, quest active, level >= required
+ * 4. claim-reward (10x) - Requires: quest completed, reward not yet claimed
+ * 5. update-level (10x) - Requires: participant registered and active
+ * 6. toggle-quest (10x) - Requires sender to be contract OWNER
+ * 7. deactivate-participant (1x) - Should be called last
+ * 
+ * NOTE: If sender is not the contract owner, create-quest and toggle-quest will fail with err-owner-only (u100)
+ */
 function getWriteFunctions(senderAddress: string): FunctionCall[] {
   return [
     {
       name: 'register-participant',
       args: (index: number, sender: string) => [],
-      description: 'Register participant',
+      description: 'Register participant (called once per address)',
+      batchSize: 1, // Only call once - each address can only register once
     },
     {
       name: 'create-quest',
@@ -113,40 +129,41 @@ function getWriteFunctions(senderAddress: string): FunctionCall[] {
         uintCV(100 + (index * 10)),
         uintCV(1),
       ],
-      description: 'Create quest',
+      description: 'Create quest (requires owner permission)',
     },
     {
       name: 'complete-quest',
       args: (index: number, sender: string) => [
         uintCV(index),
       ],
-      description: 'Complete quest',
+      description: 'Complete quest (requires registered participant & existing quest)',
     },
     {
       name: 'claim-reward',
       args: (index: number, sender: string) => [
         uintCV(index),
       ],
-      description: 'Claim reward',
+      description: 'Claim reward (requires completed quest)',
     },
     {
       name: 'update-level',
       args: (index: number, sender: string) => [
         uintCV(index + 2),
       ],
-      description: 'Update level',
+      description: 'Update level (requires registered participant)',
     },
     {
       name: 'deactivate-participant',
       args: (index: number, sender: string) => [],
-      description: 'Deactivate participant',
+      description: 'Deactivate participant (requires registered participant)',
+      batchSize: 1, // Only call once - deactivates the participant
     },
     {
       name: 'toggle-quest',
       args: (index: number, sender: string) => [
         uintCV(index),
       ],
-      description: 'Toggle quest',
+      description: 'Toggle quest (requires owner permission)',
     },
   ];
 }
@@ -265,10 +282,11 @@ async function executeBatchCallsForFunction(
 
   const results: BatchCallResult[] = [];
   let nonce = startNonce;
+  const batchSize = func.batchSize ?? CONFIG.batchSize; // Use function-specific batch size or default
 
-  for (let i = 0; i < CONFIG.batchSize; i++) {
+  for (let i = 0; i < batchSize; i++) {
     const args = func.args(i, senderAddress);
-    console.log(`  [${i + 1}/${CONFIG.batchSize}] Calling ${func.name}...`);
+    console.log(`  [${i + 1}/${batchSize}] Calling ${func.name}...`);
 
     const result = await executeContractCall(func.name, args, nonce, dryRun);
 
@@ -287,7 +305,7 @@ async function executeBatchCallsForFunction(
       console.log(`    ✗ Failed - Error: ${result.error}`);
     }
 
-    if (i < CONFIG.batchSize - 1) {
+    if (i < batchSize - 1) {
       await new Promise(resolve => setTimeout(resolve, CONFIG.delayBetweenCalls));
     }
   }
@@ -324,7 +342,8 @@ async function executeAllBatchCalls(dryRun: boolean = false, specificFunction?: 
   }
 
   console.log(`\nFunctions to call: ${functionsToCall.map(f => f.name).join(', ')}`);
-  console.log(`Total transactions: ${functionsToCall.length * CONFIG.batchSize}`);
+  const totalTxs = functionsToCall.reduce((sum, f) => sum + (f.batchSize ?? CONFIG.batchSize), 0);
+  console.log(`Total transactions: ${totalTxs}`);
 
   console.log(`\nFetching nonce for ${senderAddress}...`);
   let nonce = await fetchAccountNonce(senderAddress);
