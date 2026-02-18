@@ -9,10 +9,11 @@ import {
   stringAsciiCV,
 } from '@stacks/transactions';
 import * as dotenv from 'dotenv';
+import * as path from 'path';
 
 type NetworkType = 'mainnet' | 'testnet' | 'devnet';
 
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '../../../../.env') });
 
 function parseContractIdentifier(envValue: string | undefined, defaultContractName: string): { address: string; name: string } {
   const value = envValue || 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM';
@@ -266,9 +267,16 @@ async function executeBatchCallsForFunction(
   const results: BatchCallResult[] = [];
   let nonce = startNonce;
 
-  for (let i = 0; i < CONFIG.batchSize; i++) {
+  const oneTimeOnlyFunctions = ['register-participant', 'deactivate-participant'];
+  const iterations = oneTimeOnlyFunctions.includes(func.name) ? 1 : CONFIG.batchSize;
+
+  if (iterations === 1) {
+    console.log(`  Note: ${func.name} can only be called once per account`);
+  }
+
+  for (let i = 0; i < iterations; i++) {
     const args = func.args(i, senderAddress);
-    console.log(`  [${i + 1}/${CONFIG.batchSize}] Calling ${func.name}...`);
+    console.log(`  [${i + 1}/${iterations}] Calling ${func.name}...`);
 
     const result = await executeContractCall(func.name, args, nonce, dryRun);
 
@@ -287,7 +295,7 @@ async function executeBatchCallsForFunction(
       console.log(`    ✗ Failed - Error: ${result.error}`);
     }
 
-    if (i < CONFIG.batchSize - 1) {
+    if (i < iterations - 1) {
       await new Promise(resolve => setTimeout(resolve, CONFIG.delayBetweenCalls));
     }
   }
@@ -324,7 +332,12 @@ async function executeAllBatchCalls(dryRun: boolean = false, specificFunction?: 
   }
 
   console.log(`\nFunctions to call: ${functionsToCall.map(f => f.name).join(', ')}`);
-  console.log(`Total transactions: ${functionsToCall.length * CONFIG.batchSize}`);
+  
+  const oneTimeOnlyFunctions = ['register-participant', 'deactivate-participant'];
+  const totalTransactions = functionsToCall.reduce((sum, f) => {
+    return sum + (oneTimeOnlyFunctions.includes(f.name) ? 1 : CONFIG.batchSize);
+  }, 0);
+  console.log(`Total transactions: ${totalTransactions}`);
 
   console.log(`\nFetching nonce for ${senderAddress}...`);
   let nonce = await fetchAccountNonce(senderAddress);
