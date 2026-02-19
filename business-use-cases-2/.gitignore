@@ -64,4 +64,4 @@ Clarinet.toml.backup.*
 
 
 # MD.file
-*.md
+*.md.env

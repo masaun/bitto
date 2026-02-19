@@ -116,35 +116,35 @@ interface FunctionCall {
  */
 function getWriteFunctions(senderAddress: string): FunctionCall[] {
   return [
-    {
-      name: 'register-participant',
-      args: (index: number, sender: string) => [],
-      description: 'Register participant (called once per address)',
-      batchSize: 1, // Only call once - each address can only register once
-    },
-    {
-      name: 'create-quest',
-      args: (index: number, sender: string) => [
-        stringAsciiCV(`Quest-${index + 1}`),
-        uintCV(100 + (index * 10)),
-        uintCV(1),
-      ],
-      description: 'Create quest (requires owner permission)',
-    },
-    {
-      name: 'complete-quest',
-      args: (index: number, sender: string) => [
-        uintCV(index),
-      ],
-      description: 'Complete quest (requires registered participant & existing quest)',
-    },
-    {
-      name: 'claim-reward',
-      args: (index: number, sender: string) => [
-        uintCV(index),
-      ],
-      description: 'Claim reward (requires completed quest)',
-    },
+    // {
+    //   name: 'register-participant',
+    //   args: (index: number, sender: string) => [],
+    //   description: 'Register participant (called once per address)',
+    //   batchSize: 1, // Only call once - each address can only register once
+    // },
+    // {
+    //   name: 'create-quest',
+    //   args: (index: number, sender: string) => [
+    //     stringAsciiCV(`Quest-${index + 1}`),
+    //     uintCV(100 + (index * 10)),
+    //     uintCV(1),
+    //   ],
+    //   description: 'Create quest (requires owner permission)',
+    // },
+    // {
+    //   name: 'complete-quest',
+    //   args: (index: number, sender: string) => [
+    //     uintCV(index),
+    //   ],
+    //   description: 'Complete quest (requires registered participant & existing quest)',
+    // },
+    // {
+    //   name: 'claim-reward',
+    //   args: (index: number, sender: string) => [
+    //     uintCV(index),
+    //   ],
+    //   description: 'Claim reward (requires completed quest)',
+    // },
     {
       name: 'update-level',
       args: (index: number, sender: string) => [
@@ -158,13 +158,13 @@ function getWriteFunctions(senderAddress: string): FunctionCall[] {
       description: 'Deactivate participant (requires registered participant)',
       batchSize: 1, // Only call once - deactivates the participant
     },
-    {
-      name: 'toggle-quest',
-      args: (index: number, sender: string) => [
-        uintCV(index),
-      ],
-      description: 'Toggle quest (requires owner permission)',
-    },
+    // {
+    //   name: 'toggle-quest',
+    //   args: (index: number, sender: string) => [
+    //     uintCV(index),
+    //   ],
+    //   description: 'Toggle quest (requires owner permission)',
+    // },
   ];
 }
 

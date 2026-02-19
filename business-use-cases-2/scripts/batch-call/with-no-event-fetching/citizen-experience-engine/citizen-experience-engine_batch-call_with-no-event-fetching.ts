@@ -9,10 +9,11 @@ import {
   stringAsciiCV,
 } from '@stacks/transactions';
 import * as dotenv from 'dotenv';
+import * as path from 'path';
 
 type NetworkType = 'mainnet' | 'testnet' | 'devnet';
 
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '../../../../.env') });
 
 function parseContractIdentifier(envValue: string | undefined, defaultContractName: string): { address: string; name: string } {
   const value = envValue || 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM';
@@ -97,6 +98,7 @@ interface FunctionCall {
   name: string;
   args: (index: number, senderAddress: string) => any[];
   description: string;
+  batchSize?: number; // Allow override per function
 }
 
 function getWriteFunctions(senderAddress: string): FunctionCall[] {
@@ -105,6 +107,7 @@ function getWriteFunctions(senderAddress: string): FunctionCall[] {
       name: 'register-participant',
       args: (index: number, sender: string) => [],
       description: 'Register participant',
+      batchSize: 1, // Only call once - each address can only register once
     },
     {
       name: 'create-quest',
@@ -140,6 +143,7 @@ function getWriteFunctions(senderAddress: string): FunctionCall[] {
       name: 'deactivate-participant',
       args: (index: number, sender: string) => [],
       description: 'Deactivate participant',
+      batchSize: 1, // Only call once - deactivates the participant
     },
     {
       name: 'toggle-quest',
@@ -265,10 +269,11 @@ async function executeBatchCallsForFunction(
 
   const results: BatchCallResult[] = [];
   let nonce = startNonce;
+  const batchSize = func.batchSize ?? CONFIG.batchSize; // Use function-specific batch size or default
 
-  for (let i = 0; i < CONFIG.batchSize; i++) {
+  for (let i = 0; i < batchSize; i++) {
     const args = func.args(i, senderAddress);
-    console.log(`  [${i + 1}/${CONFIG.batchSize}] Calling ${func.name}...`);
+    console.log(`  [${i + 1}/${batchSize}] Calling ${func.name}...`);
 
     const result = await executeContractCall(func.name, args, nonce, dryRun);
 
@@ -287,7 +292,7 @@ async function executeBatchCallsForFunction(
       console.log(`    ✗ Failed - Error: ${result.error}`);
     }
 
-    if (i < CONFIG.batchSize - 1) {
+    if (i < batchSize - 1) {
       await new Promise(resolve => setTimeout(resolve, CONFIG.delayBetweenCalls));
     }
   }
