@@ -133,29 +133,32 @@ function getWriteFunctions(senderAddress: string): FunctionCall[] {
       args: (index: number, sender: string) => [],
       description: 'Register participant',
     },
-    {
-      name: 'create-quest',
-      args: (index: number, sender: string) => [
-        stringAsciiCV(`Quest-${index + 1}`),
-        uintCV(100 + (index * 10)),
-        uintCV(1),
-      ],
-      description: 'Create quest',
-    },
-    {
-      name: 'complete-quest',
-      args: (index: number, sender: string) => [
-        uintCV(index),
-      ],
-      description: 'Complete quest',
-    },
-    {
-      name: 'claim-reward',
-      args: (index: number, sender: string) => [
-        uintCV(index),
-      ],
-      description: 'Claim reward',
-    },
+    // Commented out: create-quest requires contract owner
+    // {
+    //   name: 'create-quest',
+    //   args: (index: number, sender: string) => [
+    //     stringAsciiCV(`Quest-${index + 1}`),
+    //     uintCV(100 + (index * 10)),
+    //     uintCV(1),
+    //   ],
+    //   description: 'Create quest',
+    // },
+    // Commented out: complete-quest requires existing quests
+    // {
+    //   name: 'complete-quest',
+    //   args: (index: number, sender: string) => [
+    //     uintCV(index),
+    //   ],
+    //   description: 'Complete quest',
+    // },
+    // Commented out: claim-reward requires completed quests
+    // {
+    //   name: 'claim-reward',
+    //   args: (index: number, sender: string) => [
+    //     uintCV(index),
+    //   ],
+    //   description: 'Claim reward',
+    // },
     {
       name: 'update-level',
       args: (index: number, sender: string) => [
@@ -168,13 +171,14 @@ function getWriteFunctions(senderAddress: string): FunctionCall[] {
       args: (index: number, sender: string) => [],
       description: 'Deactivate participant',
     },
-    {
-      name: 'toggle-quest',
-      args: (index: number, sender: string) => [
-        uintCV(index),
-      ],
-      description: 'Toggle quest',
-    },
+    // Commented out: toggle-quest requires contract owner
+    // {
+    //   name: 'toggle-quest',
+    //   args: (index: number, sender: string) => [
+    //     uintCV(index),
+    //   ],
+    //   description: 'Toggle quest',
+    // },
   ];
 }
 

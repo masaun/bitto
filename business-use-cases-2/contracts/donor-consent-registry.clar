@@ -1,0 +1,33 @@
+(define-constant contract-owner tx-sender)
+(define-constant err-owner-only (err u100))
+(define-constant err-not-found (err u101))
+(define-constant err-unauthorized (err u103))
+
+(define-map records uint {owner: principal, data: (string-ascii 100), status: (string-ascii 20), timestamp: uint, active: bool})
+(define-data-var record-nonce uint u0)
+
+(define-read-only (get-record (record-id uint))
+  (ok (map-get? records record-id))
+)
+
+(define-public (create-record (data (string-ascii 100)) (status (string-ascii 20)))
+  (let ((record-id (var-get record-nonce)))
+    (map-set records record-id {owner: tx-sender, data: data, status: status, timestamp: burn-block-height, active: true})
+    (var-set record-nonce (+ record-id u1))
+    (ok record-id)
+  )
+)
+
+(define-public (update-status (record-id uint) (new-status (string-ascii 20)))
+  (let ((record (unwrap! (map-get? records record-id) err-not-found)))
+    (asserts! (is-eq tx-sender (get owner record)) err-unauthorized)
+    (ok (map-set records record-id (merge record {status: new-status})))
+  )
+)
+
+(define-public (toggle-active (record-id uint))
+  (let ((record (unwrap! (map-get? records record-id) err-not-found)))
+    (asserts! (is-eq tx-sender (get owner record)) err-unauthorized)
+    (ok (map-set records record-id (merge record {active: (not (get active record))})))
+  )
+)

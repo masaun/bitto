@@ -9,10 +9,11 @@ import {
   stringAsciiCV,
 } from '@stacks/transactions';
 import * as dotenv from 'dotenv';
+import * as path from 'path';
 
 type NetworkType = 'mainnet' | 'testnet' | 'devnet';
 
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '../../../../.env') });
 
 function parseContractIdentifier(envValue: string | undefined, defaultContractName: string): { address: string; name: string } {
   const value = envValue || 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM';

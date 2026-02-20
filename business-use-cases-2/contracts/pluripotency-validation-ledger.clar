@@ -1,0 +1,38 @@
+(define-constant contract-owner tx-sender)
+(define-constant err-owner-only (err u100))
+(define-constant err-not-found (err u101))
+(define-constant err-unauthorized (err u103))
+
+(define-map validations uint {sample-id: uint, validator: principal, score: uint, passed: bool, timestamp: uint})
+(define-map samples uint {owner: principal, status: (string-ascii 20), validated: bool})
+(define-data-var validation-nonce uint u0)
+(define-data-var sample-nonce uint u0)
+
+(define-read-only (get-validation (validation-id uint))
+  (ok (map-get? validations validation-id))
+)
+
+(define-read-only (get-sample (sample-id uint))
+  (ok (map-get? samples sample-id))
+)
+
+(define-public (register-sample (status (string-ascii 20)))
+  (let ((sample-id (var-get sample-nonce)))
+    (map-set samples sample-id {owner: tx-sender, status: status, validated: false})
+    (var-set sample-nonce (+ sample-id u1))
+    (ok sample-id)
+  )
+)
+
+(define-public (validate-sample (sample-id uint) (score uint) (passed bool))
+  (let (
+    (sample (unwrap! (map-get? samples sample-id) err-not-found))
+    (validation-id (var-get validation-nonce))
+  )
+    (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+    (map-set validations validation-id {sample-id: sample-id, validator: tx-sender, score: score, passed: passed, timestamp: burn-block-height})
+    (map-set samples sample-id (merge sample {validated: true}))
+    (var-set validation-nonce (+ validation-id u1))
+    (ok validation-id)
+  )
+)
