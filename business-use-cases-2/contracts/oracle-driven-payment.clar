@@ -1,0 +1,8 @@
+(define-map oracle_driven_payment_registry uint {creator: principal, data: (string-ascii 256), timestamp: uint})
+(define-data-var oracle_driven_payment_nonce uint u0)
+(define-read-only (get-entry (id uint)) (map-get? oracle_driven_payment_registry id))
+(define-public (register (data (string-ascii 256)))
+  (let ((id (+ (var-get oracle_driven_payment_nonce) u1)))
+    (map-set oracle_driven_payment_registry id {creator: tx-sender, data: data, timestamp: stacks-block-height})
+    (var-set oracle_driven_payment_nonce id)
+    (ok id)))

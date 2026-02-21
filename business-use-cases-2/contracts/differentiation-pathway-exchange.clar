@@ -1,0 +1,26 @@
+(define-constant contract-owner tx-sender)
+(define-constant err-not-found (err u101))
+
+(define-map pathways uint {name: (string-ascii 50), protocol: (string-ascii 100), provider: principal, price: uint, active: bool})
+(define-map exchanges {buyer: principal, pathway-id: uint} {timestamp: uint, completed: bool})
+(define-data-var pathway-nonce uint u0)
+
+(define-read-only (get-pathway (pathway-id uint))
+  (ok (map-get? pathways pathway-id))
+)
+
+(define-public (register-pathway (name (string-ascii 50)) (protocol (string-ascii 100)) (price uint))
+  (let ((pathway-id (var-get pathway-nonce)))
+    (map-set pathways pathway-id {name: name, protocol: protocol, provider: tx-sender, price: price, active: true})
+    (var-set pathway-nonce (+ pathway-id u1))
+    (ok pathway-id)
+  )
+)
+
+(define-public (exchange-pathway (pathway-id uint))
+  (let ((pathway (unwrap! (map-get? pathways pathway-id) err-not-found)))
+    (try! (stx-transfer? (get price pathway) tx-sender (get provider pathway)))
+    (map-set exchanges {buyer: tx-sender, pathway-id: pathway-id} {timestamp: burn-block-height, completed: true})
+    (ok true)
+  )
+)

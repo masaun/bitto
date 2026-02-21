@@ -1,0 +1,8 @@
+(define-map price-data uint {price-hash: (buff 32), timestamp: uint, verified: bool})
+(define-data-var oracle-nonce uint u0)
+(define-read-only (get-price-data (id uint)) (map-get? price-data id))
+(define-public (submit-price (hash (buff 32)))
+  (let ((id (+ (var-get oracle-nonce) u1)))
+    (map-set price-data id {price-hash: hash, timestamp: stacks-block-height, verified: false})
+    (var-set oracle-nonce id)
+    (ok id)))

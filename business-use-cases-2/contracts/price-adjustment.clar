@@ -1,0 +1,8 @@
+(define-map adjustments uint {old-price: uint, new-price: uint, adjusted-at: uint, reason: (string-ascii 128)})
+(define-data-var adj-nonce uint u0)
+(define-read-only (get-adjustment (id uint)) (map-get? adjustments id))
+(define-public (adjust-price (old uint) (new uint) (reason (string-ascii 128)))
+  (let ((id (+ (var-get adj-nonce) u1)))
+    (map-set adjustments id {old-price: old, new-price: new, adjusted-at: stacks-block-height, reason: reason})
+    (var-set adj-nonce id)
+    (ok id)))

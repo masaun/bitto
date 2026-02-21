@@ -1,0 +1,6 @@
+(define-map risk-scores principal {financial-risk: uint, operational-risk: uint, overall-score: uint})
+(define-read-only (get-risk-score (supplier principal)) (map-get? risk-scores supplier))
+(define-public (update-risk-score (supplier principal) (financial uint) (operational uint))
+  (let ((overall (/ (+ financial operational) u2)))
+    (map-set risk-scores supplier {financial-risk: financial, operational-risk: operational, overall-score: overall})
+    (ok true)))

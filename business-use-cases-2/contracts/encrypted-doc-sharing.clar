@@ -1,0 +1,8 @@
+(define-map shared-docs uint {doc-hash: (buff 32), shared-with: (list 10 principal), owner: principal})
+(define-data-var doc-share-nonce uint u0)
+(define-read-only (get-shared-doc (id uint)) (map-get? shared-docs id))
+(define-public (share-doc (hash (buff 32)) (recipients (list 10 principal)))
+  (let ((id (+ (var-get doc-share-nonce) u1)))
+    (map-set shared-docs id {doc-hash: hash, shared-with: recipients, owner: tx-sender})
+    (var-set doc-share-nonce id)
+    (ok id)))

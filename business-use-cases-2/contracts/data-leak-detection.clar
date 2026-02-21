@@ -1,0 +1,8 @@
+(define-map leaks uint {source: principal, detected-at: uint, severity: uint})
+(define-data-var leak-nonce uint u0)
+(define-read-only (get-leak (id uint)) (map-get? leaks id))
+(define-public (report-leak (source principal) (severity uint))
+  (let ((id (+ (var-get leak-nonce) u1)))
+    (map-set leaks id {source: source, detected-at: stacks-block-height, severity: severity})
+    (var-set leak-nonce id)
+    (ok id)))

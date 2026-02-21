@@ -1,0 +1,6 @@
+(define-map performance principal {on-time-delivery: uint, quality-score: uint, total-orders: uint})
+(define-read-only (get-performance (supplier principal)) (map-get? performance supplier))
+(define-public (record-performance (supplier principal) (on-time uint) (quality uint))
+  (let ((perf (default-to {on-time-delivery: u0, quality-score: u0, total-orders: u0} (map-get? performance supplier))))
+    (map-set performance supplier {on-time-delivery: on-time, quality-score: quality, total-orders: (+ (get total-orders perf) u1)})
+    (ok true)))

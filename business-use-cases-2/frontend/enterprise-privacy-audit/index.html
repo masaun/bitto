@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EnterprisePrivacyAudit</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+    h1 { color: #5546ff; }
+    button { background: #5546ff; color: white; border: none; padding: 10px 20px; margin: 5px; cursor: pointer; border-radius: 5px; }
+    button:hover { background: #4435ee; }
+    input { padding: 8px; margin: 5px; width: 300px; }
+    .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <h1>EnterprisePrivacyAudit</h1>
+  <div class="section">
+    <h2>Wallet</h2>
+    <button id="connect-wallet">Connect Wallet</button>
+    <p>Address: <span id="user-address">Not connected</span></p>
+  </div>
+  <div class="section">
+    <h2>Create Entry</h2>
+    <input type="text" id="data-input" placeholder="Enter data (hex buffer)" />
+    <button id="create-entry">Create Entry</button>
+  </div>
+  <div class="section">
+    <h2>Update Entry</h2>
+    <input type="number" id="id-input" placeholder="Entry ID" />
+    <input type="text" id="update-data-input" placeholder="New data (hex buffer)" />
+    <button id="update-entry">Update Entry</button>
+  </div>
+  <div class="section">
+    <h2>Update Status</h2>
+    <input type="number" id="status-id-input" placeholder="Entry ID" />
+    <input type="text" id="status-input" placeholder="New status" />
+    <button id="update-status">Update Status</button>
+  </div>
+  <div class="section">
+    <h2>Get Entry</h2>
+    <input type="number" id="get-id-input" placeholder="Entry ID" />
+    <button id="get-entry">Get Entry</button>
+    <pre id="entry-result"></pre>
+  </div>
+  <script src="./index.ts" type="module"></script>
+</body>
+</html>

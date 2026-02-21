@@ -1,0 +1,8 @@
+(define-map multi_party_escrow_registry uint {creator: principal, data: (string-ascii 256), timestamp: uint})
+(define-data-var multi_party_escrow_nonce uint u0)
+(define-read-only (get-entry (id uint)) (map-get? multi_party_escrow_registry id))
+(define-public (register (data (string-ascii 256)))
+  (let ((id (+ (var-get multi_party_escrow_nonce) u1)))
+    (map-set multi_party_escrow_registry id {creator: tx-sender, data: data, timestamp: stacks-block-height})
+    (var-set multi_party_escrow_nonce id)
+    (ok id)))

@@ -1,0 +1,25 @@
+(define-constant contract-owner tx-sender)
+(define-constant err-owner-only (err u100))
+(define-constant err-not-found (err u101))
+
+(define-map assays uint {sample-id: uint, verifier: principal, result: (string-ascii 20), verified: bool, timestamp: uint})
+(define-data-var assay-nonce uint u0)
+
+(define-read-only (get-assay (assay-id uint))
+  (ok (map-get? assays assay-id))
+)
+
+(define-public (submit-assay (sample-id uint) (result (string-ascii 20)))
+  (let ((assay-id (var-get assay-nonce)))
+    (map-set assays assay-id {sample-id: sample-id, verifier: tx-sender, result: result, verified: false, timestamp: burn-block-height})
+    (var-set assay-nonce (+ assay-id u1))
+    (ok assay-id)
+  )
+)
+
+(define-public (verify-assay (assay-id uint))
+  (let ((assay (unwrap! (map-get? assays assay-id) err-not-found)))
+    (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+    (ok (map-set assays assay-id (merge assay {verified: true})))
+  )
+)

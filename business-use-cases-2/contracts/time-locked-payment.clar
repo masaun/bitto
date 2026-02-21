@@ -1,0 +1,8 @@
+(define-map time_locked_payment_registry uint {creator: principal, data: (string-ascii 256), timestamp: uint})
+(define-data-var time_locked_payment_nonce uint u0)
+(define-read-only (get-entry (id uint)) (map-get? time_locked_payment_registry id))
+(define-public (register (data (string-ascii 256)))
+  (let ((id (+ (var-get time_locked_payment_nonce) u1)))
+    (map-set time_locked_payment_registry id {creator: tx-sender, data: data, timestamp: stacks-block-height})
+    (var-set time_locked_payment_nonce id)
+    (ok id)))

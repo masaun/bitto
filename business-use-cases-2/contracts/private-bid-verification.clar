@@ -1,0 +1,8 @@
+(define-map bid-verifications uint {bid-id: uint, verified: bool, verifier: principal})
+(define-data-var verif-nonce uint u0)
+(define-read-only (get-verification (id uint)) (map-get? bid-verifications id))
+(define-public (verify-bid (bid-id uint))
+  (let ((id (+ (var-get verif-nonce) u1)))
+    (map-set bid-verifications id {bid-id: bid-id, verified: true, verifier: tx-sender})
+    (var-set verif-nonce id)
+    (ok id)))

@@ -1,0 +1,8 @@
+(define-map surge-events uint {trigger-condition: (string-ascii 128), multiplier: uint, active: bool})
+(define-data-var surge-nonce uint u0)
+(define-read-only (get-surge (id uint)) (map-get? surge-events id))
+(define-public (activate-surge (condition (string-ascii 128)) (mult uint))
+  (let ((id (+ (var-get surge-nonce) u1)))
+    (map-set surge-events id {trigger-condition: condition, multiplier: mult, active: true})
+    (var-set surge-nonce id)
+    (ok id)))

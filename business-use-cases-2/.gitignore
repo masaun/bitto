@@ -57,10 +57,11 @@ BATCH_SCRIPTS_AND_FRONTENDS.md
 
 # Deloyment scripts
 deploy-all-**-contracts.sh
+deploy-**-contracts.sh
 DEPLOYMENT_GUIDE.md
 deployments/*.yaml
 Clarinet.toml.backup.*
 
 
 # MD.file
-*.md
+*.md.env
