@@ -1,0 +1,42 @@
+(define-constant contract-owner tx-sender)
+(define-constant err-owner-only (err u100))
+(define-constant err-not-found (err u101))
+(define-constant err-already-claimed (err u102))
+(define-constant err-invalid-amount (err u103))
+
+(define-map medals uint {event: (string-ascii 50), medal-type: (string-ascii 10), bonus-amount: uint})
+(define-map athlete-medals {athlete: principal, medal-id: uint} {awarded: bool, claimed: bool, timestamp: uint})
+(define-data-var medal-nonce uint u0)
+(define-data-var total-disbursed uint u0)
+
+(define-read-only (get-medal (medal-id uint))
+  (map-get? medals medal-id))
+
+(define-read-only (get-athlete-medal (athlete principal) (medal-id uint))
+  (map-get? athlete-medals {athlete: athlete, medal-id: medal-id}))
+
+(define-read-only (get-total-disbursed)
+  (ok (var-get total-disbursed)))
+
+(define-public (register-medal (event (string-ascii 50)) (medal-type (string-ascii 10)) (bonus-amount uint))
+  (let ((medal-id (+ (var-get medal-nonce) u1)))
+    (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+    (try! (stx-transfer? bonus-amount tx-sender (as-contract tx-sender)))
+    (map-set medals medal-id {event: event, medal-type: medal-type, bonus-amount: bonus-amount})
+    (var-set medal-nonce medal-id)
+    (ok medal-id)))
+
+(define-public (award-medal (athlete principal) (medal-id uint))
+  (let ((medal (unwrap! (map-get? medals medal-id) err-not-found)))
+    (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+    (map-set athlete-medals {athlete: athlete, medal-id: medal-id} {awarded: true, claimed: false, timestamp: burn-block-height})
+    (ok true)))
+
+(define-public (claim-bonus (medal-id uint))
+  (let ((athlete-medal (unwrap! (map-get? athlete-medals {athlete: tx-sender, medal-id: medal-id}) err-not-found))
+        (medal (unwrap! (map-get? medals medal-id) err-not-found)))
+    (asserts! (get awarded athlete-medal) err-not-found)
+    (asserts! (not (get claimed athlete-medal)) err-already-claimed)
+    (map-set athlete-medals {athlete: tx-sender, medal-id: medal-id} (merge athlete-medal {claimed: true}))
+    (var-set total-disbursed (+ (var-get total-disbursed) (get bonus-amount medal)))
+    (ok (get bonus-amount medal))))

@@ -1,0 +1,43 @@
+(define-constant contract-owner tx-sender)
+(define-constant err-owner-only (err u100))
+(define-constant err-not-found (err u101))
+(define-constant err-already-claimed (err u102))
+(define-constant err-invalid-amount (err u103))
+
+(define-map bounties uint {task: (string-ascii 80), reward: uint, claimed: bool})
+(define-map submissions {bounty-id: uint, fan: principal} {content: (string-ascii 100), approved: bool, timestamp: uint})
+(define-data-var bounty-nonce uint u0)
+(define-data-var total-paid uint u0)
+
+(define-read-only (get-bounty (bounty-id uint))
+  (map-get? bounties bounty-id))
+
+(define-read-only (get-submission (bounty-id uint) (fan principal))
+  (map-get? submissions {bounty-id: bounty-id, fan: fan}))
+
+(define-read-only (get-total-paid)
+  (ok (var-get total-paid)))
+
+(define-public (create-bounty (task (string-ascii 80)) (reward uint))
+  (let ((bounty-id (+ (var-get bounty-nonce) u1)))
+    (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+    (try! (stx-transfer? reward tx-sender (as-contract tx-sender)))
+    (map-set bounties bounty-id {task: task, reward: reward, claimed: false})
+    (var-set bounty-nonce bounty-id)
+    (ok bounty-id)))
+
+(define-public (submit-work (bounty-id uint) (content (string-ascii 100)))
+  (let ((bounty (unwrap! (map-get? bounties bounty-id) err-not-found)))
+    (asserts! (not (get claimed bounty)) err-already-claimed)
+    (map-set submissions {bounty-id: bounty-id, fan: tx-sender} {content: content, approved: false, timestamp: burn-block-height})
+    (ok true)))
+
+(define-public (approve-submission (bounty-id uint) (fan principal))
+  (let ((bounty (unwrap! (map-get? bounties bounty-id) err-not-found))
+        (submission (unwrap! (map-get? submissions {bounty-id: bounty-id, fan: fan}) err-not-found)))
+    (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+    (asserts! (not (get claimed bounty)) err-already-claimed)
+    (map-set bounties bounty-id (merge bounty {claimed: true}))
+    (map-set submissions {bounty-id: bounty-id, fan: fan} (merge submission {approved: true}))
+    (var-set total-paid (+ (var-get total-paid) (get reward bounty)))
+    (ok (get reward bounty))))

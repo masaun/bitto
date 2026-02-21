@@ -1,0 +1,43 @@
+(define-constant contract-owner tx-sender)
+(define-constant err-owner-only (err u100))
+(define-constant err-not-found (err u101))
+(define-constant err-already-sold (err u102))
+(define-constant err-invalid-amount (err u103))
+
+(define-map rights uint {event: (string-ascii 50), region: (string-ascii 40), price: uint, broadcaster: (optional principal), sold: bool})
+(define-map purchases {rights-id: uint, buyer: principal} {amount: uint, timestamp: uint})
+(define-data-var rights-nonce uint u0)
+(define-data-var total-sales uint u0)
+
+(define-read-only (get-rights (rights-id uint))
+  (map-get? rights rights-id))
+
+(define-read-only (get-purchase (rights-id uint) (buyer principal))
+  (map-get? purchases {rights-id: rights-id, buyer: buyer}))
+
+(define-read-only (get-total-sales)
+  (ok (var-get total-sales)))
+
+(define-public (register-rights (event (string-ascii 50)) (region (string-ascii 40)) (price uint))
+  (let ((rights-id (+ (var-get rights-nonce) u1)))
+    (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+    (asserts! (> price u0) err-invalid-amount)
+    (map-set rights rights-id {event: event, region: region, price: price, broadcaster: none, sold: false})
+    (var-set rights-nonce rights-id)
+    (ok rights-id)))
+
+(define-public (buy-rights (rights-id uint))
+  (let ((rights-data (unwrap! (map-get? rights rights-id) err-not-found)))
+    (asserts! (not (get sold rights-data)) err-already-sold)
+    (try! (stx-transfer? (get price rights-data) tx-sender contract-owner))
+    (map-set rights rights-id (merge rights-data {broadcaster: (some tx-sender), sold: true}))
+    (map-set purchases {rights-id: rights-id, buyer: tx-sender} {amount: (get price rights-data), timestamp: burn-block-height})
+    (var-set total-sales (+ (var-get total-sales) (get price rights-data)))
+    (ok true)))
+
+(define-public (update-rights-price (rights-id uint) (new-price uint))
+  (let ((rights-data (unwrap! (map-get? rights rights-id) err-not-found)))
+    (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+    (asserts! (not (get sold rights-data)) err-already-sold)
+    (map-set rights rights-id (merge rights-data {price: new-price}))
+    (ok true)))

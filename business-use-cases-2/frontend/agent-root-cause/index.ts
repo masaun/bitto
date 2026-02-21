@@ -1,8 +1,7 @@
- import { AppConfig, UserSession, showConnect } from '@stacks/connect';
-import { StacksTestnet, StacksMainnet } from '@stacks/network';
+import { AppConfig, UserSession, showConnect } from '@stacks/connect';
+import { StacksMainnet } from '@stacks/network';
 import { 
   makeContractCall,
-  bufferCVFromString,
   uintCV,
   principalCV,
   stringAsciiCV,
@@ -19,7 +18,7 @@ const userSession = new UserSession({ appConfig });
 function connectWallet() {
   showConnect({
     appDetails: {
-      name: 'AgentRootCause',
+      name: 'Agent Root Cause',
       icon: window.location.origin + '/logo.png',
     },
     redirectTo: '/',
@@ -30,12 +29,30 @@ function connectWallet() {
   });
 }
 
-async function createRecord(data: string) {
+async function registerParticipant() {
+  const txOptions = {
+    contractAddress: CONTRACT_ADDRESS.split('.')[0],
+    contractName: CONTRACT_NAME,
+    functionName: 'register-participant',
+    functionArgs: [],
+    senderKey: userSession.loadUserData().appPrivateKey,
+    validateWithAbi: true,
+    network: NETWORK,
+    postConditionMode: PostConditionMode.Deny,
+    onFinish: (data: any) => {
+      console.log('Transaction:', data);
+      alert('Transaction submitted: ' + data.txId);
+    },
+  };
+  await makeContractCall(txOptions);
+}
+
+async function createRecord(data: string, amount: number) {
   const txOptions = {
     contractAddress: CONTRACT_ADDRESS.split('.')[0],
     contractName: CONTRACT_NAME,
     functionName: 'create-record',
-    functionArgs: [bufferCVFromString(data)],
+    functionArgs: [stringAsciiCV(data), uintCV(amount)],
     senderKey: userSession.loadUserData().appPrivateKey,
     validateWithAbi: true,
     network: NETWORK,
@@ -53,7 +70,43 @@ async function updateRecord(id: number, data: string) {
     contractAddress: CONTRACT_ADDRESS.split('.')[0],
     contractName: CONTRACT_NAME,
     functionName: 'update-record',
-    functionArgs: [uintCV(id), bufferCVFromString(data)],
+    functionArgs: [uintCV(id), stringAsciiCV(data)],
+    senderKey: userSession.loadUserData().appPrivateKey,
+    validateWithAbi: true,
+    network: NETWORK,
+    postConditionMode: PostConditionMode.Deny,
+    onFinish: (data: any) => {
+      console.log('Transaction:', data);
+      alert('Transaction submitted: ' + data.txId);
+    },
+  };
+  await makeContractCall(txOptions);
+}
+
+async function deactivateRecord(id: number) {
+  const txOptions = {
+    contractAddress: CONTRACT_ADDRESS.split('.')[0],
+    contractName: CONTRACT_NAME,
+    functionName: 'deactivate-record',
+    functionArgs: [uintCV(id)],
+    senderKey: userSession.loadUserData().appPrivateKey,
+    validateWithAbi: true,
+    network: NETWORK,
+    postConditionMode: PostConditionMode.Deny,
+    onFinish: (data: any) => {
+      console.log('Transaction:', data);
+      alert('Transaction submitted: ' + data.txId);
+    },
+  };
+  await makeContractCall(txOptions);
+}
+
+async function awardPoints(user: string, points: number) {
+  const txOptions = {
+    contractAddress: CONTRACT_ADDRESS.split('.')[0],
+    contractName: CONTRACT_NAME,
+    functionName: 'award-points',
+    functionArgs: [principalCV(user), uintCV(points)],
     senderKey: userSession.loadUserData().appPrivateKey,
     validateWithAbi: true,
     network: NETWORK,
@@ -68,28 +121,43 @@ async function updateRecord(id: number, data: string) {
 
 document.addEventListener('DOMContentLoaded', () => {
   const connectBtn = document.getElementById('connect-wallet');
+  const registerBtn = document.getElementById('register-participant');
   const createBtn = document.getElementById('create-record');
   const updateBtn = document.getElementById('update-record');
+  const deactivateBtn = document.getElementById('deactivate-record');
+  const awardBtn = document.getElementById('award-points');
   
   connectBtn?.addEventListener('click', connectWallet);
+  registerBtn?.addEventListener('click', registerParticipant);
   
   createBtn?.addEventListener('click', async () => {
-    const input = document.getElementById('data-input') as HTMLInputElement;
-    if (input && input.value) {
-      await createRecord(input.value);
+    const dataInput = document.getElementById('data-input') as HTMLInputElement;
+    const amountInput = document.getElementById('amount-input') as HTMLInputElement;
+    if (dataInput && amountInput && dataInput.value && amountInput.value) {
+      await createRecord(dataInput.value, parseInt(amountInput.value));
     }
   });
   
   updateBtn?.addEventListener('click', async () => {
-    const idInput = document.getElementById('id-input') as HTMLInputElement;
+    const idInput = document.getElementById('update-id-input') as HTMLInputElement;
     const dataInput = document.getElementById('update-data-input') as HTMLInputElement;
     if (idInput && dataInput && idInput.value && dataInput.value) {
       await updateRecord(parseInt(idInput.value), dataInput.value);
     }
   });
   
-  if (userSession.isUserSignedIn()) {
-    const userData = userSession.loadUserData();
-    document.getElementById('user-address')!.textContent = userData.profile.stxAddress.mainnet;
-  }
+  deactivateBtn?.addEventListener('click', async () => {
+    const idInput = document.getElementById('deactivate-id-input') as HTMLInputElement;
+    if (idInput && idInput.value) {
+      await deactivateRecord(parseInt(idInput.value));
+    }
+  });
+  
+  awardBtn?.addEventListener('click', async () => {
+    const userInput = document.getElementById('award-user-input') as HTMLInputElement;
+    const pointsInput = document.getElementById('award-points-input') as HTMLInputElement;
+    if (userInput && pointsInput && userInput.value && pointsInput.value) {
+      await awardPoints(userInput.value, parseInt(pointsInput.value));
+    }
+  });
 });

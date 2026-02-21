@@ -1,0 +1,37 @@
+(define-constant contract-owner tx-sender)
+(define-constant err-owner-only (err u100))
+(define-constant err-not-found (err u101))
+(define-constant err-already-claimed (err u102))
+(define-constant err-invalid-amount (err u103))
+
+(define-map events uint {name: (string-ascii 50), total-prize: uint, distributed: uint})
+(define-map prizes {event-id: uint, athlete: principal} {medal: (string-ascii 10), amount: uint, claimed: bool})
+(define-data-var event-nonce uint u0)
+
+(define-read-only (get-event (event-id uint))
+  (map-get? events event-id))
+
+(define-read-only (get-prize (event-id uint) (athlete principal))
+  (map-get? prizes {event-id: event-id, athlete: athlete}))
+
+(define-public (create-event (name (string-ascii 50)) (total-prize uint))
+  (let ((event-id (+ (var-get event-nonce) u1)))
+    (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+    (try! (stx-transfer? total-prize tx-sender (as-contract tx-sender)))
+    (map-set events event-id {name: name, total-prize: total-prize, distributed: u0})
+    (var-set event-nonce event-id)
+    (ok event-id)))
+
+(define-public (assign-prize (event-id uint) (athlete principal) (medal (string-ascii 10)) (amount uint))
+  (let ((event (unwrap! (map-get? events event-id) err-not-found)))
+    (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+    (map-set prizes {event-id: event-id, athlete: athlete} {medal: medal, amount: amount, claimed: false})
+    (ok true)))
+
+(define-public (claim-prize (event-id uint))
+  (let ((prize (unwrap! (map-get? prizes {event-id: event-id, athlete: tx-sender}) err-not-found))
+        (event (unwrap! (map-get? events event-id) err-not-found)))
+    (asserts! (not (get claimed prize)) err-already-claimed)
+    (map-set prizes {event-id: event-id, athlete: tx-sender} (merge prize {claimed: true}))
+    (map-set events event-id (merge event {distributed: (+ (get distributed event) (get amount prize))}))
+    (ok (get amount prize))))

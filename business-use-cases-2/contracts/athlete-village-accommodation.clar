@@ -1,0 +1,42 @@
+(define-constant contract-owner tx-sender)
+(define-constant err-owner-only (err u100))
+(define-constant err-not-found (err u101))
+(define-constant err-already-booked (err u102))
+(define-constant err-invalid-dates (err u103))
+
+(define-map accommodations uint {building: (string-ascii 30), room-number: uint, capacity: uint, occupied: bool})
+(define-map bookings {accommodation-id: uint, athlete: principal} {check-in: uint, check-out: uint, team: (string-ascii 40)})
+(define-data-var accommodation-nonce uint u0)
+(define-data-var total-occupied uint u0)
+
+(define-read-only (get-accommodation (accommodation-id uint))
+  (map-get? accommodations accommodation-id))
+
+(define-read-only (get-booking (accommodation-id uint) (athlete principal))
+  (map-get? bookings {accommodation-id: accommodation-id, athlete: athlete}))
+
+(define-read-only (get-total-occupied)
+  (ok (var-get total-occupied)))
+
+(define-public (register-accommodation (building (string-ascii 30)) (room-number uint) (capacity uint))
+  (let ((accommodation-id (+ (var-get accommodation-nonce) u1)))
+    (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+    (map-set accommodations accommodation-id {building: building, room-number: room-number, capacity: capacity, occupied: false})
+    (var-set accommodation-nonce accommodation-id)
+    (ok accommodation-id)))
+
+(define-public (book-accommodation (accommodation-id uint) (check-in uint) (check-out uint) (team (string-ascii 40)))
+  (let ((accommodation (unwrap! (map-get? accommodations accommodation-id) err-not-found)))
+    (asserts! (not (get occupied accommodation)) err-already-booked)
+    (asserts! (< check-in check-out) err-invalid-dates)
+    (map-set accommodations accommodation-id (merge accommodation {occupied: true}))
+    (map-set bookings {accommodation-id: accommodation-id, athlete: tx-sender} {check-in: check-in, check-out: check-out, team: team})
+    (var-set total-occupied (+ (var-get total-occupied) u1))
+    (ok true)))
+
+(define-public (checkout-accommodation (accommodation-id uint))
+  (let ((accommodation (unwrap! (map-get? accommodations accommodation-id) err-not-found))
+        (booking (unwrap! (map-get? bookings {accommodation-id: accommodation-id, athlete: tx-sender}) err-not-found)))
+    (map-set accommodations accommodation-id (merge accommodation {occupied: false}))
+    (var-set total-occupied (- (var-get total-occupied) u1))
+    (ok true)))

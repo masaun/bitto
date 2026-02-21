@@ -1,0 +1,48 @@
+(define-constant contract-owner tx-sender)
+(define-constant err-owner-only (err u100))
+(define-constant err-not-found (err u101))
+(define-constant err-pass-used (err u102))
+(define-constant err-invalid-amount (err u103))
+
+(define-map passes uint {match-id: uint, tier: (string-ascii 20), price: uint, holder: (optional principal), active: bool})
+(define-map redemptions {pass-id: uint, holder: principal} {redeemed: bool, timestamp: uint})
+(define-data-var pass-nonce uint u0)
+(define-data-var total-revenue uint u0)
+
+(define-read-only (get-pass (pass-id uint))
+  (map-get? passes pass-id))
+
+(define-read-only (get-redemption (pass-id uint) (holder principal))
+  (map-get? redemptions {pass-id: pass-id, holder: holder}))
+
+(define-read-only (get-total-revenue)
+  (ok (var-get total-revenue)))
+
+(define-public (create-pass (match-id uint) (tier (string-ascii 20)) (price uint))
+  (let ((pass-id (+ (var-get pass-nonce) u1)))
+    (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+    (map-set passes pass-id {match-id: match-id, tier: tier, price: price, holder: none, active: true})
+    (var-set pass-nonce pass-id)
+    (ok pass-id)))
+
+(define-public (purchase-pass (pass-id uint))
+  (let ((pass (unwrap! (map-get? passes pass-id) err-not-found)))
+    (asserts! (is-none (get holder pass)) err-pass-used)
+    (try! (stx-transfer? (get price pass) tx-sender contract-owner))
+    (map-set passes pass-id (merge pass {holder: (some tx-sender)}))
+    (map-set redemptions {pass-id: pass-id, holder: tx-sender} {redeemed: false, timestamp: burn-block-height})
+    (var-set total-revenue (+ (var-get total-revenue) (get price pass)))
+    (ok true)))
+
+(define-public (redeem-pass (pass-id uint))
+  (let ((pass (unwrap! (map-get? passes pass-id) err-not-found))
+        (redemption (unwrap! (map-get? redemptions {pass-id: pass-id, holder: tx-sender}) err-not-found)))
+    (asserts! (not (get redeemed redemption)) err-pass-used)
+    (map-set redemptions {pass-id: pass-id, holder: tx-sender} (merge redemption {redeemed: true}))
+    (ok true)))
+
+(define-public (deactivate-pass (pass-id uint))
+  (let ((pass (unwrap! (map-get? passes pass-id) err-not-found)))
+    (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+    (map-set passes pass-id (merge pass {active: false}))
+    (ok true)))

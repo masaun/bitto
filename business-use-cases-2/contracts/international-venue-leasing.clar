@@ -1,0 +1,61 @@
+(define-constant contract-owner tx-sender)
+(define-constant err-owner-only (err u100))
+(define-constant err-not-found (err u101))
+(define-constant err-already-exists (err u102))
+(define-constant err-unauthorized (err u103))
+
+(define-map records uint {creator: principal, data: (string-ascii 100), amount: uint, active: bool})
+(define-map participants principal {points: uint, level: uint, active: bool})
+(define-data-var record-nonce uint u0)
+(define-data-var total-records uint u0)
+
+(define-read-only (get-record (id uint))
+  (ok (map-get? records id))
+)
+
+(define-read-only (get-participant (user principal))
+  (ok (map-get? participants user))
+)
+
+(define-read-only (get-total-records)
+  (ok (var-get total-records))
+)
+
+(define-public (register-participant)
+  (let ((participant (map-get? participants tx-sender)))
+    (asserts! (is-none participant) err-already-exists)
+    (ok (map-set participants tx-sender {points: u0, level: u1, active: true}))
+  )
+)
+
+(define-public (create-record (data (string-ascii 100)) (amount uint))
+  (let ((id (var-get record-nonce)))
+    (ok (begin
+      (map-set records id {creator: tx-sender, data: data, amount: amount, active: true})
+      (var-set record-nonce (+ id u1))
+      (var-set total-records (+ (var-get total-records) u1))
+      id
+    ))
+  )
+)
+
+(define-public (update-record (id uint) (data (string-ascii 100)))
+  (let ((record (unwrap! (map-get? records id) err-not-found)))
+    (asserts! (is-eq tx-sender (get creator record)) err-unauthorized)
+    (ok (map-set records id (merge record {data: data})))
+  )
+)
+
+(define-public (deactivate-record (id uint))
+  (let ((record (unwrap! (map-get? records id) err-not-found)))
+    (asserts! (is-eq tx-sender (get creator record)) err-unauthorized)
+    (ok (map-set records id (merge record {active: false})))
+  )
+)
+
+(define-public (award-points (user principal) (points uint))
+  (let ((participant (unwrap! (map-get? participants user) err-not-found)))
+    (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+    (ok (map-set participants user (merge participant {points: (+ (get points participant) points)})))
+  )
+)

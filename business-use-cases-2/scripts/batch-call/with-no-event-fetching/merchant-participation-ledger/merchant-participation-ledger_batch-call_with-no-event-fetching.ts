@@ -90,6 +90,7 @@ const CONFIG = {
   batchSize: 10,
   delayBetweenCalls: 3000,
   delayBetweenBatches: 6000,
+  checkTransactionStatus: true, // Set to false to skip status checking
   
   senderKey: '',
 };
@@ -98,15 +99,18 @@ interface FunctionCall {
   name: string;
   args: (index: number, senderAddress: string) => any[];
   description: string;
+  batchSize?: number; // Allow override per function
 }
 
 function getWriteFunctions(senderAddress: string): FunctionCall[] {
   return [
-    {
-      name: 'register-participant',
-      args: (index: number, sender: string) => [],
-      description: 'Register participant',
-    },
+    // Skip register-participant if already registered (will fail with err-already-exists u102)
+    // {
+    //   name: 'register-participant',
+    //   args: (index: number, sender: string) => [],
+    //   description: 'Register participant (only once per address)',
+    //   batchSize: 1,
+    // },
     {
       name: 'create-quest',
       args: (index: number, sender: string) => [
@@ -114,40 +118,41 @@ function getWriteFunctions(senderAddress: string): FunctionCall[] {
         uintCV(100 + (index * 10)),
         uintCV(1),
       ],
-      description: 'Create quest',
-    },
-    {
-      name: 'complete-quest',
-      args: (index: number, sender: string) => [
-        uintCV(index),
-      ],
-      description: 'Complete quest',
-    },
-    {
-      name: 'claim-reward',
-      args: (index: number, sender: string) => [
-        uintCV(index),
-      ],
-      description: 'Claim reward',
+      description: 'Create quest (requires contract owner)',
     },
     {
       name: 'update-level',
       args: (index: number, sender: string) => [
         uintCV(index + 2),
       ],
-      description: 'Update level',
+      description: 'Update level (increases participant level)',
     },
     {
-      name: 'deactivate-participant',
-      args: (index: number, sender: string) => [],
-      description: 'Deactivate participant',
+      name: 'complete-quest',
+      args: (index: number, sender: string) => [
+        uintCV(index),
+      ],
+      description: 'Complete quest (requires: registered, active, sufficient level)',
+    },
+    {
+      name: 'claim-reward',
+      args: (index: number, sender: string) => [
+        uintCV(index),
+      ],
+      description: 'Claim reward (requires quest completion)',
     },
     {
       name: 'toggle-quest',
       args: (index: number, sender: string) => [
         uintCV(index),
       ],
-      description: 'Toggle quest',
+      description: 'Toggle quest active status (requires contract owner)',
+    },
+    {
+      name: 'deactivate-participant',
+      args: (index: number, sender: string) => [],
+      description: 'Deactivate participant (BLOCKS all future operations)',
+      batchSize: 1,
     },
   ];
 }
@@ -158,6 +163,8 @@ interface BatchCallResult {
   txId: string | null;
   success: boolean;
   error?: string;
+  errorCode?: string;
+  txStatus?: string;
 }
 
 function getStacksApiUrl(): string {
@@ -189,6 +196,76 @@ async function fetchAccountNonce(address: string): Promise<bigint> {
     console.warn('  Using nonce 0 as fallback...');
     return BigInt(0);
   }
+}
+
+async function checkTransactionStatus(txId: string, maxAttempts: number = 3): Promise<{
+  success: boolean;
+  status?: string;
+  error?: string;
+  errorCode?: string;
+}> {
+  const apiUrl = getStacksApiUrl();
+  const url = `${apiUrl}/extended/v1/tx/${txId}`;
+  
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    try {
+      await new Promise(resolve => setTimeout(resolve, 2000 * (attempt + 1))); // Wait 2s, 4s, 6s
+      
+      const response = await fetch(url);
+      if (!response.ok) {
+        if (response.status === 404 && attempt < maxAttempts - 1) {
+          continue; // Transaction not yet in mempool, retry
+        }
+        throw new Error(`API responded with status ${response.status}`);
+      }
+      
+      const data = await response.json() as {
+        tx_status: string;
+        tx_result?: {
+          repr: string;
+          hex: string;
+        };
+      };
+      
+      const isSuccess = data.tx_status === 'success';
+      const isAborted = data.tx_status === 'abort_by_response' || data.tx_status === 'abort_by_post_condition';
+      
+      let errorCode: string | undefined;
+      if (data.tx_result?.repr && data.tx_result.repr.startsWith('(err ')) {
+        // Extract error code from result like "(err u100)"
+        const match = data.tx_result.repr.match(/\(err u(\d+)\)/);
+        if (match) {
+          errorCode = `u${match[1]}`;
+          const errorMap: Record<string, string> = {
+            'u100': 'err-owner-only',
+            'u101': 'err-not-found',
+            'u102': 'err-already-exists',
+            'u103': 'err-unauthorized',
+          };
+          errorCode = errorMap[errorCode] || errorCode;
+        }
+      }
+      
+      return {
+        success: isSuccess,
+        status: data.tx_status,
+        error: isAborted ? 'Transaction aborted during execution' : undefined,
+        errorCode,
+      };
+    } catch (error) {
+      if (attempt === maxAttempts - 1) {
+        return {
+          success: false,
+          error: `Failed to check status: ${error instanceof Error ? error.message : error}`,
+        };
+      }
+    }
+  }
+  
+  return {
+    success: false,
+    error: 'Transaction not found after multiple attempts',
+  };
 }
 
 function getNetworkForBroadcast(): 'mainnet' | 'testnet' {
@@ -266,29 +343,52 @@ async function executeBatchCallsForFunction(
 
   const results: BatchCallResult[] = [];
   let nonce = startNonce;
+  const batchSize = func.batchSize ?? CONFIG.batchSize; // Use function-specific batch size or default
 
-  for (let i = 0; i < CONFIG.batchSize; i++) {
+  for (let i = 0; i < batchSize; i++) {
     const args = func.args(i, senderAddress);
-    console.log(`  [${i + 1}/${CONFIG.batchSize}] Calling ${func.name}...`);
+    console.log(`  [${i + 1}/${batchSize}] Calling ${func.name}...`);
 
     const result = await executeContractCall(func.name, args, nonce, dryRun);
 
-    results.push({
+    let finalResult: BatchCallResult = {
       functionName: func.name,
       index: i,
       txId: result.txId || null,
       success: result.success,
       error: result.error,
-    });
+    };
 
-    if (result.success) {
+    if (result.success && result.txId && result.txId !== 'dry-run-no-tx' && CONFIG.checkTransactionStatus && !dryRun) {
+      console.log(`    ⏳ Checking transaction status...`);
+      const txStatus = await checkTransactionStatus(result.txId);
+      
+      finalResult.success = txStatus.success;
+      finalResult.txStatus = txStatus.status;
+      finalResult.errorCode = txStatus.errorCode;
+      
+      if (!txStatus.success) {
+        finalResult.error = txStatus.error || 'Transaction failed on-chain';
+        if (txStatus.errorCode) {
+          console.log(`    ✗ Transaction Failed - Error: ${txStatus.errorCode} (${txStatus.error || 'aborted'})`);
+          console.log(`       Explorer: ${getStacksApiUrl().replace('api', 'explorer')}/txid/${result.txId}?chain=${CONFIG.network}`);
+        } else {
+          console.log(`    ✗ Transaction Failed - Status: ${txStatus.status}`);
+        }
+      } else {
+        console.log(`    ✓ Success - TxID: ${result.txId}`);
+        nonce++;
+      }
+    } else if (result.success) {
       console.log(`    ✓ Success${result.txId && result.txId !== 'dry-run-no-tx' ? ` - TxID: ${result.txId}` : ''}`);
       nonce++;
     } else {
       console.log(`    ✗ Failed - Error: ${result.error}`);
     }
 
-    if (i < CONFIG.batchSize - 1) {
+    results.push(finalResult);
+
+    if (i < batchSize - 1) {
       await new Promise(resolve => setTimeout(resolve, CONFIG.delayBetweenCalls));
     }
   }
@@ -377,10 +477,29 @@ function printBatchSummary(results: BatchCallResult[]): void {
   if (failed.length > 0) {
     console.log('\nFailed calls (first 10):');
     failed.slice(0, 10).forEach(f => {
-      console.log(`  - ${f.functionName}[${f.index}]: ${f.error}`);
+      const errorInfo = f.errorCode ? `${f.errorCode} - ${f.error}` : f.error;
+      const txInfo = f.txId ? ` (TxID: ${f.txId})` : '';
+      console.log(`  - ${f.functionName}[${f.index}]: ${errorInfo}${txInfo}`);
     });
     if (failed.length > 10) {
       console.log(`  ... and ${failed.length - 10} more failed calls`);
+    }
+    
+    // Group failures by error code
+    const errorCodeGroups = failed.reduce((acc, f) => {
+      const code = f.errorCode || 'unknown';
+      if (!acc[code]) {
+        acc[code] = 0;
+      }
+      acc[code]++;
+      return acc;
+    }, {} as Record<string, number>);
+    
+    if (Object.keys(errorCodeGroups).length > 0) {
+      console.log('\nError breakdown:');
+      Object.entries(errorCodeGroups).forEach(([code, count]) => {
+        console.log(`  ${code}: ${count} occurrence(s)`);
+      });
     }
   }
 
