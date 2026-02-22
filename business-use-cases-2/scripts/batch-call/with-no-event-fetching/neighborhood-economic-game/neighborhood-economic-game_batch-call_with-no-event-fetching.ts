@@ -87,8 +87,8 @@ const CONFIG = {
   contractAddress: contractDetails.address,
   contractName: contractDetails.name,
   
-  batchSize: 10,
-  delayBetweenCalls: 3000,
+  batchSize: 100,          // Number of calls to make per function (Oringally 10)
+  delayBetweenCalls: 5000, // Originally 3000 ms (3 seconds) between individual calls within a batch
   delayBetweenBatches: 6000,
   checkTransactionStatus: true, // Set to false to skip status checking
   
@@ -104,13 +104,12 @@ interface FunctionCall {
 
 function getWriteFunctions(senderAddress: string): FunctionCall[] {
   return [
-    // Skip register-participant if already registered (will fail with err-already-exists u102)
-    // {
-    //   name: 'register-participant',
-    //   args: (index: number, sender: string) => [],
-    //   description: 'Register participant (only once per address)',
-    //   batchSize: 1,
-    // },
+    {
+      name: 'register-participant',
+      args: (index: number, sender: string) => [],
+      description: 'Register participant (only once per address)',
+      batchSize: 1,
+    },
     {
       name: 'create-quest',
       args: (index: number, sender: string) => [
@@ -203,13 +202,14 @@ async function checkTransactionStatus(txId: string, maxAttempts: number = 3): Pr
   status?: string;
   error?: string;
   errorCode?: string;
+  isPending?: boolean;
 }> {
   const apiUrl = getStacksApiUrl();
   const url = `${apiUrl}/extended/v1/tx/${txId}`;
   
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000 * (attempt + 1))); // Wait 2s, 4s, 6s
+      await new Promise(resolve => setTimeout(resolve, 3000 * (attempt + 1))); // Wait 3s, 6s, 9s
       
       const response = await fetch(url);
       if (!response.ok) {
@@ -228,6 +228,7 @@ async function checkTransactionStatus(txId: string, maxAttempts: number = 3): Pr
       };
       
       const isSuccess = data.tx_status === 'success';
+      const isPending = data.tx_status === 'pending';
       const isAborted = data.tx_status === 'abort_by_response' || data.tx_status === 'abort_by_post_condition';
       
       let errorCode: string | undefined;
@@ -246,11 +247,21 @@ async function checkTransactionStatus(txId: string, maxAttempts: number = 3): Pr
         }
       }
       
+      // Treat pending as success for nonce management (transaction was broadcast)
+      if (isPending) {
+        return {
+          success: true,
+          status: data.tx_status,
+          isPending: true,
+        };
+      }
+      
       return {
         success: isSuccess,
         status: data.tx_status,
         error: isAborted ? 'Transaction aborted during execution' : undefined,
         errorCode,
+        isPending: false,
       };
     } catch (error) {
       if (attempt === maxAttempts - 1) {
@@ -367,7 +378,11 @@ async function executeBatchCallsForFunction(
       finalResult.txStatus = txStatus.status;
       finalResult.errorCode = txStatus.errorCode;
       
-      if (!txStatus.success) {
+      if (txStatus.isPending) {
+        console.log(`    ✓ Broadcast Success (pending confirmation) - TxID: ${result.txId}`);
+        console.log(`       Check status: ${getStacksApiUrl().replace('api', 'explorer')}/txid/${result.txId}?chain=${CONFIG.network}`);
+        nonce++; // Increment nonce for pending transactions
+      } else if (!txStatus.success) {
         finalResult.error = txStatus.error || 'Transaction failed on-chain';
         if (txStatus.errorCode) {
           console.log(`    ✗ Transaction Failed - Error: ${txStatus.errorCode} (${txStatus.error || 'aborted'})`);
