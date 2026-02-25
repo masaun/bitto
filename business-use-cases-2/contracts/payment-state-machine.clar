@@ -1,34 +1,24 @@
-(define-map payment-states 
-  uint 
-  {
-    current-state: (string-ascii 32),
-    previous-state: (string-ascii 32),
-    updated-at: uint
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-read-only (get-state (payment-id uint))
-  (map-get? payment-states payment-id)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-public (initialize-state (payment-id uint))
-  (begin
-    (map-set payment-states payment-id {
-      current-state: "initialized",
-      previous-state: "none",
-      updated-at: stacks-block-height
-    })
-    (ok true)
-  )
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
 )
-
-(define-public (transition-state (payment-id uint) (new-state (string-ascii 32)))
-  (let ((state (unwrap! (map-get? payment-states payment-id) (err u1))))
-    (map-set payment-states payment-id {
-      current-state: new-state,
-      previous-state: (get current-state state),
-      updated-at: stacks-block-height
-    })
-    (ok true)
-  )
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

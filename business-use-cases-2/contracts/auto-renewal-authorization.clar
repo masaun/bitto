@@ -1,28 +1,24 @@
-(define-map renewal-authorizations 
-  uint 
-  {
-    subscription-id: uint,
-    authorized: bool,
-    authorized-by: principal,
-    authorized-at: uint
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-data-var renewal-auth-nonce uint u0)
-
-(define-read-only (get-renewal-auth (id uint))
-  (map-get? renewal-authorizations id)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-public (authorize-renewal (subscription-id uint))
-  (let ((id (+ (var-get renewal-auth-nonce) u1)))
-    (map-set renewal-authorizations id {
-      subscription-id: subscription-id,
-      authorized: true,
-      authorized-by: tx-sender,
-      authorized-at: stacks-block-height
-    })
-    (var-set renewal-auth-nonce id)
-    (ok id)
-  )
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

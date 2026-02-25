@@ -1,26 +1,24 @@
-(define-map proofs (string-ascii 100) {
-  batch-id: (string-ascii 100),
-  auditor: principal,
-  audit-date: uint,
-  conflict-free: bool,
-  evidence-hash: (buff 32),
-  status: (string-ascii 20)
-})
-
-(define-data-var auditor-authority principal tx-sender)
-
-(define-read-only (get-proof (proof-id (string-ascii 100)))
-  (map-get? proofs proof-id))
-
-(define-public (issue-proof (proof-id (string-ascii 100)) (batch-id (string-ascii 100)) (conflict-free bool) (evidence-hash (buff 32)))
-  (begin
-    (asserts! (is-eq tx-sender (var-get auditor-authority)) (err u1))
-    (asserts! (is-none (map-get? proofs proof-id)) (err u2))
-    (ok (map-set proofs proof-id {
-      batch-id: batch-id,
-      auditor: tx-sender,
-      audit-date: stacks-block-height,
-      conflict-free: conflict-free,
-      evidence-hash: evidence-hash,
-      status: "verified"
-    }))))
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
+)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
+)
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
+)

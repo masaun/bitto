@@ -1,30 +1,24 @@
-(define-map requests 
-  uint 
-  {
-    requester: principal,
-    title: (string-ascii 128),
-    requirements: (string-ascii 512),
-    deadline: uint,
-    status: (string-ascii 20)
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-data-var request-nonce uint u0)
-
-(define-read-only (get-request (id uint))
-  (map-get? requests id)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-public (create-request (title (string-ascii 128)) (requirements (string-ascii 512)) (deadline uint))
-  (let ((id (+ (var-get request-nonce) u1)))
-    (map-set requests id {
-      requester: tx-sender,
-      title: title,
-      requirements: requirements,
-      deadline: deadline,
-      status: "active"
-    })
-    (var-set request-nonce id)
-    (ok id)
-  )
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

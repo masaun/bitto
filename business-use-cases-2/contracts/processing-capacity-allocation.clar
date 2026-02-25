@@ -1,26 +1,24 @@
-(define-map capacity-allocations uint {
-  facility-id: uint,
-  allocated-to: principal,
-  capacity-amount: uint,
-  start-date: uint,
-  end-date: uint,
-  status: (string-ascii 20)
-})
-
-(define-data-var allocation-counter uint u0)
-
-(define-read-only (get-allocation (allocation-id uint))
-  (map-get? capacity-allocations allocation-id))
-
-(define-public (allocate-capacity (facility-id uint) (allocated-to principal) (capacity-amount uint) (duration uint))
-  (let ((new-id (+ (var-get allocation-counter) u1)))
-    (map-set capacity-allocations new-id {
-      facility-id: facility-id,
-      allocated-to: allocated-to,
-      capacity-amount: capacity-amount,
-      start-date: stacks-block-height,
-      end-date: (+ stacks-block-height duration),
-      status: "active"
-    })
-    (var-set allocation-counter new-id)
-    (ok new-id)))
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
+)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
+)
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
+)

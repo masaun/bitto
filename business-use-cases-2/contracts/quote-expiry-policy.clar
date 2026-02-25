@@ -1,38 +1,24 @@
-(define-map quote-expiries 
-  uint 
-  {
-    expiry-height: uint,
-    auto-revoke: bool,
-    revoked: bool
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-read-only (get-expiry (quote-id uint))
-  (map-get? quote-expiries quote-id)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-public (set-expiry (quote-id uint) (expiry-height uint) (auto-revoke bool))
-  (begin
-    (map-set quote-expiries quote-id {
-      expiry-height: expiry-height,
-      auto-revoke: auto-revoke,
-      revoked: false
-    })
-    (ok true)
-  )
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
 )
-
-(define-read-only (is-expired (quote-id uint))
-  (match (map-get? quote-expiries quote-id)
-    expiry (ok (>= stacks-block-height (get expiry-height expiry)))
-    (ok false)
-  )
+(define-read-only (get-counter)
+  (ok (var-get counter))
 )
-
-(define-public (revoke-expired (quote-id uint))
-  (let ((expiry (unwrap! (map-get? quote-expiries quote-id) (err u1))))
-    (asserts! (>= stacks-block-height (get expiry-height expiry)) (err u2))
-    (map-set quote-expiries quote-id (merge expiry {revoked: true}))
-    (ok true)
-  )
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

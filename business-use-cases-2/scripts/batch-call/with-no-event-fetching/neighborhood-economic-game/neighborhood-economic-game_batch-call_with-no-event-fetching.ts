@@ -89,7 +89,7 @@ const CONFIG = {
   
   batchSize: 100,          // Number of calls to make per function (Oringally 10)
   delayBetweenCalls: 5000, // Originally 3000 ms (3 seconds) between individual calls within a batch
-  delayBetweenBatches: 6000,
+  delayBetweenBatches: 10000, // Increased to 10 seconds to allow more confirmation time (was 6000)
   checkTransactionStatus: true, // Set to false to skip status checking
   
   senderKey: '',
@@ -119,27 +119,30 @@ function getWriteFunctions(senderAddress: string): FunctionCall[] {
       ],
       description: 'Create quest (requires contract owner)',
     },
-    {
-      name: 'update-level',
-      args: (index: number, sender: string) => [
-        uintCV(index + 2),
-      ],
-      description: 'Update level (increases participant level)',
-    },
-    {
-      name: 'complete-quest',
-      args: (index: number, sender: string) => [
-        uintCV(index),
-      ],
-      description: 'Complete quest (requires: registered, active, sufficient level)',
-    },
-    {
-      name: 'claim-reward',
-      args: (index: number, sender: string) => [
-        uintCV(index),
-      ],
-      description: 'Claim reward (requires quest completion)',
-    },
+    // COMMENTED OUT: update-level fails due to deactivated participant
+    // {
+    //   name: 'update-level',
+    //   args: (index: number, sender: string) => [
+    //     uintCV(index + 2),
+    //   ],
+    //   description: 'Update level (increases participant level)',
+    // },
+    // COMMENTED OUT: complete-quest fails due to deactivated participant
+    // {
+    //   name: 'complete-quest',
+    //   args: (index: number, sender: string) => [
+    //     uintCV(index),
+    //   ],
+    //   description: 'Complete quest (requires: registered, active, sufficient level)',
+    // },
+    // COMMENTED OUT: claim-reward will fail (no completions exist due to deactivated participant)
+    // {
+    //   name: 'claim-reward',
+    //   args: (index: number, sender: string) => [
+    //     uintCV(index),
+    //   ],
+    //   description: 'Claim reward (requires quest completion)',
+    // },
     {
       name: 'toggle-quest',
       args: (index: number, sender: string) => [
@@ -236,14 +239,18 @@ async function checkTransactionStatus(txId: string, maxAttempts: number = 3): Pr
         // Extract error code from result like "(err u100)"
         const match = data.tx_result.repr.match(/\(err u(\d+)\)/);
         if (match) {
-          errorCode = `u${match[1]}`;
+          const rawCode = `u${match[1]}`;
           const errorMap: Record<string, string> = {
             'u100': 'err-owner-only',
             'u101': 'err-not-found',
             'u102': 'err-already-exists',
             'u103': 'err-unauthorized',
           };
-          errorCode = errorMap[errorCode] || errorCode;
+          errorCode = rawCode; // Keep the raw code for programmatic checks
+          const errorName = errorMap[rawCode];
+          if (errorName) {
+            errorCode = `${errorName} (${rawCode})`;
+          }
         }
       }
       
@@ -381,15 +388,25 @@ async function executeBatchCallsForFunction(
       if (txStatus.isPending) {
         console.log(`    ✓ Broadcast Success (pending confirmation) - TxID: ${result.txId}`);
         console.log(`       Check status: ${getStacksApiUrl().replace('api', 'explorer')}/txid/${result.txId}?chain=${CONFIG.network}`);
-        nonce++; // Increment nonce for pending transactions
+        nonce++; // Increment nonce - transaction was broadcast successfully
       } else if (!txStatus.success) {
         finalResult.error = txStatus.error || 'Transaction failed on-chain';
         if (txStatus.errorCode) {
           console.log(`    ✗ Transaction Failed - Error: ${txStatus.errorCode} (${txStatus.error || 'aborted'})`);
           console.log(`       Explorer: ${getStacksApiUrl().replace('api', 'explorer')}/txid/${result.txId}?chain=${CONFIG.network}`);
+          
+          // Special case: register-participant already-exists is not fatal
+          if (func.name === 'register-participant' && txStatus.errorCode.includes('u102')) {
+            console.log(`       ℹ️  Note: Participant already registered (this is OK)`);
+          }
+          // Special case: update-level unauthorized means participant is deactivated
+          if (func.name === 'update-level' && txStatus.errorCode.includes('u103')) {
+            console.log(`       ⚠️  CRITICAL: Participant is deactivated - all future calls will fail!`);
+          }
         } else {
           console.log(`    ✗ Transaction Failed - Status: ${txStatus.status}`);
         }
+        nonce++; // Still increment - transaction was broadcast (nonce was consumed)
       } else {
         console.log(`    ✓ Success - TxID: ${result.txId}`);
         nonce++;
@@ -399,6 +416,7 @@ async function executeBatchCallsForFunction(
       nonce++;
     } else {
       console.log(`    ✗ Failed - Error: ${result.error}`);
+      // Don't increment nonce - transaction was never broadcast to network
     }
 
     results.push(finalResult);
@@ -409,6 +427,54 @@ async function executeBatchCallsForFunction(
   }
 
   return { results, endNonce: nonce };
+}
+
+async function checkParticipantStatus(address: string): Promise<{
+  exists: boolean;
+  active: boolean;
+  level: number;
+  points: number;
+}> {
+  const apiUrl = getStacksApiUrl();
+  const url = `${apiUrl}/v2/contracts/call-read/${CONFIG.contractAddress}/${CONFIG.contractName}/get-participant`;
+  
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sender: address,
+        arguments: [`0x${Buffer.from(address.slice(1)).toString('hex')}`] // Convert principal to hex
+      }),
+    });
+    
+    if (!response.ok) {
+      console.warn(`  Warning: Could not fetch participant status (${response.status})`);
+      return { exists: false, active: false, level: 0, points: 0 };
+    }
+    
+    const data = await response.json() as { okay: boolean; result: string };
+    
+    // Parse the Clarity response
+    if (data.result.includes('none')) {
+      return { exists: false, active: false, level: 0, points: 0 };
+    }
+    
+    // Simple parsing - result looks like: (some {active: true, level: u1, points: u0})
+    const activeMatch = data.result.match(/active:\s*(true|false)/);
+    const levelMatch = data.result.match(/level:\s*u(\d+)/);
+    const pointsMatch = data.result.match(/points:\s*u(\d+)/);
+    
+    return {
+      exists: true,
+      active: activeMatch ? activeMatch[1] === 'true' : false,
+      level: levelMatch ? parseInt(levelMatch[1]) : 0,
+      points: pointsMatch ? parseInt(pointsMatch[1]) : 0,
+    };
+  } catch (error) {
+    console.warn(`  Warning: Failed to check participant status: ${error instanceof Error ? error.message : error}`);
+    return { exists: false, active: false, level: 0, points: 0 };
+  }
 }
 
 async function executeAllBatchCalls(dryRun: boolean = false, specificFunction?: string): Promise<BatchCallResult[]> {
@@ -425,6 +491,25 @@ async function executeAllBatchCalls(dryRun: boolean = false, specificFunction?: 
   const senderAddress = getAddressFromKey(CONFIG.senderKey, CONFIG.network);
 
   console.log(`Sender Address: ${senderAddress}`);
+  
+  // Check participant status before starting
+  console.log('\n🔍 Checking participant status...');
+  const participantStatus = await checkParticipantStatus(senderAddress);
+  console.log(`   Exists: ${participantStatus.exists}`);
+  if (participantStatus.exists) {
+    console.log(`   Active: ${participantStatus.active}`);
+    console.log(`   Level: ${participantStatus.level}`);
+    console.log(`   Points: ${participantStatus.points}`);
+    
+    if (!participantStatus.active) {
+      console.error('\n❌ ERROR: Participant is DEACTIVATED!');
+      console.error('   update-level, complete-quest, and other functions will fail.');
+      console.error('   You need to use a different address or redeploy the contract.');
+      process.exit(1);
+    }
+  } else {
+    console.log('   No participant found - register-participant will be needed.');
+  }
 
   const allFunctions = getWriteFunctions(senderAddress);
   
@@ -442,7 +527,7 @@ async function executeAllBatchCalls(dryRun: boolean = false, specificFunction?: 
   console.log(`\nFunctions to call: ${functionsToCall.map(f => f.name).join(', ')}`);
   console.log(`Total transactions: ${functionsToCall.length * CONFIG.batchSize}`);
 
-  console.log(`\nFetching nonce for ${senderAddress}...`);
+  console.log(`\nFetching initial nonce for ${senderAddress}...`);
   let nonce = await fetchAccountNonce(senderAddress);
   console.log(`Starting nonce: ${nonce}`);
 
@@ -450,6 +535,14 @@ async function executeAllBatchCalls(dryRun: boolean = false, specificFunction?: 
 
   for (let i = 0; i < functionsToCall.length; i++) {
     const func = functionsToCall[i];
+    
+    // Refetch nonce before each function batch to avoid BadNonce errors
+    if (i > 0 && !dryRun) {
+      console.log(`\n🔄 Fetching fresh nonce before ${func.name} batch...`);
+      nonce = await fetchAccountNonce(senderAddress);
+      console.log(`   Current nonce: ${nonce}`);
+    }
+    
     const { results, endNonce } = await executeBatchCallsForFunction(func, nonce, dryRun, senderAddress);
     allResults.push(...results);
     nonce = endNonce;

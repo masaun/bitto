@@ -1,35 +1,24 @@
-(define-map renewal-conditions 
-  uint 
-  {
-    subscription-id: uint,
-    auto-renew: bool,
-    conditions-met: bool,
-    last-check: uint
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-read-only (get-renewal-condition (subscription-id uint))
-  (map-get? renewal-conditions subscription-id)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-public (set-renewal-conditions (subscription-id uint) (auto-renew bool))
-  (begin
-    (map-set renewal-conditions subscription-id {
-      subscription-id: subscription-id,
-      auto-renew: auto-renew,
-      conditions-met: false,
-      last-check: stacks-block-height
-    })
-    (ok true)
-  )
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
 )
-
-(define-public (check-renewal-conditions (subscription-id uint))
-  (let ((cond (unwrap! (map-get? renewal-conditions subscription-id) (err u1))))
-    (map-set renewal-conditions subscription-id (merge cond {
-      conditions-met: true,
-      last-check: stacks-block-height
-    }))
-    (ok true)
-  )
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

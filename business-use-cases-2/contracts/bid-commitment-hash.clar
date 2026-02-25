@@ -1,35 +1,24 @@
-(define-map bid-commitments 
-  uint 
-  {
-    bidder: principal,
-    commitment-hash: (buff 32),
-    revealed: bool,
-    created-at: uint
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-data-var commitment-nonce uint u0)
-
-(define-read-only (get-commitment (id uint))
-  (map-get? bid-commitments id)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-public (commit-bid (commitment-hash (buff 32)))
-  (let ((id (+ (var-get commitment-nonce) u1)))
-    (map-set bid-commitments id {
-      bidder: tx-sender,
-      commitment-hash: commitment-hash,
-      revealed: false,
-      created-at: stacks-block-height
-    })
-    (var-set commitment-nonce id)
-    (ok id)
-  )
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
 )
-
-(define-read-only (verify-commitment (id uint) (value (buff 32)))
-  (match (map-get? bid-commitments id)
-    commitment (ok (is-eq (get commitment-hash commitment) value))
-    (ok false)
-  )
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

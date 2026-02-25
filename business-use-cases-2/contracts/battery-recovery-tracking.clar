@@ -1,26 +1,24 @@
-(define-map battery-recovery uint {
-  recycler: principal,
-  battery-type: (string-ascii 50),
-  quantity: uint,
-  recovery-date: uint,
-  recovered-materials: (string-ascii 200),
-  status: (string-ascii 20)
-})
-
-(define-data-var recovery-counter uint u0)
-
-(define-read-only (get-battery-recovery (recovery-id uint))
-  (map-get? battery-recovery recovery-id))
-
-(define-public (track-battery-recovery (battery-type (string-ascii 50)) (quantity uint) (recovered-materials (string-ascii 200)))
-  (let ((new-id (+ (var-get recovery-counter) u1)))
-    (map-set battery-recovery new-id {
-      recycler: tx-sender,
-      battery-type: battery-type,
-      quantity: quantity,
-      recovery-date: stacks-block-height,
-      recovered-materials: recovered-materials,
-      status: "recovered"
-    })
-    (var-set recovery-counter new-id)
-    (ok new-id)))
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
+)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
+)
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
+)

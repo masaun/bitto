@@ -1,33 +1,24 @@
-(define-map confidential-quotes 
-  uint 
-  {
-    hash: (buff 32),
-    authorized-viewers: (list 10 principal),
-    created-at: uint
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-data-var confidential-nonce uint u0)
-
-(define-read-only (get-confidential (id uint))
-  (map-get? confidential-quotes id)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-public (create-confidential (hash (buff 32)) (viewers (list 10 principal)))
-  (let ((id (+ (var-get confidential-nonce) u1)))
-    (map-set confidential-quotes id {
-      hash: hash,
-      authorized-viewers: viewers,
-      created-at: stacks-block-height
-    })
-    (var-set confidential-nonce id)
-    (ok id)
-  )
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
 )
-
-(define-read-only (is-authorized (quote-id uint) (viewer principal))
-  (match (map-get? confidential-quotes quote-id)
-    quote (ok (is-some (index-of (get authorized-viewers quote) viewer)))
-    (ok false)
-  )
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

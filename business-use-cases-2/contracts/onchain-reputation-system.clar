@@ -1,10 +1,24 @@
-(define-constant contract-owner tx-sender)
-
-(define-map reputations principal {score: uint, interactions: uint, last-updated: uint})
-
-(define-public (update-reputation (user principal) (score-change uint))
-  (let ((current (default-to {score: u0, interactions: u0, last-updated: u0} (map-get? reputations user))))
-    (ok (map-set reputations user {score: (+ (get score current) score-change), interactions: (+ (get interactions current) u1), last-updated: stacks-block-height}))))
-
-(define-read-only (get-reputation (user principal))
-  (ok (map-get? reputations user)))
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
+)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
+)
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
+)

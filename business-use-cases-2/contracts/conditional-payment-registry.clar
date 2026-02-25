@@ -1,40 +1,24 @@
-(define-map payment-registrations 
-  uint 
-  {
-    payer: principal,
-    payee: principal,
-    amount: uint,
-    conditions: (string-ascii 256),
-    status: (string-ascii 20),
-    created-at: uint
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-data-var registry-nonce uint u0)
-
-(define-read-only (get-payment (id uint))
-  (map-get? payment-registrations id)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-public (register-payment (payee principal) (amount uint) (conditions (string-ascii 256)))
-  (let ((id (+ (var-get registry-nonce) u1)))
-    (map-set payment-registrations id {
-      payer: tx-sender,
-      payee: payee,
-      amount: amount,
-      conditions: conditions,
-      status: "pending",
-      created-at: stacks-block-height
-    })
-    (var-set registry-nonce id)
-    (ok id)
-  )
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
 )
-
-(define-public (update-status (id uint) (new-status (string-ascii 20)))
-  (let ((payment (unwrap! (map-get? payment-registrations id) (err u1))))
-    (asserts! (is-eq tx-sender (get payer payment)) (err u2))
-    (map-set payment-registrations id (merge payment {status: new-status}))
-    (ok true)
-  )
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

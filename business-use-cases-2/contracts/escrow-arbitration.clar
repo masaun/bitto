@@ -1,28 +1,24 @@
-(define-map escrow-arbitrations 
-  uint 
-  {
-    dispute-id: uint,
-    arbitrator: principal,
-    ruling: (string-ascii 128),
-    ruled-at: uint
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-data-var arbitration-nonce uint u0)
-
-(define-read-only (get-escrow-arbitration (id uint))
-  (map-get? escrow-arbitrations id)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-public (arbitrate-escrow (dispute-id uint) (ruling (string-ascii 128)))
-  (let ((id (+ (var-get arbitration-nonce) u1)))
-    (map-set escrow-arbitrations id {
-      dispute-id: dispute-id,
-      arbitrator: tx-sender,
-      ruling: ruling,
-      ruled-at: stacks-block-height
-    })
-    (var-set arbitration-nonce id)
-    (ok id)
-  )
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

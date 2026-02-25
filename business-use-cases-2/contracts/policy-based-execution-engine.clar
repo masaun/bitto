@@ -1,37 +1,24 @@
-(define-map executions 
-  uint 
-  {
-    policy-id: uint,
-    executor: principal,
-    status: (string-ascii 20),
-    executed-at: uint,
-    result: (string-ascii 128)
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-data-var exec-nonce uint u0)
-
-(define-read-only (get-execution (id uint))
-  (map-get? executions id)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-public (execute-policy (policy-id uint))
-  (let ((id (+ (var-get exec-nonce) u1)))
-    (map-set executions id {
-      policy-id: policy-id,
-      executor: tx-sender,
-      status: "executing",
-      executed-at: stacks-block-height,
-      result: ""
-    })
-    (var-set exec-nonce id)
-    (ok id)
-  )
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
 )
-
-(define-public (finalize-execution (id uint) (result (string-ascii 128)))
-  (let ((execution (unwrap! (map-get? executions id) (err u1))))
-    (map-set executions id (merge execution {status: "completed", result: result}))
-    (ok true)
-  )
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

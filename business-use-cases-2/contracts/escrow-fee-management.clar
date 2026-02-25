@@ -1,30 +1,24 @@
-(define-map escrow-fees 
-  uint 
-  {
-    base-fee: uint,
-    percentage-fee: uint,
-    collected: uint
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-read-only (get-escrow-fee (escrow-id uint))
-  (map-get? escrow-fees escrow-id)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-public (set-escrow-fee (escrow-id uint) (base-fee uint) (percentage-fee uint))
-  (begin
-    (map-set escrow-fees escrow-id {
-      base-fee: base-fee,
-      percentage-fee: percentage-fee,
-      collected: u0
-    })
-    (ok true)
-  )
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
 )
-
-(define-public (collect-escrow-fee (escrow-id uint) (amount uint))
-  (let ((fee (unwrap! (map-get? escrow-fees escrow-id) (err u1))))
-    (map-set escrow-fees escrow-id (merge fee {collected: (+ (get collected fee) amount)}))
-    (ok true)
-  )
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

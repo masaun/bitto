@@ -1,50 +1,24 @@
-(define-constant contract-owner tx-sender)
-(define-constant err-owner-only (err u100))
-(define-constant err-not-found (err u101))
-
-(define-map frontrun-detections
-  { detection-id: uint }
-  {
-    tx-hash: (buff 32),
-    risk-score: uint,
-    blocked: bool,
-    timestamp: uint
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-data-var detection-counter uint u0)
-
-(define-read-only (get-detection (detection-id uint))
-  (map-get? frontrun-detections { detection-id: detection-id })
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-read-only (get-count)
-  (ok (var-get detection-counter))
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
 )
-
-(define-public (detect-frontrun (tx-hash (buff 32)) (risk-score uint))
-  (let ((detection-id (var-get detection-counter)))
-    (map-set frontrun-detections
-      { detection-id: detection-id }
-      {
-        tx-hash: tx-hash,
-        risk-score: risk-score,
-        blocked: (>= risk-score u80),
-        timestamp: stacks-block-height
-      }
-    )
-    (var-set detection-counter (+ detection-id u1))
-    (ok detection-id)
-  )
+(define-read-only (get-counter)
+  (ok (var-get counter))
 )
-
-(define-public (update-block-status (detection-id uint) (blocked bool))
-  (let ((det-data (unwrap! (map-get? frontrun-detections { detection-id: detection-id }) err-not-found)))
-    (asserts! (is-eq tx-sender contract-owner) err-owner-only)
-    (map-set frontrun-detections
-      { detection-id: detection-id }
-      (merge det-data { blocked: blocked })
-    )
-    (ok true)
-  )
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

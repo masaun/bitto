@@ -1,50 +1,24 @@
-(define-constant contract-owner tx-sender)
-(define-constant err-owner-only (err u100))
-(define-constant err-not-found (err u101))
-
-(define-map commitments
-  { commitment-hash: (buff 32) }
-  {
-    data: (buff 512),
-    revealed: bool,
-    creator: principal,
-    timestamp: uint
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-data-var commitment-count uint u0)
-
-(define-read-only (get-commitment (commitment-hash (buff 32)))
-  (map-get? commitments { commitment-hash: commitment-hash })
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-read-only (get-count)
-  (ok (var-get commitment-count))
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
 )
-
-(define-public (store-commitment (commitment-hash (buff 32)) (data (buff 512)))
-  (begin
-    (map-set commitments
-      { commitment-hash: commitment-hash }
-      {
-        data: data,
-        revealed: false,
-        creator: tx-sender,
-        timestamp: stacks-block-height
-      }
-    )
-    (var-set commitment-count (+ (var-get commitment-count) u1))
-    (ok true)
-  )
+(define-read-only (get-counter)
+  (ok (var-get counter))
 )
-
-(define-public (reveal-commitment (commitment-hash (buff 32)))
-  (let ((commitment-data (unwrap! (map-get? commitments { commitment-hash: commitment-hash }) err-not-found)))
-    (asserts! (is-eq (get creator commitment-data) tx-sender) err-owner-only)
-    (map-set commitments
-      { commitment-hash: commitment-hash }
-      (merge commitment-data { revealed: true })
-    )
-    (ok true)
-  )
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

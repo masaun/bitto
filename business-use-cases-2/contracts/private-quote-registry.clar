@@ -1,38 +1,24 @@
-(define-map quotes 
-  uint 
-  {
-    supplier: principal,
-    buyer: principal,
-    amount: uint,
-    valid-until: uint,
-    status: (string-ascii 20)
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-data-var quote-nonce uint u0)
-
-(define-read-only (get-quote (id uint))
-  (map-get? quotes id)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-public (create-quote (buyer principal) (amount uint) (valid-until uint))
-  (let ((id (+ (var-get quote-nonce) u1)))
-    (map-set quotes id {
-      supplier: tx-sender,
-      buyer: buyer,
-      amount: amount,
-      valid-until: valid-until,
-      status: "active"
-    })
-    (var-set quote-nonce id)
-    (ok id)
-  )
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
 )
-
-(define-public (update-quote-status (id uint) (status (string-ascii 20)))
-  (let ((quote (unwrap! (map-get? quotes id) (err u1))))
-    (asserts! (is-eq tx-sender (get supplier quote)) (err u2))
-    (map-set quotes id (merge quote {status: status}))
-    (ok true)
-  )
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

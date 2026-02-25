@@ -1,32 +1,24 @@
-(define-map kyc-records 
-  principal 
-  {
-    verified: bool,
-    verification-level: uint,
-    verified-by: principal,
-    verified-at: uint
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-read-only (get-kyc (supplier principal))
-  (map-get? kyc-records supplier)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-public (verify-kyc (supplier principal) (level uint))
-  (begin
-    (map-set kyc-records supplier {
-      verified: true,
-      verification-level: level,
-      verified-by: tx-sender,
-      verified-at: stacks-block-height
-    })
-    (ok true)
-  )
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
 )
-
-(define-read-only (is-kyc-verified (supplier principal))
-  (match (map-get? kyc-records supplier)
-    record (ok (get verified record))
-    (ok false)
-  )
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

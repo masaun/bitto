@@ -1,52 +1,24 @@
-(define-constant contract-owner tx-sender)
-(define-constant err-owner-only (err u100))
-(define-constant err-not-found (err u101))
-(define-constant err-already-exists (err u102))
-
-(define-map transactions
-  { tx-id: (buff 32) }
-  {
-    encrypted-payload: (buff 1024),
-    commitment: (buff 32),
-    timestamp: uint,
-    sender: principal
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-data-var transaction-count uint u0)
-
-(define-read-only (get-transaction (tx-id (buff 32)))
-  (map-get? transactions { tx-id: tx-id })
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-read-only (get-count)
-  (ok (var-get transaction-count))
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
 )
-
-(define-public (register-transaction (tx-id (buff 32)) (encrypted-payload (buff 1024)) (commitment (buff 32)))
-  (let ((current-count (var-get transaction-count)))
-    (asserts! (is-none (map-get? transactions { tx-id: tx-id })) err-already-exists)
-    (map-set transactions
-      { tx-id: tx-id }
-      {
-        encrypted-payload: encrypted-payload,
-        commitment: commitment,
-        timestamp: stacks-block-height,
-        sender: tx-sender
-      }
-    )
-    (var-set transaction-count (+ current-count u1))
-    (ok true)
-  )
+(define-read-only (get-counter)
+  (ok (var-get counter))
 )
-
-(define-public (update-transaction (tx-id (buff 32)) (encrypted-payload (buff 1024)))
-  (let ((tx-data (unwrap! (map-get? transactions { tx-id: tx-id }) err-not-found)))
-    (asserts! (is-eq (get sender tx-data) tx-sender) err-owner-only)
-    (map-set transactions
-      { tx-id: tx-id }
-      (merge tx-data { encrypted-payload: encrypted-payload })
-    )
-    (ok true)
-  )
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

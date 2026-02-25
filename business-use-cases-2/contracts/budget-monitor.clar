@@ -1,28 +1,24 @@
-(define-data-var balance uint u0)
-(define-data-var transaction-count uint u0)
-(define-data-var manager-status bool true)
-
-(define-public (initialize)
-  (ok (begin (var-set balance u0) (var-set transaction-count u0))))
-
-(define-public (deposit-funds (amount uint))
-  (if (> amount u0)
-    (ok (begin (var-set balance (+ (var-get balance) amount)) (var-set transaction-count (+ (var-get transaction-count) u1)) amount))
-    (err u1)))
-
-(define-public (withdraw-funds (amount uint))
-  (if (and (> amount u0) (>= (var-get balance) amount))
-    (ok (begin (var-set balance (- (var-get balance) amount)) (var-set transaction-count (+ (var-get transaction-count) u1)) amount))
-    (err u2)))
-
-(define-public (get-balance)
-  (ok (var-get balance)))
-
-(define-public (get-transaction-count)
-  (ok (var-get transaction-count)))
-
-(define-public (enable-management)
-  (ok (begin (var-set manager-status true) true)))
-
-(define-public (query-treasury-state)
-  (ok (tuple (balance (var-get balance)) (transactions (var-get transaction-count)) (active (var-get manager-status)))))
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
+)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
+)
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
+)

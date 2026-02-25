@@ -1,29 +1,24 @@
-(define-map disruption-events uint {
-  event-type: (string-ascii 50),
-  affected-region: (string-ascii 100),
-  material-type: (string-ascii 50),
-  severity: uint,
-  event-date: uint,
-  description: (string-utf8 512),
-  status: (string-ascii 20)
-})
-
-(define-data-var event-counter uint u0)
-
-(define-read-only (get-disruption-event (event-id uint))
-  (map-get? disruption-events event-id))
-
-(define-public (record-disruption (event-type (string-ascii 50)) (affected-region (string-ascii 100)) (material-type (string-ascii 50)) (severity uint) (description (string-utf8 512)))
-  (let ((new-id (+ (var-get event-counter) u1)))
-    (asserts! (<= severity u10) (err u1))
-    (map-set disruption-events new-id {
-      event-type: event-type,
-      affected-region: affected-region,
-      material-type: material-type,
-      severity: severity,
-      event-date: stacks-block-height,
-      description: description,
-      status: "monitoring"
-    })
-    (var-set event-counter new-id)
-    (ok new-id)))
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
+)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
+)
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
+)

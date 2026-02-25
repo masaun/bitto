@@ -1,61 +1,24 @@
-(define-constant contract-owner tx-sender)
-(define-constant err-owner-only (err u100))
-(define-constant err-not-found (err u101))
-
-(define-map registry
-  { entry-id: uint }
-  {
-    data: (buff 1024),
-    status: (string-ascii 20),
-    owner: principal,
-    timestamp: uint
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-data-var entry-counter uint u0)
-
-(define-read-only (get-entry (entry-id uint))
-  (map-get? registry { entry-id: entry-id })
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-read-only (get-count)
-  (ok (var-get entry-counter))
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
 )
-
-(define-public (create-entry (data (buff 1024)))
-  (let ((entry-id (var-get entry-counter)))
-    (map-set registry
-      { entry-id: entry-id }
-      {
-        data: data,
-        status: "active",
-        owner: tx-sender,
-        timestamp: stacks-block-height
-      }
-    )
-    (var-set entry-counter (+ entry-id u1))
-    (ok entry-id)
-  )
+(define-read-only (get-counter)
+  (ok (var-get counter))
 )
-
-(define-public (update-entry (entry-id uint) (new-data (buff 1024)))
-  (let ((entry-data (unwrap! (map-get? registry { entry-id: entry-id }) err-not-found)))
-    (asserts! (is-eq (get owner entry-data) tx-sender) err-owner-only)
-    (map-set registry
-      { entry-id: entry-id }
-      (merge entry-data { data: new-data })
-    )
-    (ok true)
-  )
-)
-
-(define-public (update-status (entry-id uint) (new-status (string-ascii 20)))
-  (let ((entry-data (unwrap! (map-get? registry { entry-id: entry-id }) err-not-found)))
-    (asserts! (is-eq (get owner entry-data) tx-sender) err-owner-only)
-    (map-set registry
-      { entry-id: entry-id }
-      (merge entry-data { status: new-status })
-    )
-    (ok true)
-  )
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

@@ -1,26 +1,24 @@
-(define-data-var workflow-state uint u0)
-(define-data-var execution-count uint u0)
-(define-data-var automation-running bool true)
-
-(define-public (initialize)
-  (ok (begin (var-set workflow-state u0) (var-set execution-count u0))))
-
-(define-public (execute-workflow (workflow-id uint))
-  (if (var-get automation-running)
-    (ok (begin (var-set execution-count (+ (var-get execution-count) u1)) (var-set workflow-state workflow-id) workflow-id))
-    (err u1)))
-
-(define-public (pause-automation)
-  (ok (begin (var-set automation-running false) false)))
-
-(define-public (resume-automation)
-  (ok (begin (var-set automation-running true) true)))
-
-(define-public (get-execution-count)
-  (ok (var-get execution-count)))
-
-(define-public (get-workflow-state)
-  (ok (var-get workflow-state)))
-
-(define-public (query-automation-status)
-  (ok {state: (var-get workflow-state), executions: (var-get execution-count), running: (var-get automation-running)}))
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
+)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
+)
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
+)

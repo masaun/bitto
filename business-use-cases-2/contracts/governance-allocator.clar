@@ -1,26 +1,24 @@
-(define-data-var proposal-counter uint u0)
-(define-data-var vote-total uint u0)
-(define-data-var governance-active bool true)
-
-(define-public (initialize)
-  (ok (begin (var-set proposal-counter u0) (var-set vote-total u0))))
-
-(define-public (create-proposal)
-  (ok (begin (var-set proposal-counter (+ (var-get proposal-counter) u1)) (var-get proposal-counter))))
-
-(define-public (cast-vote (weight uint))
-  (if (> weight u0)
-    (ok (begin (var-set vote-total (+ (var-get vote-total) weight)) weight))
-    (err u1)))
-
-(define-public (get-proposal-count)
-  (ok (var-get proposal-counter)))
-
-(define-public (get-total-votes)
-  (ok (var-get vote-total)))
-
-(define-public (activate-governance)
-  (ok (begin (var-set governance-active true) true)))
-
-(define-public (query-governance-state)
-  (ok {proposals: (var-get proposal-counter), votes: (var-get vote-total), active: (var-get governance-active)}))
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
+)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
+)
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
+)

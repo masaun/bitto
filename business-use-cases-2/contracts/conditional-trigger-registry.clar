@@ -1,35 +1,24 @@
-(define-map triggers 
-  uint 
-  {
-    name: (string-ascii 64),
-    trigger-type: (string-ascii 32),
-    data: (string-ascii 256),
-    active: bool
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-data-var trigger-nonce uint u0)
-
-(define-read-only (get-trigger (id uint))
-  (map-get? triggers id)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-public (register-trigger (name (string-ascii 64)) (trigger-type (string-ascii 32)) (data (string-ascii 256)))
-  (let ((id (+ (var-get trigger-nonce) u1)))
-    (map-set triggers id {
-      name: name,
-      trigger-type: trigger-type,
-      data: data,
-      active: true
-    })
-    (var-set trigger-nonce id)
-    (ok id)
-  )
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
 )
-
-(define-public (deactivate-trigger (id uint))
-  (let ((trigger (unwrap! (map-get? triggers id) (err u1))))
-    (map-set triggers id (merge trigger {active: false}))
-    (ok true)
-  )
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

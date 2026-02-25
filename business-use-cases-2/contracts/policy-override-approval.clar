@@ -1,37 +1,24 @@
-(define-map override-approvals 
-  uint 
-  {
-    policy-id: uint,
-    requester: principal,
-    approver: principal,
-    approved: bool,
-    timestamp: uint
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-data-var override-nonce uint u0)
-
-(define-read-only (get-override (id uint))
-  (map-get? override-approvals id)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-public (request-override (policy-id uint))
-  (let ((id (+ (var-get override-nonce) u1)))
-    (map-set override-approvals id {
-      policy-id: policy-id,
-      requester: tx-sender,
-      approver: tx-sender,
-      approved: false,
-      timestamp: stacks-block-height
-    })
-    (var-set override-nonce id)
-    (ok id)
-  )
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
 )
-
-(define-public (approve-override (id uint))
-  (let ((override (unwrap! (map-get? override-approvals id) (err u1))))
-    (map-set override-approvals id (merge override {approved: true, approver: tx-sender}))
-    (ok true)
-  )
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

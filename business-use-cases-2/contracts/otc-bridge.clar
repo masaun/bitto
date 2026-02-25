@@ -1,26 +1,24 @@
-(define-data-var trade-counter uint u0)
-(define-data-var settlement-state uint u0)
-(define-data-var otc-volume uint u0)
-
-(define-public (initialize)
-  (ok (begin (var-set trade-counter u0) (var-set settlement-state u0) (var-set otc-volume u0))))
-
-(define-public (initiate-trade (amount uint) (counterparty-id uint))
-  (if (> amount u0)
-    (ok (begin (var-set trade-counter (+ (var-get trade-counter) u1)) (var-set otc-volume (+ (var-get otc-volume) amount)) amount))
-    (err u1)))
-
-(define-public (settle-trade)
-  (ok (begin (var-set settlement-state (+ (var-get settlement-state) u1)) (var-get settlement-state))))
-
-(define-public (get-trade-count)
-  (ok (var-get trade-counter)))
-
-(define-public (get-otc-volume)
-  (ok (var-get otc-volume)))
-
-(define-public (cancel-trade (trade-id uint))
-  (ok trade-id))
-
-(define-public (query-otc-state)
-  (ok {trades: (var-get trade-counter), settlements: (var-get settlement-state), volume: (var-get otc-volume)}))
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
+)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
+)
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
+)

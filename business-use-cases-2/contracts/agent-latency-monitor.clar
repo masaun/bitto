@@ -1,12 +1,24 @@
-(define-constant ERR-NOT-AUTHORIZED (err u100))
-(define-constant ERR-ALREADY-EXISTS (err u101))
-(define-constant ERR-NOT-FOUND (err u102))
-(define-constant ERR-INVALID-PARAMETER (err u103))
-
-(define-map latency-measurements {agent: principal, operation: (string-ascii 64)} {latency-ms: uint, timestamp: uint})
-
-(define-public (record-latency (operation (string-ascii 64)) (latency-ms uint))
-  (ok (map-set latency-measurements {agent: tx-sender, operation: operation} {latency-ms: latency-ms, timestamp: stacks-block-height})))
-
-(define-read-only (get-latency (agent principal) (operation (string-ascii 64)))
-  (ok (map-get? latency-measurements {agent: agent, operation: operation})))
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
+)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
+)
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
+)

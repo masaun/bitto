@@ -1,27 +1,24 @@
-(define-map audits uint {
-  site-id: (string-ascii 100),
-  auditor: principal,
-  audit-date: uint,
-  biodiversity-score: uint,
-  findings: (string-utf8 512),
-  status: (string-ascii 20)
-})
-
-(define-data-var audit-counter uint u0)
-
-(define-read-only (get-audit (audit-id uint))
-  (map-get? audits audit-id))
-
-(define-public (conduct-audit (site-id (string-ascii 100)) (biodiversity-score uint) (findings (string-utf8 512)))
-  (let ((new-id (+ (var-get audit-counter) u1)))
-    (asserts! (<= biodiversity-score u100) (err u1))
-    (map-set audits new-id {
-      site-id: site-id,
-      auditor: tx-sender,
-      audit-date: stacks-block-height,
-      biodiversity-score: biodiversity-score,
-      findings: findings,
-      status: "completed"
-    })
-    (var-set audit-counter new-id)
-    (ok new-id)))
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
+)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
+)
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
+)
