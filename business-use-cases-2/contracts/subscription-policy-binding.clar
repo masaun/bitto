@@ -1,21 +1,24 @@
-(define-map policy-bindings 
-  {subscription-id: uint, policy-id: uint}
-  {
-    bound-at: uint,
-    active: bool
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-read-only (get-policy-binding (subscription-id uint) (policy-id uint))
-  (map-get? policy-bindings {subscription-id: subscription-id, policy-id: policy-id})
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-public (bind-policy (subscription-id uint) (policy-id uint))
-  (begin
-    (map-set policy-bindings {subscription-id: subscription-id, policy-id: policy-id} {
-      bound-at: stacks-block-height,
-      active: true
-    })
-    (ok true)
-  )
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

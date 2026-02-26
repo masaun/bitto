@@ -1,31 +1,24 @@
-(define-map default-events uint {
-  defaulting-party: principal,
-  contract-id: uint,
-  default-type: (string-ascii 50),
-  default-date: uint,
-  amount: uint,
-  resolution: (string-ascii 20)
-})
-
-(define-data-var default-counter uint u0)
-
-(define-read-only (get-default-event (default-id uint))
-  (map-get? default-events default-id))
-
-(define-public (record-default (defaulting-party principal) (contract-id uint) (default-type (string-ascii 50)) (amount uint))
-  (let ((new-id (+ (var-get default-counter) u1)))
-    (map-set default-events new-id {
-      defaulting-party: defaulting-party,
-      contract-id: contract-id,
-      default-type: default-type,
-      default-date: stacks-block-height,
-      amount: amount,
-      resolution: "pending"
-    })
-    (var-set default-counter new-id)
-    (ok new-id)))
-
-(define-public (resolve-default (default-id uint) (resolution (string-ascii 20)))
-  (begin
-    (asserts! (is-some (map-get? default-events default-id)) (err u1))
-    (ok (map-set default-events default-id (merge (unwrap-panic (map-get? default-events default-id)) { resolution: resolution })))))
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
+)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
+)
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
+)

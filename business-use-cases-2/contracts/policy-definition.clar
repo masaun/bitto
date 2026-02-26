@@ -1,30 +1,24 @@
-(define-map policy-definitions 
-  uint 
-  {
-    policy-id: uint,
-    rules: (string-ascii 512),
-    scope: (string-ascii 64),
-    defined-by: principal,
-    defined-at: uint
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-data-var def-nonce uint u0)
-
-(define-read-only (get-definition (id uint))
-  (map-get? policy-definitions id)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-public (define-policy (policy-id uint) (rules (string-ascii 512)) (scope (string-ascii 64)))
-  (let ((id (+ (var-get def-nonce) u1)))
-    (map-set policy-definitions id {
-      policy-id: policy-id,
-      rules: rules,
-      scope: scope,
-      defined-by: tx-sender,
-      defined-at: stacks-block-height
-    })
-    (var-set def-nonce id)
-    (ok id)
-  )
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

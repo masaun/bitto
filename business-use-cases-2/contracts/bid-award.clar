@@ -1,30 +1,24 @@
-(define-map bid-awards 
-  uint 
-  {
-    auction-id: uint,
-    winning-bid: uint,
-    winner: principal,
-    amount: uint,
-    awarded-at: uint
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-data-var award-nonce uint u0)
-
-(define-read-only (get-award (id uint))
-  (map-get? bid-awards id)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-public (award-bid (auction-id uint) (winning-bid uint) (winner principal) (amount uint))
-  (let ((id (+ (var-get award-nonce) u1)))
-    (map-set bid-awards id {
-      auction-id: auction-id,
-      winning-bid: winning-bid,
-      winner: winner,
-      amount: amount,
-      awarded-at: stacks-block-height
-    })
-    (var-set award-nonce id)
-    (ok id)
-  )
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

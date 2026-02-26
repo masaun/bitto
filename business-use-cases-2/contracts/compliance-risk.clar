@@ -1,14 +1,24 @@
-(define-constant ERR-NOT-AUTHORIZED (err u100))
-(define-constant ERR-ALREADY-EXISTS (err u101))
-(define-constant ERR-NOT-FOUND (err u102))
-(define-constant ERR-INVALID-PARAMETER (err u103))
-
-(define-map compliance-risks principal {score: uint, violations: uint, remediated: uint})
-
-(define-public (set-compliance-risk (score uint) (violations uint) (remediated uint))
-  (begin
-    (asserts! (<= score u100) ERR-INVALID-PARAMETER)
-    (ok (map-set compliance-risks tx-sender {score: score, violations: violations, remediated: remediated}))))
-
-(define-read-only (get-compliance-risk (entity principal))
-  (ok (map-get? compliance-risks entity)))
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
+)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
+)
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
+)

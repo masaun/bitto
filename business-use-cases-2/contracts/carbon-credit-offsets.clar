@@ -1,31 +1,24 @@
-(define-map carbon-credits uint {
-  project-id: uint,
-  issuer: principal,
-  credits-amount: uint,
-  issue-date: uint,
-  status: (string-ascii 20)
-})
-
-(define-data-var credit-counter uint u0)
-
-(define-read-only (get-carbon-credit (credit-id uint))
-  (map-get? carbon-credits credit-id))
-
-(define-public (issue-carbon-credits (project-id uint) (credits-amount uint))
-  (let ((new-id (+ (var-get credit-counter) u1)))
-    (map-set carbon-credits new-id {
-      project-id: project-id,
-      issuer: tx-sender,
-      credits-amount: credits-amount,
-      issue-date: stacks-block-height,
-      status: "active"
-    })
-    (var-set credit-counter new-id)
-    (ok new-id)))
-
-(define-public (retire-credits (credit-id uint))
-  (begin
-    (asserts! (is-some (map-get? carbon-credits credit-id)) (err u2))
-    (let ((credit (unwrap-panic (map-get? carbon-credits credit-id))))
-      (asserts! (is-eq tx-sender (get issuer credit)) (err u1))
-      (ok (map-set carbon-credits credit-id (merge credit { status: "retired" }))))))
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
+)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
+)
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
+)

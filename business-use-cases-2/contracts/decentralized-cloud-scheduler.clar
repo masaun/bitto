@@ -1,17 +1,24 @@
-(define-constant contract-owner tx-sender)
-
-(define-map compute-jobs uint {requester: principal, resource-type: (string-ascii 32), status: (string-ascii 20), created-at: uint})
-(define-data-var job-nonce uint u0)
-
-(define-public (schedule-job (resource-type (string-ascii 32)))
-  (let ((id (var-get job-nonce)))
-    (map-set compute-jobs id {requester: tx-sender, resource-type: resource-type, status: "pending", created-at: stacks-block-height})
-    (var-set job-nonce (+ id u1))
-    (ok id)))
-
-(define-public (update-job-status (job-id uint) (status (string-ascii 20)))
-  (let ((job (unwrap! (map-get? compute-jobs job-id) (err u101))))
-    (ok (map-set compute-jobs job-id (merge job {status: status})))))
-
-(define-read-only (get-job (job-id uint))
-  (ok (map-get? compute-jobs job-id)))
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
+)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
+)
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
+)

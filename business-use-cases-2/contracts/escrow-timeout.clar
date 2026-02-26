@@ -1,31 +1,24 @@
-(define-map escrow-timeouts 
-  uint 
-  {
-    timeout-height: uint,
-    refund-to: principal,
-    timed-out: bool
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-read-only (get-escrow-timeout (escrow-id uint))
-  (map-get? escrow-timeouts escrow-id)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-public (set-escrow-timeout (escrow-id uint) (timeout-height uint) (refund-to principal))
-  (begin
-    (map-set escrow-timeouts escrow-id {
-      timeout-height: timeout-height,
-      refund-to: refund-to,
-      timed-out: false
-    })
-    (ok true)
-  )
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
 )
-
-(define-public (trigger-timeout (escrow-id uint))
-  (let ((timeout (unwrap! (map-get? escrow-timeouts escrow-id) (err u1))))
-    (asserts! (>= stacks-block-height (get timeout-height timeout)) (err u2))
-    (map-set escrow-timeouts escrow-id (merge timeout {timed-out: true}))
-    (ok true)
-  )
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

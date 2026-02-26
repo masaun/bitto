@@ -1,21 +1,24 @@
-(define-constant contract-owner tx-sender)
-(define-constant err-owner-only (err u100))
-(define-constant err-unauthorized (err u101))
-
-(define-map health-records principal {record-hash: (buff 32), last-updated: uint})
-(define-map access-permissions {patient: principal, provider: principal} bool)
-
-(define-public (update-record (record-hash (buff 32)))
-  (ok (map-set health-records tx-sender {record-hash: record-hash, last-updated: stacks-block-height})))
-
-(define-public (grant-access (provider principal))
-  (ok (map-set access-permissions {patient: tx-sender, provider: provider} true)))
-
-(define-public (revoke-access (provider principal))
-  (ok (map-set access-permissions {patient: tx-sender, provider: provider} false)))
-
-(define-read-only (get-record (patient principal))
-  (ok (map-get? health-records patient)))
-
-(define-read-only (has-access (patient principal) (provider principal))
-  (ok (default-to false (map-get? access-permissions {patient: patient, provider: provider}))))
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
+)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
+)
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
+)

@@ -1,30 +1,24 @@
-(define-map sealed-bids 
-  uint 
-  {
-    bidder: principal,
-    bid-hash: (buff 32),
-    item-id: uint,
-    revealed: bool,
-    submitted-at: uint
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-data-var sealed-nonce uint u0)
-
-(define-read-only (get-sealed-bid (id uint))
-  (map-get? sealed-bids id)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-public (submit-sealed-bid (item-id uint) (bid-hash (buff 32)))
-  (let ((id (+ (var-get sealed-nonce) u1)))
-    (map-set sealed-bids id {
-      bidder: tx-sender,
-      bid-hash: bid-hash,
-      item-id: item-id,
-      revealed: false,
-      submitted-at: stacks-block-height
-    })
-    (var-set sealed-nonce id)
-    (ok id)
-  )
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

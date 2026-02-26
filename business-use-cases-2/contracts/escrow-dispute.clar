@@ -1,30 +1,24 @@
-(define-map escrow-disputes 
-  uint 
-  {
-    escrow-id: uint,
-    disputer: principal,
-    reason: (string-ascii 256),
-    status: (string-ascii 20),
-    created-at: uint
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-data-var escrow-dispute-nonce uint u0)
-
-(define-read-only (get-escrow-dispute (id uint))
-  (map-get? escrow-disputes id)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-public (raise-escrow-dispute (escrow-id uint) (reason (string-ascii 256)))
-  (let ((id (+ (var-get escrow-dispute-nonce) u1)))
-    (map-set escrow-disputes id {
-      escrow-id: escrow-id,
-      disputer: tx-sender,
-      reason: reason,
-      status: "open",
-      created-at: stacks-block-height
-    })
-    (var-set escrow-dispute-nonce id)
-    (ok id)
-  )
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

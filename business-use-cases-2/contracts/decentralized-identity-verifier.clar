@@ -1,24 +1,24 @@
-(define-constant contract-owner tx-sender)
-(define-constant err-owner-only (err u100))
-(define-constant err-not-found (err u101))
-
-(define-map identities principal {verified: bool, credential-hash: (buff 32), verified-at: uint})
-(define-map verifiers principal bool)
-
-(define-public (add-verifier (verifier principal))
-  (begin
-    (asserts! (is-eq tx-sender contract-owner) err-owner-only)
-    (ok (map-set verifiers verifier true))))
-
-(define-public (verify-identity (user principal) (cred-hash (buff 32)))
-  (begin
-    (asserts! (default-to false (map-get? verifiers tx-sender)) err-owner-only)
-    (ok (map-set identities user {verified: true, credential-hash: cred-hash, verified-at: stacks-block-height}))))
-
-(define-read-only (get-identity (user principal))
-  (ok (map-get? identities user)))
-
-(define-read-only (is-verified (user principal))
-  (ok (match (map-get? identities user)
-    identity-data (get verified identity-data)
-    false)))
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
+)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
+)
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
+)

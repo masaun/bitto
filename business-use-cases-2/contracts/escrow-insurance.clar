@@ -1,30 +1,24 @@
-(define-map escrow-insurance-policies 
-  uint 
-  {
-    escrow-id: uint,
-    coverage-amount: uint,
-    premium: uint,
-    insurer: principal,
-    active: bool
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-data-var insurance-nonce uint u0)
-
-(define-read-only (get-escrow-insurance (id uint))
-  (map-get? escrow-insurance-policies id)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-public (insure-escrow (escrow-id uint) (coverage uint) (premium uint) (insurer principal))
-  (let ((id (+ (var-get insurance-nonce) u1)))
-    (map-set escrow-insurance-policies id {
-      escrow-id: escrow-id,
-      coverage-amount: coverage,
-      premium: premium,
-      insurer: insurer,
-      active: true
-    })
-    (var-set insurance-nonce id)
-    (ok id)
-  )
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

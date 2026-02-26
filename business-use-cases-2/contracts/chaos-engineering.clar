@@ -1,19 +1,24 @@
-(define-map records {id: uint} {owner: principal, data: (buff 64), created-at: uint})
+(define-map data principal uint)
 (define-data-var counter uint u0)
-
-(define-constant ERR-NOT-AUTHORIZED (err u100))
-(define-constant ERR-NOT-FOUND (err u102))
-
-(define-public (create-record (data (buff 64)))
-  (let ((id (var-get counter)))
-    (map-set records {id: id} {owner: tx-sender, data: data, created-at: stacks-block-height})
-    (var-set counter (+ id u1))
-    (ok id)))
-
-(define-public (update-record (id uint) (data (buff 64)))
-  (let ((record (unwrap! (map-get? records {id: id}) ERR-NOT-FOUND)))
-    (asserts! (is-eq (get owner record) tx-sender) ERR-NOT-AUTHORIZED)
-    (ok (map-set records {id: id} (merge record {data: data})))))
-
-(define-read-only (get-record (id uint))
-  (map-get? records {id: id}))
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
+)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
+)
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
+)

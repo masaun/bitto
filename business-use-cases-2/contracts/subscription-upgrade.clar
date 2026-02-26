@@ -1,30 +1,24 @@
-(define-map upgrades 
-  uint 
-  {
-    subscription-id: uint,
-    old-plan: uint,
-    new-plan: uint,
-    upgraded-at: uint,
-    upgraded-by: principal
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-data-var upgrade-nonce uint u0)
-
-(define-read-only (get-upgrade (id uint))
-  (map-get? upgrades id)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-public (upgrade-subscription (subscription-id uint) (old-plan uint) (new-plan uint))
-  (let ((id (+ (var-get upgrade-nonce) u1)))
-    (map-set upgrades id {
-      subscription-id: subscription-id,
-      old-plan: old-plan,
-      new-plan: new-plan,
-      upgraded-at: stacks-block-height,
-      upgraded-by: tx-sender
-    })
-    (var-set upgrade-nonce id)
-    (ok id)
-  )
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

@@ -9,10 +9,11 @@ import {
   stringAsciiCV,
 } from '@stacks/transactions';
 import * as dotenv from 'dotenv';
+import * as path from 'path';
 
 type NetworkType = 'mainnet' | 'testnet' | 'devnet';
 
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '../../../../.env') });
 
 function parseContractIdentifier(envValue: string | undefined, defaultContractName: string): { address: string; name: string } {
   const value = envValue || 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM';
@@ -86,9 +87,10 @@ const CONFIG = {
   contractAddress: contractDetails.address,
   contractName: contractDetails.name,
   
-  batchSize: 10,
-  delayBetweenCalls: 3000,
-  delayBetweenBatches: 6000,
+  batchSize: 100,          // Number of calls to make per function (Oringally 10)
+  delayBetweenCalls: 5000, // Originally 3000 ms (3 seconds) between individual calls within a batch
+  delayBetweenBatches: 10000, // Increased to 10 seconds to allow more confirmation time (was 6000)
+  checkTransactionStatus: true, // Set to false to skip status checking
   
   senderKey: '',
 };
@@ -97,6 +99,7 @@ interface FunctionCall {
   name: string;
   args: (index: number, senderAddress: string) => any[];
   description: string;
+  batchSize?: number; // Allow override per function
 }
 
 function getWriteFunctions(senderAddress: string): FunctionCall[] {
@@ -104,7 +107,8 @@ function getWriteFunctions(senderAddress: string): FunctionCall[] {
     {
       name: 'register-participant',
       args: (index: number, sender: string) => [],
-      description: 'Register participant',
+      description: 'Register participant (only once per address)',
+      batchSize: 1,
     },
     {
       name: 'create-quest',
@@ -113,40 +117,44 @@ function getWriteFunctions(senderAddress: string): FunctionCall[] {
         uintCV(100 + (index * 10)),
         uintCV(1),
       ],
-      description: 'Create quest',
+      description: 'Create quest (requires contract owner)',
     },
-    {
-      name: 'complete-quest',
-      args: (index: number, sender: string) => [
-        uintCV(index),
-      ],
-      description: 'Complete quest',
-    },
-    {
-      name: 'claim-reward',
-      args: (index: number, sender: string) => [
-        uintCV(index),
-      ],
-      description: 'Claim reward',
-    },
-    {
-      name: 'update-level',
-      args: (index: number, sender: string) => [
-        uintCV(index + 2),
-      ],
-      description: 'Update level',
-    },
-    {
-      name: 'deactivate-participant',
-      args: (index: number, sender: string) => [],
-      description: 'Deactivate participant',
-    },
+    // COMMENTED OUT: update-level fails due to deactivated participant
+    // {
+    //   name: 'update-level',
+    //   args: (index: number, sender: string) => [
+    //     uintCV(index + 2),
+    //   ],
+    //   description: 'Update level (increases participant level)',
+    // },
+    // COMMENTED OUT: complete-quest fails due to deactivated participant
+    // {
+    //   name: 'complete-quest',
+    //   args: (index: number, sender: string) => [
+    //     uintCV(index),
+    //   ],
+    //   description: 'Complete quest (requires: registered, active, sufficient level)',
+    // },
+    // COMMENTED OUT: claim-reward will fail (no completions exist due to deactivated participant)
+    // {
+    //   name: 'claim-reward',
+    //   args: (index: number, sender: string) => [
+    //     uintCV(index),
+    //   ],
+    //   description: 'Claim reward (requires quest completion)',
+    // },
     {
       name: 'toggle-quest',
       args: (index: number, sender: string) => [
         uintCV(index),
       ],
-      description: 'Toggle quest',
+      description: 'Toggle quest active status (requires contract owner)',
+    },
+    {
+      name: 'deactivate-participant',
+      args: (index: number, sender: string) => [],
+      description: 'Deactivate participant (BLOCKS all future operations)',
+      batchSize: 1,
     },
   ];
 }
@@ -157,6 +165,8 @@ interface BatchCallResult {
   txId: string | null;
   success: boolean;
   error?: string;
+  errorCode?: string;
+  txStatus?: string;
 }
 
 function getStacksApiUrl(): string {
@@ -188,6 +198,92 @@ async function fetchAccountNonce(address: string): Promise<bigint> {
     console.warn('  Using nonce 0 as fallback...');
     return BigInt(0);
   }
+}
+
+async function checkTransactionStatus(txId: string, maxAttempts: number = 3): Promise<{
+  success: boolean;
+  status?: string;
+  error?: string;
+  errorCode?: string;
+  isPending?: boolean;
+}> {
+  const apiUrl = getStacksApiUrl();
+  const url = `${apiUrl}/extended/v1/tx/${txId}`;
+  
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    try {
+      await new Promise(resolve => setTimeout(resolve, 3000 * (attempt + 1))); // Wait 3s, 6s, 9s
+      
+      const response = await fetch(url);
+      if (!response.ok) {
+        if (response.status === 404 && attempt < maxAttempts - 1) {
+          continue; // Transaction not yet in mempool, retry
+        }
+        throw new Error(`API responded with status ${response.status}`);
+      }
+      
+      const data = await response.json() as {
+        tx_status: string;
+        tx_result?: {
+          repr: string;
+          hex: string;
+        };
+      };
+      
+      const isSuccess = data.tx_status === 'success';
+      const isPending = data.tx_status === 'pending';
+      const isAborted = data.tx_status === 'abort_by_response' || data.tx_status === 'abort_by_post_condition';
+      
+      let errorCode: string | undefined;
+      if (data.tx_result?.repr && data.tx_result.repr.startsWith('(err ')) {
+        // Extract error code from result like "(err u100)"
+        const match = data.tx_result.repr.match(/\(err u(\d+)\)/);
+        if (match) {
+          const rawCode = `u${match[1]}`;
+          const errorMap: Record<string, string> = {
+            'u100': 'err-owner-only',
+            'u101': 'err-not-found',
+            'u102': 'err-already-exists',
+            'u103': 'err-unauthorized',
+          };
+          errorCode = rawCode; // Keep the raw code for programmatic checks
+          const errorName = errorMap[rawCode];
+          if (errorName) {
+            errorCode = `${errorName} (${rawCode})`;
+          }
+        }
+      }
+      
+      // Treat pending as success for nonce management (transaction was broadcast)
+      if (isPending) {
+        return {
+          success: true,
+          status: data.tx_status,
+          isPending: true,
+        };
+      }
+      
+      return {
+        success: isSuccess,
+        status: data.tx_status,
+        error: isAborted ? 'Transaction aborted during execution' : undefined,
+        errorCode,
+        isPending: false,
+      };
+    } catch (error) {
+      if (attempt === maxAttempts - 1) {
+        return {
+          success: false,
+          error: `Failed to check status: ${error instanceof Error ? error.message : error}`,
+        };
+      }
+    }
+  }
+  
+  return {
+    success: false,
+    error: 'Transaction not found after multiple attempts',
+  };
 }
 
 function getNetworkForBroadcast(): 'mainnet' | 'testnet' {
@@ -265,34 +361,120 @@ async function executeBatchCallsForFunction(
 
   const results: BatchCallResult[] = [];
   let nonce = startNonce;
+  const batchSize = func.batchSize ?? CONFIG.batchSize; // Use function-specific batch size or default
 
-  for (let i = 0; i < CONFIG.batchSize; i++) {
+  for (let i = 0; i < batchSize; i++) {
     const args = func.args(i, senderAddress);
-    console.log(`  [${i + 1}/${CONFIG.batchSize}] Calling ${func.name}...`);
+    console.log(`  [${i + 1}/${batchSize}] Calling ${func.name}...`);
 
     const result = await executeContractCall(func.name, args, nonce, dryRun);
 
-    results.push({
+    let finalResult: BatchCallResult = {
       functionName: func.name,
       index: i,
       txId: result.txId || null,
       success: result.success,
       error: result.error,
-    });
+    };
 
-    if (result.success) {
+    if (result.success && result.txId && result.txId !== 'dry-run-no-tx' && CONFIG.checkTransactionStatus && !dryRun) {
+      console.log(`    ⏳ Checking transaction status...`);
+      const txStatus = await checkTransactionStatus(result.txId);
+      
+      finalResult.success = txStatus.success;
+      finalResult.txStatus = txStatus.status;
+      finalResult.errorCode = txStatus.errorCode;
+      
+      if (txStatus.isPending) {
+        console.log(`    ✓ Broadcast Success (pending confirmation) - TxID: ${result.txId}`);
+        console.log(`       Check status: ${getStacksApiUrl().replace('api', 'explorer')}/txid/${result.txId}?chain=${CONFIG.network}`);
+        nonce++; // Increment nonce - transaction was broadcast successfully
+      } else if (!txStatus.success) {
+        finalResult.error = txStatus.error || 'Transaction failed on-chain';
+        if (txStatus.errorCode) {
+          console.log(`    ✗ Transaction Failed - Error: ${txStatus.errorCode} (${txStatus.error || 'aborted'})`);
+          console.log(`       Explorer: ${getStacksApiUrl().replace('api', 'explorer')}/txid/${result.txId}?chain=${CONFIG.network}`);
+          
+          // Special case: register-participant already-exists is not fatal
+          if (func.name === 'register-participant' && txStatus.errorCode.includes('u102')) {
+            console.log(`       ℹ️  Note: Participant already registered (this is OK)`);
+          }
+          // Special case: update-level unauthorized means participant is deactivated
+          if (func.name === 'update-level' && txStatus.errorCode.includes('u103')) {
+            console.log(`       ⚠️  CRITICAL: Participant is deactivated - all future calls will fail!`);
+          }
+        } else {
+          console.log(`    ✗ Transaction Failed - Status: ${txStatus.status}`);
+        }
+        nonce++; // Still increment - transaction was broadcast (nonce was consumed)
+      } else {
+        console.log(`    ✓ Success - TxID: ${result.txId}`);
+        nonce++;
+      }
+    } else if (result.success) {
       console.log(`    ✓ Success${result.txId && result.txId !== 'dry-run-no-tx' ? ` - TxID: ${result.txId}` : ''}`);
       nonce++;
     } else {
       console.log(`    ✗ Failed - Error: ${result.error}`);
+      // Don't increment nonce - transaction was never broadcast to network
     }
 
-    if (i < CONFIG.batchSize - 1) {
+    results.push(finalResult);
+
+    if (i < batchSize - 1) {
       await new Promise(resolve => setTimeout(resolve, CONFIG.delayBetweenCalls));
     }
   }
 
   return { results, endNonce: nonce };
+}
+
+async function checkParticipantStatus(address: string): Promise<{
+  exists: boolean;
+  active: boolean;
+  level: number;
+  points: number;
+}> {
+  const apiUrl = getStacksApiUrl();
+  const url = `${apiUrl}/v2/contracts/call-read/${CONFIG.contractAddress}/${CONFIG.contractName}/get-participant`;
+  
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sender: address,
+        arguments: [`0x${Buffer.from(address.slice(1)).toString('hex')}`] // Convert principal to hex
+      }),
+    });
+    
+    if (!response.ok) {
+      console.warn(`  Warning: Could not fetch participant status (${response.status})`);
+      return { exists: false, active: false, level: 0, points: 0 };
+    }
+    
+    const data = await response.json() as { okay: boolean; result: string };
+    
+    // Parse the Clarity response
+    if (data.result.includes('none')) {
+      return { exists: false, active: false, level: 0, points: 0 };
+    }
+    
+    // Simple parsing - result looks like: (some {active: true, level: u1, points: u0})
+    const activeMatch = data.result.match(/active:\s*(true|false)/);
+    const levelMatch = data.result.match(/level:\s*u(\d+)/);
+    const pointsMatch = data.result.match(/points:\s*u(\d+)/);
+    
+    return {
+      exists: true,
+      active: activeMatch ? activeMatch[1] === 'true' : false,
+      level: levelMatch ? parseInt(levelMatch[1]) : 0,
+      points: pointsMatch ? parseInt(pointsMatch[1]) : 0,
+    };
+  } catch (error) {
+    console.warn(`  Warning: Failed to check participant status: ${error instanceof Error ? error.message : error}`);
+    return { exists: false, active: false, level: 0, points: 0 };
+  }
 }
 
 async function executeAllBatchCalls(dryRun: boolean = false, specificFunction?: string): Promise<BatchCallResult[]> {
@@ -309,6 +491,25 @@ async function executeAllBatchCalls(dryRun: boolean = false, specificFunction?: 
   const senderAddress = getAddressFromKey(CONFIG.senderKey, CONFIG.network);
 
   console.log(`Sender Address: ${senderAddress}`);
+  
+  // Check participant status before starting
+  console.log('\n🔍 Checking participant status...');
+  const participantStatus = await checkParticipantStatus(senderAddress);
+  console.log(`   Exists: ${participantStatus.exists}`);
+  if (participantStatus.exists) {
+    console.log(`   Active: ${participantStatus.active}`);
+    console.log(`   Level: ${participantStatus.level}`);
+    console.log(`   Points: ${participantStatus.points}`);
+    
+    if (!participantStatus.active) {
+      console.error('\n❌ ERROR: Participant is DEACTIVATED!');
+      console.error('   update-level, complete-quest, and other functions will fail.');
+      console.error('   You need to use a different address or redeploy the contract.');
+      process.exit(1);
+    }
+  } else {
+    console.log('   No participant found - register-participant will be needed.');
+  }
 
   const allFunctions = getWriteFunctions(senderAddress);
   
@@ -326,7 +527,7 @@ async function executeAllBatchCalls(dryRun: boolean = false, specificFunction?: 
   console.log(`\nFunctions to call: ${functionsToCall.map(f => f.name).join(', ')}`);
   console.log(`Total transactions: ${functionsToCall.length * CONFIG.batchSize}`);
 
-  console.log(`\nFetching nonce for ${senderAddress}...`);
+  console.log(`\nFetching initial nonce for ${senderAddress}...`);
   let nonce = await fetchAccountNonce(senderAddress);
   console.log(`Starting nonce: ${nonce}`);
 
@@ -334,6 +535,14 @@ async function executeAllBatchCalls(dryRun: boolean = false, specificFunction?: 
 
   for (let i = 0; i < functionsToCall.length; i++) {
     const func = functionsToCall[i];
+    
+    // Refetch nonce before each function batch to avoid BadNonce errors
+    if (i > 0 && !dryRun) {
+      console.log(`\n🔄 Fetching fresh nonce before ${func.name} batch...`);
+      nonce = await fetchAccountNonce(senderAddress);
+      console.log(`   Current nonce: ${nonce}`);
+    }
+    
     const { results, endNonce } = await executeBatchCallsForFunction(func, nonce, dryRun, senderAddress);
     allResults.push(...results);
     nonce = endNonce;
@@ -376,10 +585,29 @@ function printBatchSummary(results: BatchCallResult[]): void {
   if (failed.length > 0) {
     console.log('\nFailed calls (first 10):');
     failed.slice(0, 10).forEach(f => {
-      console.log(`  - ${f.functionName}[${f.index}]: ${f.error}`);
+      const errorInfo = f.errorCode ? `${f.errorCode} - ${f.error}` : f.error;
+      const txInfo = f.txId ? ` (TxID: ${f.txId})` : '';
+      console.log(`  - ${f.functionName}[${f.index}]: ${errorInfo}${txInfo}`);
     });
     if (failed.length > 10) {
       console.log(`  ... and ${failed.length - 10} more failed calls`);
+    }
+    
+    // Group failures by error code
+    const errorCodeGroups = failed.reduce((acc, f) => {
+      const code = f.errorCode || 'unknown';
+      if (!acc[code]) {
+        acc[code] = 0;
+      }
+      acc[code]++;
+      return acc;
+    }, {} as Record<string, number>);
+    
+    if (Object.keys(errorCodeGroups).length > 0) {
+      console.log('\nError breakdown:');
+      Object.entries(errorCodeGroups).forEach(([code, count]) => {
+        console.log(`  ${code}: ${count} occurrence(s)`);
+      });
     }
   }
 

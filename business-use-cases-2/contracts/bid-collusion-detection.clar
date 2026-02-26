@@ -1,30 +1,24 @@
-(define-map collusion-flags 
-  uint 
-  {
-    auction-id: uint,
-    flagged-parties: (list 10 principal),
-    reason: (string-ascii 256),
-    severity: uint,
-    flagged-at: uint
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-data-var flag-nonce uint u0)
-
-(define-read-only (get-flag (id uint))
-  (map-get? collusion-flags id)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-public (flag-collusion (auction-id uint) (parties (list 10 principal)) (reason (string-ascii 256)) (severity uint))
-  (let ((id (+ (var-get flag-nonce) u1)))
-    (map-set collusion-flags id {
-      auction-id: auction-id,
-      flagged-parties: parties,
-      reason: reason,
-      severity: severity,
-      flagged-at: stacks-block-height
-    })
-    (var-set flag-nonce id)
-    (ok id)
-  )
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

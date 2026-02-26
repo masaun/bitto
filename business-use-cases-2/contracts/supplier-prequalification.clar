@@ -1,30 +1,24 @@
-(define-map suppliers 
-  principal 
-  {
-    certified: bool,
-    score: uint,
-    verified-at: uint
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-read-only (get-supplier (supplier principal))
-  (map-get? suppliers supplier)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-public (prequalify-supplier (supplier principal) (score uint))
-  (begin
-    (map-set suppliers supplier {
-      certified: true,
-      score: score,
-      verified-at: stacks-block-height
-    })
-    (ok true)
-  )
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
 )
-
-(define-read-only (is-qualified (supplier principal))
-  (match (map-get? suppliers supplier)
-    s (ok (get certified s))
-    (ok false)
-  )
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

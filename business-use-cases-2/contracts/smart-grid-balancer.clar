@@ -1,13 +1,24 @@
-(define-constant contract-owner tx-sender)
-
-(define-map grid-nodes (string-ascii 64) {operator: principal, capacity: uint, current-load: uint, status: (string-ascii 20)})
-
-(define-public (register-node (node-id (string-ascii 64)) (capacity uint))
-  (ok (map-set grid-nodes node-id {operator: tx-sender, capacity: capacity, current-load: u0, status: "active"})))
-
-(define-public (update-load (node-id (string-ascii 64)) (load uint))
-  (let ((node (unwrap! (map-get? grid-nodes node-id) (err u101))))
-    (ok (map-set grid-nodes node-id (merge node {current-load: load})))))
-
-(define-read-only (get-node (node-id (string-ascii 64)))
-  (ok (map-get? grid-nodes node-id)))
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
+)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
+)
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
+)

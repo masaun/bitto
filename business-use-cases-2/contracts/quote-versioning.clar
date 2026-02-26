@@ -1,30 +1,24 @@
-(define-map quote-versions 
-  {quote-id: uint, version: uint}
-  {
-    data: (string-ascii 512),
-    created-at: uint,
-    created-by: principal
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-map latest-version uint uint)
-
-(define-read-only (get-version (quote-id uint) (version uint))
-  (map-get? quote-versions {quote-id: quote-id, version: version})
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-read-only (get-latest-version (quote-id uint))
-  (map-get? latest-version quote-id)
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
 )
-
-(define-public (create-version (quote-id uint) (data (string-ascii 512)))
-  (let ((next-version (+ (default-to u0 (map-get? latest-version quote-id)) u1)))
-    (map-set quote-versions {quote-id: quote-id, version: next-version} {
-      data: data,
-      created-at: stacks-block-height,
-      created-by: tx-sender
-    })
-    (map-set latest-version quote-id next-version)
-    (ok next-version)
-  )
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

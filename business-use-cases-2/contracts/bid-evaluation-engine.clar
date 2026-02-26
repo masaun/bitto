@@ -1,30 +1,24 @@
-(define-map evaluations 
-  uint 
-  {
-    bid-id: uint,
-    evaluator: principal,
-    score: uint,
-    criteria: (string-ascii 256),
-    evaluated-at: uint
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-data-var evaluation-nonce uint u0)
-
-(define-read-only (get-evaluation (id uint))
-  (map-get? evaluations id)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-public (evaluate-bid (bid-id uint) (score uint) (criteria (string-ascii 256)))
-  (let ((id (+ (var-get evaluation-nonce) u1)))
-    (map-set evaluations id {
-      bid-id: bid-id,
-      evaluator: tx-sender,
-      score: score,
-      criteria: criteria,
-      evaluated-at: stacks-block-height
-    })
-    (var-set evaluation-nonce id)
-    (ok id)
-  )
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

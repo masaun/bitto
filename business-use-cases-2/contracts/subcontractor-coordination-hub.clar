@@ -1,19 +1,24 @@
-(define-map subcontractors uint {owner: principal, status: (string-ascii 20), value: uint})
-(define-data-var sub-nonce uint u0)
-
-(define-public (register-subcontractor (value uint))
-  (let ((id (+ (var-get sub-nonce) u1)))
-    (map-set subcontractors id {owner: tx-sender, status: "active", value: value})
-    (var-set sub-nonce id)
-    (ok id)))
-
-(define-public (update-status (id uint) (status (string-ascii 20)))
-  (let ((sub (unwrap! (map-get? subcontractors id) (err u404))))
-    (asserts! (is-eq (get owner sub) tx-sender) (err u403))
-    (ok (map-set subcontractors id (merge sub {status: status})))))
-
-(define-read-only (get-subcontractor (id uint))
-  (map-get? subcontractors id))
-
-(define-read-only (get-total-subcontractors)
-  (ok (var-get sub-nonce)))
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
+)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
+)
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
+)

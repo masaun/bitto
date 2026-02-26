@@ -1,39 +1,24 @@
-(define-map conditions 
-  uint 
-  {
-    payment-id: uint,
-    condition-type: (string-ascii 32),
-    threshold: uint,
-    met: bool
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-data-var condition-nonce uint u0)
-
-(define-read-only (get-condition (id uint))
-  (map-get? conditions id)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-public (add-condition (payment-id uint) (condition-type (string-ascii 32)) (threshold uint))
-  (let ((id (+ (var-get condition-nonce) u1)))
-    (map-set conditions id {
-      payment-id: payment-id,
-      condition-type: condition-type,
-      threshold: threshold,
-      met: false
-    })
-    (var-set condition-nonce id)
-    (ok id)
-  )
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
 )
-
-(define-public (mark-condition-met (id uint))
-  (let ((condition (unwrap! (map-get? conditions id) (err u1))))
-    (map-set conditions id (merge condition {met: true}))
-    (ok true)
-  )
+(define-read-only (get-counter)
+  (ok (var-get counter))
 )
-
-(define-read-only (check-conditions (payment-id uint))
-  (ok true)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

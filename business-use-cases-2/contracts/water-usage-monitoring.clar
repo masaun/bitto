@@ -1,24 +1,24 @@
-(define-map water-usage uint {
-  operator: principal,
-  site-id: (string-ascii 100),
-  usage-amount: uint,
-  usage-period: uint,
-  timestamp: uint
-})
-
-(define-data-var usage-counter uint u0)
-
-(define-read-only (get-water-usage (usage-id uint))
-  (map-get? water-usage usage-id))
-
-(define-public (record-water-usage (site-id (string-ascii 100)) (usage-amount uint) (usage-period uint))
-  (let ((new-id (+ (var-get usage-counter) u1)))
-    (map-set water-usage new-id {
-      operator: tx-sender,
-      site-id: site-id,
-      usage-amount: usage-amount,
-      usage-period: usage-period,
-      timestamp: stacks-block-height
-    })
-    (var-set usage-counter new-id)
-    (ok new-id)))
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
+)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
+)
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
+)

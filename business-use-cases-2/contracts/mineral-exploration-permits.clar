@@ -1,34 +1,24 @@
-(define-map permits uint {
-  applicant: principal,
-  location: (string-utf8 256),
-  area-size: uint,
-  issue-date: uint,
-  expiry-date: uint,
-  status: (string-ascii 20)
-})
-
-(define-data-var permit-counter uint u0)
-(define-data-var permit-authority principal tx-sender)
-
-(define-read-only (get-permit (permit-id uint))
-  (map-get? permits permit-id))
-
-(define-public (issue-permit (applicant principal) (location (string-utf8 256)) (area-size uint) (duration uint))
-  (let ((new-id (+ (var-get permit-counter) u1)))
-    (asserts! (is-eq tx-sender (var-get permit-authority)) (err u1))
-    (map-set permits new-id {
-      applicant: applicant,
-      location: location,
-      area-size: area-size,
-      issue-date: stacks-block-height,
-      expiry-date: (+ stacks-block-height duration),
-      status: "active"
-    })
-    (var-set permit-counter new-id)
-    (ok new-id)))
-
-(define-public (revoke-permit (permit-id uint))
-  (begin
-    (asserts! (is-eq tx-sender (var-get permit-authority)) (err u1))
-    (asserts! (is-some (map-get? permits permit-id)) (err u2))
-    (ok (map-set permits permit-id (merge (unwrap-panic (map-get? permits permit-id)) { status: "revoked" })))))
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
+)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
+)
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
+)

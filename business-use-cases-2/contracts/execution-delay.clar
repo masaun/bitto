@@ -1,32 +1,24 @@
-(define-map execution-delays 
-  uint 
-  {
-    execution-id: uint,
-    delay-until: uint,
-    reason: (string-ascii 128),
-    set-by: principal
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-read-only (get-delay (execution-id uint))
-  (map-get? execution-delays execution-id)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-public (set-delay (execution-id uint) (delay-until uint) (reason (string-ascii 128)))
-  (begin
-    (map-set execution-delays execution-id {
-      execution-id: execution-id,
-      delay-until: delay-until,
-      reason: reason,
-      set-by: tx-sender
-    })
-    (ok true)
-  )
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
 )
-
-(define-read-only (can-execute (execution-id uint))
-  (match (map-get? execution-delays execution-id)
-    delay (ok (>= stacks-block-height (get delay-until delay)))
-    (ok true)
-  )
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

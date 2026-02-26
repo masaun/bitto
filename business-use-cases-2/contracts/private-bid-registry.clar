@@ -1,37 +1,24 @@
-(define-map bids 
-  uint 
-  {
-    bidder: principal,
-    item-id: uint,
-    amount: uint,
-    status: (string-ascii 20),
-    submitted-at: uint
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-data-var bid-nonce uint u0)
-
-(define-read-only (get-bid (id uint))
-  (map-get? bids id)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-public (submit-bid (item-id uint) (amount uint))
-  (let ((id (+ (var-get bid-nonce) u1)))
-    (map-set bids id {
-      bidder: tx-sender,
-      item-id: item-id,
-      amount: amount,
-      status: "submitted",
-      submitted-at: stacks-block-height
-    })
-    (var-set bid-nonce id)
-    (ok id)
-  )
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
 )
-
-(define-public (update-bid-status (id uint) (status (string-ascii 20)))
-  (let ((bid (unwrap! (map-get? bids id) (err u1))))
-    (map-set bids id (merge bid {status: status}))
-    (ok true)
-  )
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

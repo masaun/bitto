@@ -1,30 +1,24 @@
-(define-map subscription-plans 
-  uint 
-  {
-    name: (string-ascii 64),
-    price: uint,
-    duration: uint,
-    features: (string-ascii 256),
-    active: bool
-  }
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
 )
-
-(define-data-var plan-nonce uint u0)
-
-(define-read-only (get-plan (id uint))
-  (map-get? subscription-plans id)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
 )
-
-(define-public (create-plan (name (string-ascii 64)) (price uint) (duration uint) (features (string-ascii 256)))
-  (let ((id (+ (var-get plan-nonce) u1)))
-    (map-set subscription-plans id {
-      name: name,
-      price: price,
-      duration: duration,
-      features: features,
-      active: true
-    })
-    (var-set plan-nonce id)
-    (ok id)
-  )
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
 )

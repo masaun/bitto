@@ -12,5 +12,7 @@ fix-**.js
 generate-all-**.js
 generate-clarinet-**.js
 rebuild-clarinet-**.js
+generate-contracts.js
+deduplicate-toml.js
 update-**.js
 verify-**.js

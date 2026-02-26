@@ -1,21 +1,24 @@
-(define-map batches (string-ascii 100) {
-  origin: (string-ascii 100),
-  material-type: (string-ascii 50),
-  quantity: uint,
-  creation-date: uint,
-  current-holder: principal
-})
-
-(define-read-only (get-batch (batch-id (string-ascii 100)))
-  (map-get? batches batch-id))
-
-(define-public (create-batch (batch-id (string-ascii 100)) (origin (string-ascii 100)) (material-type (string-ascii 50)) (quantity uint))
-  (begin
-    (asserts! (is-none (map-get? batches batch-id)) (err u1))
-    (ok (map-set batches batch-id {
-      origin: origin,
-      material-type: material-type,
-      quantity: quantity,
-      creation-date: stacks-block-height,
-      current-holder: tx-sender
-    }))))
+(define-map data principal uint)
+(define-data-var counter uint u0)
+(define-read-only (get-data (key principal))
+  (ok (default-to u0 (map-get? data key)))
+)
+(define-public (set-data (key principal) (value uint))
+  (ok (begin
+    (map-set data key value)
+    (var-set counter (+ (var-get counter) u1))
+    true
+  ))
+)
+(define-public (increment)
+  (ok (begin
+    (var-set counter (+ (var-get counter) u1))
+    (var-get counter)
+  ))
+)
+(define-read-only (get-counter)
+  (ok (var-get counter))
+)
+(define-public (process-value (val uint))
+  (ok (+ val u1))
+)
