@@ -16,3 +16,7 @@ generate-contracts.js
 deduplicate-toml.js
 update-**.js
 verify-**.js
+
+# Others
+.env
+.env.local
